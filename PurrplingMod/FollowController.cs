@@ -142,14 +142,17 @@ namespace PurrplingMod
 
         private void CurrentFollowedPointUpdateCheck()
         {
-            if (this.pathToFollow.Count == 0)
-            {
-                // Step path is empty? Nothing to following
-                this.currentFollowedPoint = Point.Zero;
+            if (this.currentFollowedPoint == Point.Zero)
                 return;
-            }
-            else if (this.currentFollowedPoint == this.follower.getTileLocationPoint()) 
+            
+            if (this.currentFollowedPoint == this.follower.getTileLocationPoint()) 
             {
+                if (this.pathToFollow.Count == 0)
+                {
+                    // Step path is empty? We are on end of path
+                    this.currentFollowedPoint = Point.Zero;
+                    return;
+                }
                 // Followed point reached? Pop next point to follow
                 this.currentFollowedPoint = this.pathToFollow.Dequeue();
             }
