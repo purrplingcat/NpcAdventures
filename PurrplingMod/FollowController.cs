@@ -96,39 +96,56 @@ namespace PurrplingMod
             if (this.pathToFollow.Count > PATH_MAX_NODE_COUNT || Helper.Distance(leaderTilePoint, followerTilePoint) > LOST_DISTANCE)
             {
                 // Step path is too long or lost leader? Try to find direct path to follower or warp on
-                this.ResolveLostFollow(forceFindPath: true, emoteWhenPathIsFound: true);
+                this.ResolveLostFollow(forceWarp: true, emoteWhenPathIsFound: true);
                 return;
             }
 
-            if (follower.controller == null)
-                this.FollowPath(time); // Follow leader's step path if follower has'nt direct path
+            if (follower.controller == null) 
+            {
+                // Follow leader's step path if follower has'nt direct path
+                this.CurrentFollowedPointUpdateCheck()
+                this.FollowCurrentPoint(); 
+            }
         }
 
-        private void ResolveLostFollow(bool forceFindPath = false, bool emoteWhenPathIsFound = false)
+        private void ResolveLostFollow(bool forceWarp = false, bool emoteWhenPathIsFound = false)
         {
             Point endTilePoint = this.leader.getTileLocationPoint();
 
-            if (!this.follower.isCharging && !forceFindPath)
+            this.currentFollowedPoint = endTilePoint;
+            this.followingLostTime = 0;
+            
+            // Try to find alternative path to leader's position.
+            Stack<Point> newPath = FollowController.FindPath(npcTilePosition, endPointTile, follower.currentLocation, follower, PATH_MAX_NODE_COUNT);
+            
+            if (newPath != null)
             {
-                this.followingLostTime = 0;
-                this.follower.isCharging = true;
-                return;
+                // Path found, we are not lost now!
+                this.pathToFollow = new Queue<Point>(path.Reverse());
+                return; 
             }
             
-            this.follower.addedSpeed = 4;
-            this.follower.isCharging = false;
-            this.pathToFollow.Clear();
-            this.currentFollowedPoint = endTilePoint;
-            if (!FollowController.ComeTo(this.follower, endTilePoint, emoteWhenPathIsFound))
+            if (this.pathToFollow.Count > 0 && !forceWarp) 
+            {
+                // Force walk through everything, when we have original path and warp is not forced
+                this.follower.isCharging = true;
+                this.follower.addedSpeed = 4;
+            }
+            else
+            {
+                // Warp to leader when no original path exists or warp is forced
+                this.pathToFollow.Clear();
+                this.follower.isCharging = false;
                 FollowController.WarpTo(this.follower, endTilePoint);
-            this.followingLostTime = 0;
+            }
         }
 
-        private void FollowPath(GameTime time)
+        private void CurrentFollowedPointUpdateCheck()
         {
             if (this.pathToFollow.Count == 0)
             {
                 // Step path is empty? Nothing to following
+                this.currentFollowedPoint = Point.Zero;
                 return;
             }
             else if (this.currentFollowedPoint == this.follower.getTileLocationPoint()) 
@@ -136,9 +153,31 @@ namespace PurrplingMod
                 // Followed point reached? Pop next point to follow
                 this.currentFollowedPoint = this.pathToFollow.Dequeue();
             }
+        }
+        
+        private void FollowCurrentPoint()
+        {
+            Rectangle tileBox = new Rectangle(this.currentFollowedPoint.X * 64, this.currentFollowedPoint.Y * 64, 64, 64);
+            Rectangle followerBox = this.follower.GetBoundingBox();
+            tileBox.Inflate(-2, 0);
+            
+            if (this.currentFollowedPoint == Point.Zero) 
+            {
+                this.follower.Halt();
+                return;
+            }
 
-            // Follow current step point
-            FollowController.FollowTile(this.follower, this.currentFollowedPoint, time);
+            if (followerBox.Right > tileBox.Right && followerBox.Left > tileBox.Left)
+                this.follower.SetMovingOnlyLeft();
+            else if (followerBox.Left < tileBox.Left && followerBox.Right < tileBox.Right)
+                this.follower.SetMovingOnlyRight();
+            else if (followerBox.Bottom >= tileBox.Bottom - 2)
+                this.follower.SetMovingOnlyUp();
+            else if (followerBox.Top <= tileBox.Top)
+                this.follower.SetMovingOnlyDown();
+
+            this.follower.willDestroyObjectsUnderfoot = false; // Nothing destroy and not moving across walls and solid objects
+            this.follower.MovePosition(Game1.currentTime, Game1.viewport, follower.currentLocation); // Update follower movement
         }
 
         private void AddPathPoint(Point p)
@@ -152,53 +191,6 @@ namespace PurrplingMod
         private bool FollowerLeaderIsTooFar()
         {
             return Helper.Distance(this.leader.getTileLocationPoint(), this.follower.getTileLocationPoint()) > OUT_OF_RANGE_DISTANCE;
-        }
-
-        public static void FollowTile(NPC follower, Point endPointTile, GameTime time)
-        {
-            Rectangle rectangle = new Rectangle(endPointTile.X * 64, endPointTile.Y * 64, 64, 64);
-            rectangle.Inflate(-2, 0);
-            Rectangle boundingBox = follower.GetBoundingBox();
-
-            if (boundingBox.Right > rectangle.Right && boundingBox.Left > rectangle.Left)
-                follower.SetMovingOnlyLeft();
-            else if (boundingBox.Left < rectangle.Left && boundingBox.Right < rectangle.Right)
-                follower.SetMovingOnlyRight();
-            else if (boundingBox.Bottom >= rectangle.Bottom - 2)
-                follower.SetMovingOnlyUp();
-            else if (boundingBox.Top <= rectangle.Top)
-                follower.SetMovingOnlyDown();
-
-            follower.willDestroyObjectsUnderfoot = false; // Nothing destroy and not moving across walls and solid objects
-            follower.MovePosition(time, Game1.viewport, follower.currentLocation); // Update follower movement
-        }
-
-        public static bool ComeTo(NPC follower, Point endPointTile, bool emoteWhenPathIsFound = false)
-        {
-            Point npcTilePosition = follower.getTileLocationPoint();
-            bool pathFound = false;
-
-            if (follower.controller == null)
-            {
-                follower.Halt();
-                follower.temporaryController = null;
-                follower.willDestroyObjectsUnderfoot = false;
-
-                Stack<Point> path = FollowController.FindPath(npcTilePosition, endPointTile, follower.currentLocation, follower, PATH_MAX_NODE_COUNT);
-                follower.controller = new PathFindController(path, follower, follower.currentLocation);
-
-                if (follower.controller.pathToEndPoint == null)
-                    follower.doEmote(8); // Question mark emote
-                else
-                {
-                    if (emoteWhenPathIsFound)
-                        follower.doEmote(40); // Three dots emote
-                    pathFound = true;
-                }
-            }
-
-            follower.updateEmote(Game1.currentGameTime);
-            return pathFound;
         }
 
         public static void WarpTo(NPC follower, Point tilePosition)
