@@ -46,6 +46,7 @@ namespace PurrplingMod
             }
 
             // Update follower movement
+            this.follower.farmerPassesThrough = true;
             this.UpdateFollowing(time, this.follower, this.leader);
         }
 
@@ -103,7 +104,7 @@ namespace PurrplingMod
             if (follower.controller == null) 
             {
                 // Follow leader's step path if follower has'nt direct path
-                this.CurrentFollowedPointUpdateCheck()
+                this.CurrentFollowedPointUpdateCheck();
                 this.FollowCurrentPoint(); 
             }
         }
@@ -116,12 +117,10 @@ namespace PurrplingMod
             this.followingLostTime = 0;
             
             // Try to find alternative path to leader's position.
-            Stack<Point> newPath = FollowController.FindPath(npcTilePosition, endPointTile, follower.currentLocation, follower, PATH_MAX_NODE_COUNT);
-            
-            if (newPath != null)
+            if (FollowController.ComeTo(this.follower, endTilePoint, emoteWhenPathIsFound))
             {
                 // Path found, we are not lost now!
-                this.pathToFollow = new Queue<Point>(path.Reverse());
+                this.pathToFollow.Clear();
                 return; 
             }
             
@@ -180,7 +179,7 @@ namespace PurrplingMod
                 this.follower.SetMovingOnlyDown();
 
             this.follower.willDestroyObjectsUnderfoot = false; // Nothing destroy and not moving across walls and solid objects
-            this.follower.MovePosition(Game1.currentTime, Game1.viewport, follower.currentLocation); // Update follower movement
+            this.follower.MovePosition(Game1.currentGameTime, Game1.viewport, this.follower.currentLocation); // Update follower movement
         }
 
         private void AddPathPoint(Point p)
@@ -215,6 +214,34 @@ namespace PurrplingMod
             follower.setTilePosition(tilePosition);
 
             location.addCharacter(follower);
+        }
+
+        public static bool ComeTo(NPC follower, Point endPointTile, bool emoteWhenPathIsFound = false)
+        {
+            Point npcTilePosition = follower.getTileLocationPoint();
+            bool pathFound = false;
+
+            if (follower.controller == null)
+            {
+                follower.Halt();
+                follower.temporaryController = null;
+                follower.willDestroyObjectsUnderfoot = false;
+
+                Stack<Point> path = FollowController.FindPath(npcTilePosition, endPointTile, follower.currentLocation, follower, PATH_MAX_NODE_COUNT);
+                follower.controller = new PathFindController(path, follower, follower.currentLocation);
+
+                if (follower.controller.pathToEndPoint == null)
+                    follower.doEmote(8); // Question mark emote
+                else
+                {
+                    if (emoteWhenPathIsFound)
+                        follower.doEmote(40); // Three dots emote
+                    pathFound = true;
+                }
+            }
+
+            follower.updateEmote(Game1.currentGameTime);
+            return pathFound;
         }
 
         public static Stack<Point> FindPath(Point startTilePoint, Point endPointTile, GameLocation location, NPC n, int limit = 100)
