@@ -11,9 +11,9 @@ using PurrplingMod.Utils;
 using StardewModdingAPI;
 using System.Reflection;
 
-namespace PurrplingMod.Controller
+namespace PurrplingMod.AI.Controller
 {
-    public class FollowController : Internal.IUpdateable
+    public class FollowController : IController
     {
         public const int FOLLOWING_LOST_TIMEOUT = 15;
         public const float SPEEDUP_DISTANCE_THRESHOLD = 7;
@@ -33,6 +33,7 @@ namespace PurrplingMod.Controller
         private PathFinder pathFinder;
         public int followingLostTime = 0;
         public Queue<Vector2> pathToFollow;
+        private readonly AI_StateMachine ai;
         private FieldInfo characterMoveUp;
         private FieldInfo characterMoveDown;
         private FieldInfo characterMoveLeft;
@@ -50,19 +51,35 @@ namespace PurrplingMod.Controller
         private int facingDirection;
         private Vector2 animationUpdateSum;
 
-        public FollowController(NPC follower, Character leader)
+        public FollowController(AI_StateMachine ai)
         {
             this.pathToFollow = new Queue<Vector2>();
-            this.leader = leader;
-            this.follower = follower;
-            this.pathFinder = new PathFinder(follower.currentLocation, follower, leader);
+            this.ai = ai;
+            this.leader = ai.player;
+            this.follower = ai.npc;
+            this.pathFinder = new PathFinder(this.follower.currentLocation, this.follower, this.leader);
 
             this.characterMoveUp = typeof(Character).GetField("moveUp", BindingFlags.NonPublic | BindingFlags.Instance);
             this.characterMoveDown = typeof(Character).GetField("moveDown", BindingFlags.NonPublic | BindingFlags.Instance);
             this.characterMoveLeft = typeof(Character).GetField("moveLeft", BindingFlags.NonPublic | BindingFlags.Instance);
             this.characterMoveRight = typeof(Character).GetField("moveRight", BindingFlags.NonPublic | BindingFlags.Instance);
 
+            this.ai.LocationChanged += this.Ai_LocationChanged;
+
             this.gatesInThisLocation = this.CheckForGatesInThisLocation();
+        }
+
+        private void Ai_LocationChanged(object sender, EventArgsLocationChanged e)
+        {
+            // We are not active controller? Don't handle changed location event
+            if (this.ai.CurrentController != this)
+                return;
+
+            this.pathFinder.GameLocation = e.CurrentLocation;
+            this.currentFollowedPoint = this.negativeOne;
+            this.leaderLastTileCheckPoint = this.negativeOne;
+            this.gatesInThisLocation = this.CheckForGatesInThisLocation();
+            this.PathfindingRemakeCheck();
         }
 
         public void Update(UpdateTickedEventArgs e)
@@ -77,16 +94,6 @@ namespace PurrplingMod.Controller
 
             if (e.IsMultipleOf(15))
                 this.PathfindingRemakeCheck();
-        }
-
-        public void ChangeLocation(GameLocation l)
-        {
-            Helper.WarpTo(this.follower, l, this.leader.getTileLocationPoint());
-            this.pathFinder.GameLocation = l;
-            this.currentFollowedPoint = this.negativeOne;
-            this.leaderLastTileCheckPoint = this.negativeOne;
-            this.gatesInThisLocation = this.CheckForGatesInThisLocation();
-            this.PathfindingRemakeCheck();
         }
 
         protected virtual void AnimationSubUpdate()

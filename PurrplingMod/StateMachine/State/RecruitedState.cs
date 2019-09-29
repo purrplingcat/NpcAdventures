@@ -1,5 +1,5 @@
 ﻿using PurrplingMod.StateMachine.StateFeatures;
-using PurrplingMod.Controller;
+using PurrplingMod.AI.Controller;
 using PurrplingMod.Utils;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -14,12 +14,13 @@ using PurrplingMod.Model;
 using System;
 using PurrplingMod.Buffs;
 using StardewModdingAPI;
+using PurrplingMod.AI;
 
 namespace PurrplingMod.StateMachine.State
 {
     internal class RecruitedState : CompanionState, IRequestedDialogueCreator, IDialogueDetector
     {
-        private FollowController followController;
+        private AI_StateMachine ai;
         private Dialogue dismissalDialogue;
         private Dialogue currentLocationDialogue;
 
@@ -33,7 +34,7 @@ namespace PurrplingMod.StateMachine.State
 
         public override void Entry()
         {
-            this.followController = new FollowController(this.StateMachine.Companion, this.StateMachine.CompanionManager.Farmer);
+            this.ai = new AI_StateMachine(this.StateMachine.Companion, this.StateMachine.CompanionManager.Farmer);
 
             this.StateMachine.Companion.faceTowardFarmerTimer = 0;
             this.StateMachine.Companion.movementPause = 0;
@@ -56,11 +57,14 @@ namespace PurrplingMod.StateMachine.State
             if (DialogueHelper.GetVariousDialogueString(this.StateMachine.Companion, "companionRecruited", out string dialogueText))
                 this.StateMachine.Companion.setNewDialogue(dialogueText);
             this.CanCreateDialogue = true;
+
+            this.ai.Setup();
         }
 
         public override void Exit()
         {
             this.BuffManager.ReleaseBuffs();
+            this.ai.Dispose();
 
             this.StateMachine.Companion.eventActor = false;
             this.StateMachine.Companion.farmerPassesThrough = false;
@@ -70,7 +74,7 @@ namespace PurrplingMod.StateMachine.State
             this.Events.GameLoop.TimeChanged -= this.GameLoop_TimeChanged;
             this.Events.Player.Warped -= this.Player_Warped;
 
-            this.followController = null;
+            this.ai = null;
             this.dismissalDialogue = null;
         }
 
@@ -108,7 +112,7 @@ namespace PurrplingMod.StateMachine.State
             if (e.IsMultipleOf(25))
                 this.FixProblemsWithNPC();
 
-            this.followController.Update(e);
+            this.ai.Update(e);
         }
 
         private void FixProblemsWithNPC()
@@ -127,7 +131,7 @@ namespace PurrplingMod.StateMachine.State
 
             // Warp companion to farmer if it's needed
             if (companion.currentLocation != e.NewLocation)
-                this.followController.ChangeLocation(e.NewLocation);
+                this.ai.ChangeLocation(e.NewLocation);
 
             // Show above head bubble text for location
             if (DialogueHelper.GetBubbleString(bubbles, companion, e.NewLocation, out string bubble))

@@ -62,10 +62,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\AI_StateMachine.cs" />
+    <Compile Include="AI\EventArgsLocationChanged.cs" />
     <Compile Include="Buffs\BuffManager.cs" />
     <Compile Include="CompanionManager.cs" />
+    <Compile Include="AI\Controller\IController.cs" />
     <Compile Include="Driver\DialogueDriver.cs" />
-    <Compile Include="Controller\FollowController.cs" />
+    <Compile Include="AI\Controller\FollowController.cs" />
     <Compile Include="Driver\HintDriver.cs" />
     <Compile Include="Driver\StuffDriver.cs" />
     <Compile Include="Loader\IContentLoader.cs" />
@@ -87,7 +90,7 @@
     <Compile Include="StateMachine\CompanionStateMachine.cs" />
     <Compile Include="StateMachine\State\AvailableState.cs" />
     <Compile Include="StateMachine\State\ResetState.cs" />
-    <Compile Include="Controller\PathFinder.cs" />
+    <Compile Include="AI\Controller\PathFinder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\Buffs\Abigail.json">

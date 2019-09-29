@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using xTile.Dimensions;
 
-namespace PurrplingMod.Controller
+namespace PurrplingMod.AI.Controller
 {
     public class PathFinder
     {
