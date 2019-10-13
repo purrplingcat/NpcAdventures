@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Xna.Framework;
 using StardewValley;
+using StardewValley.Monsters;
 using xTile.Dimensions;
 
 namespace PurrplingMod.Utils
@@ -161,5 +162,17 @@ namespace PurrplingMod.Utils
             location.addCharacter(follower);
         }
 
+        public static Monster GetNearestMonsterToCharacter(Character me, float distance)
+        {
+            foreach (Character c in me.currentLocation.characters)
+            {
+                if (c is Monster monster && Helper.Distance(me.getTileLocationPoint(), monster.getTileLocationPoint()) < distance)
+                {
+                    return monster;
+                }
+            }
+
+            return null;
+        }
     }
 }

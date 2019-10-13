@@ -34,7 +34,7 @@ namespace PurrplingMod.StateMachine.State
 
         public override void Entry()
         {
-            this.ai = new AI_StateMachine(this.StateMachine.Companion, this.StateMachine.CompanionManager.Farmer);
+            this.ai = new AI_StateMachine(this.StateMachine.Companion, this.StateMachine.CompanionManager.Farmer, this.Events, this.StateMachine.Monitor);
 
             this.StateMachine.Companion.faceTowardFarmerTimer = 0;
             this.StateMachine.Companion.movementPause = 0;

@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\AI_StateMachine.cs" />
+    <Compile Include="AI\Controller\FightController.cs" />
     <Compile Include="AI\EventArgsLocationChanged.cs" />
     <Compile Include="Buffs\BuffManager.cs" />
     <Compile Include="CompanionManager.cs" />

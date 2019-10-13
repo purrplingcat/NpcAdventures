@@ -19,7 +19,6 @@ namespace PurrplingMod.AI.Controller
         public const float SPEEDUP_DISTANCE_THRESHOLD = 7;
         public const float MOVE_THRESHOLD_DISTANCE = 2.65f;
         public const float DECELERATE_THRESHOLD = 1.35f;
-        public const float PROXIMITY_THRESHOLD = 64;
         public const float LOST_DISTANCE = 16;
         public const float OUT_OF_RANGE_DISTANCE = 64;
         public const int PATH_MAX_NODE_COUNT = 28;
@@ -30,10 +29,10 @@ namespace PurrplingMod.AI.Controller
 
         public Character leader;
         public NPC follower;
-        private PathFinder pathFinder;
+        protected PathFinder pathFinder;
         public int followingLostTime = 0;
         public Queue<Vector2> pathToFollow;
-        private readonly AI_StateMachine ai;
+        protected readonly AI_StateMachine ai;
         private FieldInfo characterMoveUp;
         private FieldInfo characterMoveDown;
         private FieldInfo characterMoveLeft;
@@ -46,10 +45,12 @@ namespace PurrplingMod.AI.Controller
         private Vector2 lastFramePosition;
         private Vector2 lastMovementDirection;
         private bool movedLastFrame;
-        private float speed;
+        protected float speed;
         private int switchDirectionSpeed;
         private int facingDirection;
         private Vector2 animationUpdateSum;
+
+        public virtual bool IsIdle => false;
 
         public FollowController(AI_StateMachine ai)
         {
@@ -82,7 +83,7 @@ namespace PurrplingMod.AI.Controller
             this.PathfindingRemakeCheck();
         }
 
-        public void Update(UpdateTickedEventArgs e)
+        public virtual void Update(UpdateTickedEventArgs e)
         {
             if (this.follower == null || this.leader == null || !Context.CanPlayerMove)
                 return;
@@ -177,9 +178,13 @@ namespace PurrplingMod.AI.Controller
             }
         }
 
-        protected void PathfindingRemakeCheck()
+        protected virtual void PathfindingRemakeCheck()
         {
             Vector2 leaderCurrentTile = this.leader.getTileLocation();
+
+            if (this.pathFinder.GameLocation != this.leader.currentLocation) {
+                this.pathFinder.GameLocation = this.leader.currentLocation;
+            }
 
             if (this.leaderLastTileCheckPoint != leaderCurrentTile)
             {
@@ -216,8 +221,16 @@ namespace PurrplingMod.AI.Controller
             }
         }
 
-        protected float GetMovementSpeedBasedOnDistance(float distanceFromFarmer)
+        protected virtual float GetMovementSpeedBasedOnDistance(float distanceFromFarmer)
         {
+            if (distanceFromFarmer > MOVE_THRESHOLD_DISTANCE * Game1.tileSize * 4)
+            {
+                if (this.leader is Farmer farmer && farmer.getMovementSpeed() > 5.28f)
+                    return farmer.getMovementSpeed() + 2.65f;
+
+                return 5.28f;
+            }
+
             if (distanceFromFarmer > MOVE_THRESHOLD_DISTANCE * Game1.tileSize)
             {
                 if (this.leader is Farmer farmer)
@@ -407,5 +420,14 @@ namespace PurrplingMod.AI.Controller
             return false;
         }
 
+        public virtual void Activate()
+        {
+            if (this.leader != null)
+            {
+                this.PathfindingRemakeCheck();
+            }
+        }
+
+        public virtual void Deactivate() {}
     }
 }

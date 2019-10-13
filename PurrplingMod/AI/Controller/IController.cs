@@ -8,5 +8,8 @@ namespace PurrplingMod.AI.Controller
 {
     internal interface IController : Internal.IUpdateable
     {
+        bool IsIdle { get; }
+        void Activate();
+        void Deactivate();
     }
 }

@@ -1,7 +1,9 @@
 ﻿using PurrplingMod.AI.Controller;
 using PurrplingMod.Utils;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Monsters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,16 +20,23 @@ namespace PurrplingMod.AI
         public enum State
         {
             FOLLOW,
+            FIGHT,
         }
 
+        private const float MONSTER_DISTANCE = 5f;
         public readonly NPC npc;
         public readonly Character player;
+        private readonly IModEvents events;
+        public readonly IMonitor monitor;
         private Dictionary<State, IController> controllers;
+        private int idleTimer = 0;
 
-        public AI_StateMachine(NPC npc, Character player)
+        public AI_StateMachine(NPC npc, Character player, IModEvents events, IMonitor monitor)
         {
             this.npc = npc ?? throw new ArgumentNullException(nameof(npc));
             this.player = player ?? throw new ArgumentNullException(nameof(player));
+            this.events = events ?? throw new ArgumentException(nameof(events));
+            this.monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
         }
 
         public State CurrentState { get; private set; }
@@ -43,13 +52,61 @@ namespace PurrplingMod.AI
             this.controllers = new Dictionary<State, IController>()
             {
                 [State.FOLLOW] = new FollowController(this),
+                [State.FIGHT] = new FightController(this, this.events),
             };
 
             // By default AI following the player
-            this.CurrentState = State.FOLLOW;
+            this.ChangeState(State.FOLLOW);
         }
+
+        private void ChangeState(State state)
+        {
+            this.monitor.Log($"AI changes state {this.CurrentState} -> {state}");
+
+            if (this.CurrentController != null)
+            {
+                this.CurrentController.Deactivate();
+            }
+
+            this.CurrentState = state;
+            this.CurrentController.Activate();
+        }
+
+        private bool IsThereAnyMonster()
+        {
+            return Helper.GetNearestMonsterToCharacter(this.npc, MONSTER_DISTANCE) != null;
+        }
+
+        private bool PlayerIsNear()
+        {
+            return Helper.Distance(this.player.getTileLocationPoint(), this.npc.getTileLocationPoint()) < 11f;
+        }
+
+        private void CheckPotentialStateChange()
+        {
+            if (this.idleTimer == 0 && this.CurrentState != State.FIGHT && this.PlayerIsNear() && this.IsThereAnyMonster())
+            {
+                this.ChangeState(State.FIGHT);
+                this.monitor.Log("A 50ft monster is here!");
+            }
+
+            if (this.CurrentState == State.FIGHT && this.CurrentController.IsIdle)
+            {
+                this.idleTimer = 100;
+                this.ChangeState(State.FOLLOW);
+            }
+        }
+
         public void Update(UpdateTickedEventArgs e)
         {
+            if (e.IsMultipleOf(15))
+            {
+                this.CheckPotentialStateChange();
+            }
+
+            if (this.idleTimer > 0)
+                this.idleTimer--;
+
             if (this.CurrentController != null)
                 this.CurrentController.Update(e);
         }
