@@ -12,8 +12,6 @@
 - Abigail
 - Alex
 - Haley
-
-### Planned companion NPCs to support
 - Maru
 - Shane
 - Leah
