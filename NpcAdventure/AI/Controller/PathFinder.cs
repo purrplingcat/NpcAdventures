@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using PurrplingMod.Utils;
+using NpcAdventure.Utils;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using xTile.Dimensions;
 
-namespace PurrplingMod.AI.Controller
+namespace NpcAdventure.AI.Controller
 {
     public class PathFinder
     {

@@ -1,9 +1,9 @@
-﻿using PurrplingMod.Utils;
-using PurrplingMod.StateMachine.StateFeatures;
+﻿using NpcAdventure.Utils;
+using NpcAdventure.StateMachine.StateFeatures;
 using StardewModdingAPI.Events;
 using StardewValley;
 
-namespace PurrplingMod.StateMachine.State
+namespace NpcAdventure.StateMachine.State
 {
     internal class AvailableState : CompanionState, IRequestedDialogueCreator, IDialogueDetector
     {

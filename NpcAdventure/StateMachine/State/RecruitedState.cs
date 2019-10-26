@@ -1,6 +1,6 @@
-﻿using PurrplingMod.StateMachine.StateFeatures;
-using PurrplingMod.AI.Controller;
-using PurrplingMod.Utils;
+﻿using NpcAdventure.StateMachine.StateFeatures;
+using NpcAdventure.AI.Controller;
+using NpcAdventure.Utils;
 using StardewModdingAPI.Events;
 using StardewValley;
 using System.Collections.Generic;
@@ -11,11 +11,11 @@ using System.Reflection;
 using StardewValley.Menus;
 using StardewValley.Objects;
 using System;
-using PurrplingMod.Buffs;
+using NpcAdventure.Buffs;
 using StardewModdingAPI;
-using PurrplingMod.AI;
+using NpcAdventure.AI;
 
-namespace PurrplingMod.StateMachine.State
+namespace NpcAdventure.StateMachine.State
 {
     internal class RecruitedState : CompanionState, IRequestedDialogueCreator, IDialogueDetector
     {
@@ -33,7 +33,7 @@ namespace PurrplingMod.StateMachine.State
 
         public override void Entry()
         {
-            this.ai = new AI_StateMachine(this.StateMachine.Companion, this.StateMachine.CompanionManager.Farmer, this.Events, this.StateMachine.Monitor);
+            this.ai = new AI_StateMachine(this.StateMachine.Companion, this.StateMachine.CompanionManager.Farmer, this.StateMachine.Metadata, this.Events, this.StateMachine.Monitor);
 
             if (this.StateMachine.Companion.doingEndOfRouteAnimation.Value)
                 this.FinishScheduleAnimation();

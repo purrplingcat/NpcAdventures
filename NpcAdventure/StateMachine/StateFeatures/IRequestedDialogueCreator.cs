@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PurrplingMod.StateMachine.StateFeatures
+namespace NpcAdventure.StateMachine.StateFeatures
 {
     interface IRequestedDialogueCreator
     {

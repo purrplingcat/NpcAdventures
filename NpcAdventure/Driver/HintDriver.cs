@@ -4,7 +4,7 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using System;
 
-namespace PurrplingMod.Driver
+namespace NpcAdventure.Driver
 {
     public class HintDriver
     {

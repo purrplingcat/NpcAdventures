@@ -1,4 +1,4 @@
-﻿namespace PurrplingMod.StateMachine.StateFeatures
+﻿namespace NpcAdventure.StateMachine.StateFeatures
 {
     internal interface ICompanionIntegrator
     {

@@ -1,7 +1,7 @@
 ﻿using StardewValley;
 using System;
 
-namespace PurrplingMod.AI
+namespace NpcAdventure.AI
 {
     public class EventArgsLocationChanged : EventArgs
     {

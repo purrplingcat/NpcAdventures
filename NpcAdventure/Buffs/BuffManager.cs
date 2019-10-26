@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-using PurrplingMod.Loader;
-using PurrplingMod.Model;
-using PurrplingMod.Utils;
+using NpcAdventure.Loader;
+using NpcAdventure.Model;
+using NpcAdventure.Utils;
 using StardewValley;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PurrplingMod.Buffs
+namespace NpcAdventure.Buffs
 {
     class BuffManager
     {

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PurrplingMod.Objects
+namespace NpcAdventure.Objects
 {
     class Package : Chest
     {

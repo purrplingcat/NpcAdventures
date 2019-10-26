@@ -1,20 +1,12 @@
-﻿using System;
-using StardewModdingAPI;
+﻿using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using PurrplingMod.Loader;
-using PurrplingMod.Driver;
-using System.Collections.Generic;
-using StardewValley.Objects;
-using StardewValley;
-using System.Xml;
-using System.IO;
-using Microsoft.Xna.Framework;
-using PurrplingMod.Model;
+using NpcAdventure.Loader;
+using NpcAdventure.Driver;
 
-namespace PurrplingMod
+namespace NpcAdventure
 {
     /// <summary>The mod entry point.</summary>
-    public class PurrplingMod : Mod
+    public class NpcAdventureMod : Mod
     {
         private CompanionManager companionManager;
         private ContentLoader contentLoader;
@@ -47,13 +39,13 @@ namespace PurrplingMod
             /* Preload assets to cache */
             this.Monitor.Log("Preloading assets...", LogLevel.Info);
 
-            string[] dispositions = this.contentLoader.Load<string[]>("CompanionDispositions");
+            var dispositions = this.contentLoader.LoadStrings("CompanionDispositions");
 
             this.contentLoader.LoadStrings("Strings/Strings");
             this.contentLoader.LoadStrings("Strings/SpeechBubbles");
 
             // Preload dialogues for companions
-            foreach (string npcName in dispositions)
+            foreach (string npcName in dispositions.Keys)
             {
                 this.contentLoader.LoadStrings($"Dialogue/{npcName}");
             }
@@ -63,7 +55,7 @@ namespace PurrplingMod
 
         private void GameLoop_DayStarted(object sender, DayStartedEventArgs e)
         {
-            this.StuffDriver.RevivePossibleBags();
+            this.StuffDriver.ReviveDeliveredBags();
             this.companionManager.NewDaySetup();
         }
 
@@ -71,7 +63,7 @@ namespace PurrplingMod
         {
             this.companionManager.ResetStateMachines();
             this.companionManager.DumpCompanionNonEmptyBags();
-            this.StuffDriver.DetectAndPrepareBagsToSave();
+            this.StuffDriver.PrepareDeliveredBagsToSave();
         }
 
         private void GameLoop_ReturnedToTitle(object sender, StardewModdingAPI.Events.ReturnedToTitleEventArgs e)

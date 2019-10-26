@@ -1,5 +1,6 @@
-﻿using PurrplingMod.AI.Controller;
-using PurrplingMod.Utils;
+﻿using NpcAdventure.AI.Controller;
+using NpcAdventure.Model;
+using NpcAdventure.Utils;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -10,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PurrplingMod.AI
+namespace NpcAdventure.AI
 {
     /// <summary>
     /// State machine for companion AI
@@ -28,15 +29,17 @@ namespace PurrplingMod.AI
         public readonly Character player;
         private readonly IModEvents events;
         public readonly IMonitor monitor;
+        internal readonly CompanionMetaData metadata;
         private Dictionary<State, IController> controllers;
         private int idleTimer = 0;
 
-        public AI_StateMachine(NPC npc, Character player, IModEvents events, IMonitor monitor)
+        internal AI_StateMachine(NPC npc, Character player, CompanionMetaData metadata, IModEvents events, IMonitor monitor)
         {
             this.npc = npc ?? throw new ArgumentNullException(nameof(npc));
             this.player = player ?? throw new ArgumentNullException(nameof(player));
             this.events = events ?? throw new ArgumentException(nameof(events));
             this.monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
+            this.metadata = metadata;
         }
 
         public State CurrentState { get; private set; }
@@ -52,7 +55,7 @@ namespace PurrplingMod.AI
             this.controllers = new Dictionary<State, IController>()
             {
                 [State.FOLLOW] = new FollowController(this),
-                [State.FIGHT] = new FightController(this, this.events),
+                [State.FIGHT] = new FightController(this, this.events, this.metadata.Sword),
             };
 
             // By default AI following the player

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using PurrplingMod.Model;
-using PurrplingMod.Objects;
+using NpcAdventure.Model;
+using NpcAdventure.Objects;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PurrplingMod.Driver
+namespace NpcAdventure.Driver
 {
     class StuffDriver
     {
@@ -29,7 +29,7 @@ namespace PurrplingMod.Driver
             this.Monitor = monitor;
         }
 
-        public void DetectAndPrepareBagsToSave()
+        public void PrepareDeliveredBagsToSave()
         {
             FarmHouse house = Game1.getLocationFromName("FarmHouse") as FarmHouse;
 
@@ -66,7 +66,7 @@ namespace PurrplingMod.Driver
 
         public IDataHelper DataHelper { get; }
 
-        public void RevivePossibleBags()
+        public void ReviveDeliveredBags()
         {
             int reviveCount = 0;
             FarmHouse house = Game1.getLocationFromName("FarmHouse") as FarmHouse;

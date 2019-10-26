@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Monsters;
 using xTile.Dimensions;
 
-namespace PurrplingMod.Utils
+namespace NpcAdventure.Utils
 {
-    internal static class Helper
+    internal static partial class Helper
     {
         public static bool IsNPCAtTile(GameLocation location, Vector2 tile, NPC whichNPC = null)
         {
@@ -164,13 +165,22 @@ namespace PurrplingMod.Utils
 
         public static Monster GetNearestMonsterToCharacter(Character me, float distance)
         {
+            SortedDictionary<float, Monster> nearestMonsters = new SortedDictionary<float, Monster>();
+
             foreach (Character c in me.currentLocation.characters)
             {
                 if (c is Monster monster && Helper.Distance(me.getTileLocationPoint(), monster.getTileLocationPoint()) < distance)
                 {
-                    return monster;
+                    float monsterDistance = Helper.Distance(me.getTileLocationPoint(), monster.getTileLocationPoint());
+                    if (!nearestMonsters.ContainsKey(monsterDistance))
+                    {
+                        nearestMonsters.Add(monsterDistance, monster);
+                    }
                 }
             }
+
+            if (nearestMonsters.Count > 0) 
+                return nearestMonsters.Values.First();
 
             return null;
         }

@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using PurrplingMod.StateMachine;
+using NpcAdventure.StateMachine;
 using StardewValley;
 using StardewModdingAPI;
-using PurrplingMod.Driver;
-using PurrplingMod.Loader;
+using NpcAdventure.Driver;
+using NpcAdventure.Loader;
 using StardewModdingAPI.Events;
-using PurrplingMod.Utils;
-using PurrplingMod.StateMachine.State;
-using static PurrplingMod.StateMachine.CompanionStateMachine;
+using NpcAdventure.Utils;
+using NpcAdventure.StateMachine.State;
+using static NpcAdventure.StateMachine.CompanionStateMachine;
+using NpcAdventure.Model;
 
-namespace PurrplingMod
+namespace NpcAdventure
 {
     internal class CompanionManager
     {
@@ -178,16 +179,16 @@ namespace PurrplingMod
         /// <param name="gameEvents"></param>
         public void InitializeCompanions(IContentLoader loader, IModEvents gameEvents)
         {
-            string[] dispositions = loader.Load<string[]>("CompanionDispositions");
+            Dictionary<string, string> dispositions = loader.Load<Dictionary<string, string>>("CompanionDispositions");
 
-            foreach (string npcName in dispositions)
+            foreach (string npcName in dispositions.Keys)
             {
                 NPC companion = Game1.getCharacterFromName(npcName, true);
 
                 if (companion == null)
                     throw new Exception($"Can't find NPC with name '{npcName}'");
 
-                CompanionStateMachine csm = new CompanionStateMachine(this, companion, loader, this.monitor);
+                CompanionStateMachine csm = new CompanionStateMachine(this, companion, new CompanionMetaData(dispositions[npcName]), loader, this.monitor);
                 Dictionary<StateFlag, ICompanionState> stateHandlers = new Dictionary<StateFlag, ICompanionState>()
                 {
                     [StateFlag.RESET] = new ResetState(csm, gameEvents),

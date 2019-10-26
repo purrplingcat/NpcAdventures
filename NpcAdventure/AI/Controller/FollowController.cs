@@ -7,11 +7,11 @@ using StardewValley;
 using StardewValley.Locations;
 using StardewModdingAPI.Events;
 using Microsoft.Xna.Framework;
-using PurrplingMod.Utils;
+using NpcAdventure.Utils;
 using StardewModdingAPI;
 using System.Reflection;
 
-namespace PurrplingMod.AI.Controller
+namespace NpcAdventure.AI.Controller
 {
     public class FollowController : IController
     {
@@ -212,6 +212,7 @@ namespace PurrplingMod.AI.Controller
                 {
                     if (this.pathToFollow.Count == 0)
                     {
+                        this.follower.Sprite.StopAnimation();
                         this.pathToFollow = null;
                         this.currentFollowedPoint = this.negativeOne;
                         return;

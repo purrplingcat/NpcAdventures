@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using StardewModdingAPI.Events;
 
-namespace PurrplingMod.StateMachine.State
+namespace NpcAdventure.StateMachine.State
 {
     class UnavailableState : CompanionState
     {

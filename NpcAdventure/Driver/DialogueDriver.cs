@@ -1,11 +1,11 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using PurrplingMod.Utils;
+using NpcAdventure.Utils;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 
-namespace PurrplingMod.Driver
+namespace NpcAdventure.Driver
 {
     public class DialogueDriver
     {

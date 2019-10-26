@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PurrplingMod.Utils
+namespace NpcAdventure.Utils
 {
     internal static partial class DialogueHelper
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PurrplingMod.Loader
+namespace NpcAdventure.Loader
 {
     public interface IContentLoader
     {

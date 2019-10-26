@@ -75,6 +75,7 @@
     <Compile Include="Loader\IContentLoader.cs" />
     <Compile Include="Model\BagDumpInfo.cs" />
     <Compile Include="Model\BuffInfo.cs" />
+    <Compile Include="Model\CompanionMetaData.cs" />
     <Compile Include="Objects\Package.cs" />
     <Compile Include="StateMachine\StateFeatures\IRequestedDialogueCreator.cs" />
     <Compile Include="StateMachine\StateFeatures\IDialogueDetector.cs" />
@@ -86,12 +87,13 @@
     <Compile Include="Internal\IUpdateable.cs" />
     <Compile Include="Loader\ContentLoader.cs" />
     <Compile Include="Utils\DialogueHelper.cs" />
-    <Compile Include="PurrplingMod.cs" />
+    <Compile Include="NpcAdventureMod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StateMachine\CompanionStateMachine.cs" />
     <Compile Include="StateMachine\State\AvailableState.cs" />
     <Compile Include="StateMachine\State\ResetState.cs" />
     <Compile Include="AI\Controller\PathFinder.cs" />
+    <Compile Include="Utils\Helper\DrawDuringUse.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\Buffs\Abigail.json">

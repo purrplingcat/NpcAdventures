@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PurrplingMod.AI.Controller
+namespace NpcAdventure.AI.Controller
 {
     internal interface IController : Internal.IUpdateable
     {

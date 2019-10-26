@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI.Events;
 
-namespace PurrplingMod.Internal
+namespace NpcAdventure.Internal
 {
     internal interface IUpdateable
     {

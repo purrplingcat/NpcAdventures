@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace PurrplingMod.Loader
+namespace NpcAdventure.Loader
 {
     public class ContentLoader : IContentLoader
     {

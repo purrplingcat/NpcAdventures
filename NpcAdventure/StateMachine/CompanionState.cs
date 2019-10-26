@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PurrplingMod.StateMachine
+namespace NpcAdventure.StateMachine
 {
     public interface ICompanionState
     {

@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using PurrplingMod.Loader;
-using PurrplingMod.Objects;
-using PurrplingMod.StateMachine.State;
-using PurrplingMod.StateMachine.StateFeatures;
-using PurrplingMod.Utils;
+using NpcAdventure.Loader;
+using NpcAdventure.Model;
+using NpcAdventure.Objects;
+using NpcAdventure.StateMachine.State;
+using NpcAdventure.StateMachine.StateFeatures;
+using NpcAdventure.Utils;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Objects;
 
-namespace PurrplingMod.StateMachine
+namespace NpcAdventure.StateMachine
 {
 
     internal class CompanionStateMachine
@@ -30,16 +31,18 @@ namespace PurrplingMod.StateMachine
         }
         public CompanionManager CompanionManager { get; private set; }
         public NPC Companion { get; private set; }
+        public CompanionMetaData Metadata { get; }
         public IContentLoader ContentLoader { get; private set; }
         public IMonitor Monitor { get; }
         public Chest Bag { get; private set; }
         public Dictionary<StateFlag, ICompanionState> States { get; private set; }
         private ICompanionState currentState;
 
-        public CompanionStateMachine(CompanionManager manager, NPC companion, IContentLoader loader, IMonitor monitor = null)
+        public CompanionStateMachine(CompanionManager manager, NPC companion, CompanionMetaData metadata, IContentLoader loader, IMonitor monitor = null)
         {
             this.CompanionManager = manager;
             this.Companion = companion;
+            this.Metadata = metadata;
             this.ContentLoader = loader;
             this.Monitor = monitor;
             this.Bag = new Chest(true);

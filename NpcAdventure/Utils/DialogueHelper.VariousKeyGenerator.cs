@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PurrplingMod.Utils
+namespace NpcAdventure.Utils
 {
     internal static partial class DialogueHelper
     {
