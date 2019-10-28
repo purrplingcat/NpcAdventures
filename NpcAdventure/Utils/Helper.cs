@@ -163,19 +163,22 @@ namespace NpcAdventure.Utils
             location.addCharacter(follower);
         }
 
-        public static Monster GetNearestMonsterToCharacter(Character me, float distance)
+        public static Monster GetNearestMonsterToCharacter(Character me, float tileDistance)
         {
             SortedDictionary<float, Monster> nearestMonsters = new SortedDictionary<float, Monster>();
 
             foreach (Character c in me.currentLocation.characters)
             {
-                if (c is Monster monster && Helper.Distance(me.getTileLocationPoint(), monster.getTileLocationPoint()) < distance)
+                Monster monster = c as Monster;
+
+                if (monster == null)
+                    continue;
+
+                float monsterDistance = Helper.Distance(me.getTileLocationPoint(), monster.getTileLocationPoint());
+
+                if (monsterDistance < tileDistance && !nearestMonsters.ContainsKey(monsterDistance))
                 {
-                    float monsterDistance = Helper.Distance(me.getTileLocationPoint(), monster.getTileLocationPoint());
-                    if (!nearestMonsters.ContainsKey(monsterDistance))
-                    {
-                        nearestMonsters.Add(monsterDistance, monster);
-                    }
+                    nearestMonsters.Add(monsterDistance, monster);
                 }
             }
 

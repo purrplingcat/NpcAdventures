@@ -16,9 +16,10 @@ namespace NpcAdventure.AI.Controller
         private const int COOLDOWN_EFFECTIVE_THRESHOLD = 36;
         private const int COOLDOWN_INITAL = 50;
         private const int COOLDOWN_MINIMUM = COOLDOWN_INITAL - COOLDOWN_EFFECTIVE_THRESHOLD;
+        private const float DEFEND_TILE_RADIUS = 7f;
         private bool potentialIddle = false;
         private readonly IModEvents events;
-        private MeleeWeapon weapon;
+        private readonly MeleeWeapon weapon;
         private readonly Character realLeader;
         private readonly float attackRadius;
         private readonly float backupRadius;
@@ -171,7 +172,7 @@ namespace NpcAdventure.AI.Controller
         /// </summary>
         private void CheckMonsterToFight()
         {
-            Monster monster = Helper.GetNearestMonsterToCharacter(this.follower, 7f);
+            Monster monster = Helper.GetNearestMonsterToCharacter(this.follower, DEFEND_TILE_RADIUS);
 
             if (monster == null || !this.IsValidMonster(monster))
             {

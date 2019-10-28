@@ -24,7 +24,7 @@ namespace NpcAdventure.AI
             FIGHT,
         }
 
-        private const float MONSTER_DISTANCE = 5f;
+        private const float MONSTER_DISTANCE = 9f;
         public readonly NPC npc;
         public readonly Character player;
         private readonly IModEvents events;
