@@ -57,8 +57,11 @@ namespace PurrplingMod.StateMachine.State
             {
                 if (answer == "Yes")
                 {
-                    this.StateMachine.Companion.Halt();
-                    this.StateMachine.Companion.facePlayer(leader);
+                    if (!this.StateMachine.Companion.doingEndOfRouteAnimation.Value)
+                    {
+                        this.StateMachine.Companion.Halt();
+                        this.StateMachine.Companion.facePlayer(leader);
+                    }
                     this.ReactOnAnswer(this.StateMachine.Companion, leader);
                 }
             }, null);

@@ -10,7 +10,6 @@ using Microsoft.Xna.Framework;
 using System.Reflection;
 using StardewValley.Menus;
 using StardewValley.Objects;
-using PurrplingMod.Model;
 using System;
 using PurrplingMod.Buffs;
 using StardewModdingAPI;
@@ -36,6 +35,9 @@ namespace PurrplingMod.StateMachine.State
         {
             this.ai = new AI_StateMachine(this.StateMachine.Companion, this.StateMachine.CompanionManager.Farmer, this.Events, this.StateMachine.Monitor);
 
+            if (this.StateMachine.Companion.doingEndOfRouteAnimation.Value)
+                this.FinishScheduleAnimation();
+
             this.StateMachine.Companion.faceTowardFarmerTimer = 0;
             this.StateMachine.Companion.movementPause = 0;
             this.StateMachine.Companion.followSchedule = false;
@@ -59,6 +61,21 @@ namespace PurrplingMod.StateMachine.State
             this.CanCreateDialogue = true;
 
             this.ai.Setup();
+        }
+
+        /// <summary>
+        /// Animate last sequence of current schedule animation
+        /// </summary>
+        private void FinishScheduleAnimation()
+        {
+            // Prevent animation freeze glitch
+            this.StateMachine.Companion.Sprite.standAndFaceDirection(this.StateMachine.Companion.FacingDirection);
+
+            // And then play finish animation "end of route animation" when companion is recruited
+            // Must be called via reflection, because they are private members of NPC class
+            PurrplingMod.Mod.Helper.Reflection.GetMethod(this.StateMachine.Companion, "finishEndOfRouteAnimation").Invoke();
+            this.StateMachine.Companion.doingEndOfRouteAnimation.Value = false;
+            PurrplingMod.Mod.Helper.Reflection.GetField<Boolean>(this.StateMachine.Companion, "currentlyDoingEndOfRouteAnimation").SetValue(false);
         }
 
         public override void Exit()
