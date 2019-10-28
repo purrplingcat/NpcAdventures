@@ -73,9 +73,9 @@ namespace NpcAdventure.StateMachine.State
 
             // And then play finish animation "end of route animation" when companion is recruited
             // Must be called via reflection, because they are private members of NPC class
-            PurrplingMod.Mod.Helper.Reflection.GetMethod(this.StateMachine.Companion, "finishEndOfRouteAnimation").Invoke();
+            NpcAdventureMod.Mod.Helper.Reflection.GetMethod(this.StateMachine.Companion, "finishEndOfRouteAnimation").Invoke();
             this.StateMachine.Companion.doingEndOfRouteAnimation.Value = false;
-            PurrplingMod.Mod.Helper.Reflection.GetField<Boolean>(this.StateMachine.Companion, "currentlyDoingEndOfRouteAnimation").SetValue(false);
+            NpcAdventureMod.Mod.Helper.Reflection.GetField<Boolean>(this.StateMachine.Companion, "currentlyDoingEndOfRouteAnimation").SetValue(false);
         }
 
         public override void Exit()
