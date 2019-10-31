@@ -96,9 +96,6 @@
     <Compile Include="Utils\Helper\DrawDuringUse.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\Buffs\Abigail.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="assets\CompanionDispositions.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -155,6 +152,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="StateMachine\CompanionState.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="assets\Buffs\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Pathoschild.Stardew.ModBuildConfig.2.2.0\build\Pathoschild.Stardew.ModBuildConfig.targets" Condition="Exists('..\packages\Pathoschild.Stardew.ModBuildConfig.2.2.0\build\Pathoschild.Stardew.ModBuildConfig.targets')" />

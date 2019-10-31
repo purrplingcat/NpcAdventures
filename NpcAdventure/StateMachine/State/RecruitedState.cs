@@ -1,5 +1,4 @@
 ﻿using NpcAdventure.StateMachine.StateFeatures;
-using NpcAdventure.AI.Controller;
 using NpcAdventure.Utils;
 using StardewModdingAPI.Events;
 using StardewValley;
