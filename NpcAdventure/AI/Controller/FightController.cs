@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using NpcAdventure.Loader;
 using NpcAdventure.Utils;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -20,9 +21,11 @@ namespace NpcAdventure.AI.Controller
         private bool potentialIddle = false;
         private readonly IModEvents events;
         private readonly MeleeWeapon weapon;
+        private readonly Dictionary<string, string> bubbles;
         private readonly Character realLeader;
         private readonly float attackRadius;
         private readonly float backupRadius;
+        private readonly double fightSpeechTriggerThres;
         private int weaponSwingCooldown = 0;
         private bool defendFistUsed;
         private List<FarmerSprite.AnimationFrame>[] attackAnimation;
@@ -49,7 +52,7 @@ namespace NpcAdventure.AI.Controller
             }
         }
 
-        public FightController(AI_StateMachine ai, IModEvents events, int sword) : base(ai)
+        public FightController(AI_StateMachine ai, IContentLoader content, IModEvents events, int sword) : base(ai)
         {
             this.attackRadius = 1.25f * Game1.tileSize;
             this.backupRadius = 0.9f * Game1.tileSize;
@@ -58,6 +61,8 @@ namespace NpcAdventure.AI.Controller
             this.pathFinder.GoalCharacter = null;
             this.events = events;
             this.weapon = this.GetSword(sword, this.ai.metadata.Profession == "warrior");
+            this.bubbles = content.LoadStrings("Strings/SpeechBubbles");
+            this.fightSpeechTriggerThres = ai.metadata.Profession == "warrior" ? 0.33 : 0.15;
 
             this.attackAnimation = new List<FarmerSprite.AnimationFrame>[4]
             {
@@ -173,6 +178,7 @@ namespace NpcAdventure.AI.Controller
         private void CheckMonsterToFight()
         {
             Monster monster = Helper.GetNearestMonsterToCharacter(this.follower, DEFEND_TILE_RADIUS);
+            string text;
 
             if (monster == null || !this.IsValidMonster(monster))
             {
@@ -180,6 +186,15 @@ namespace NpcAdventure.AI.Controller
                 this.leader = null;
                 this.pathFinder.GoalCharacter = null;
                 return;
+            }
+
+            if (Game1.random.NextDouble() < this.fightSpeechTriggerThres && DialogueHelper.GetBubbleString(this.bubbles, this.follower, "fight", out text))
+            {
+                bool isRed = this.ai.metadata.Profession == "warrior" && Game1.random.NextDouble() < 0.1;
+                this.follower.showTextAboveHead(text, isRed ? 2 : -1);
+            } else if (this.ai.metadata.Profession == "warrior" && Game1.random.NextDouble() < this.fightSpeechTriggerThres / 2)
+            {
+                this.follower.doEmote(12);
             }
 
             this.potentialIddle = false;

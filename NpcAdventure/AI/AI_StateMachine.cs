@@ -1,4 +1,5 @@
 ﻿using NpcAdventure.AI.Controller;
+using NpcAdventure.Loader;
 using NpcAdventure.Model;
 using NpcAdventure.Utils;
 using StardewModdingAPI;
@@ -30,16 +31,18 @@ namespace NpcAdventure.AI
         private readonly IModEvents events;
         public readonly IMonitor monitor;
         internal readonly CompanionMetaData metadata;
+        private readonly IContentLoader loader;
         private Dictionary<State, IController> controllers;
         private int idleTimer = 0;
 
-        internal AI_StateMachine(NPC npc, Character player, CompanionMetaData metadata, IModEvents events, IMonitor monitor)
+        internal AI_StateMachine(NPC npc, Character player, CompanionMetaData metadata, IContentLoader loader, IModEvents events, IMonitor monitor)
         {
             this.npc = npc ?? throw new ArgumentNullException(nameof(npc));
             this.player = player ?? throw new ArgumentNullException(nameof(player));
             this.events = events ?? throw new ArgumentException(nameof(events));
             this.monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
             this.metadata = metadata;
+            this.loader = loader;
         }
 
         public State CurrentState { get; private set; }
@@ -55,7 +58,7 @@ namespace NpcAdventure.AI
             this.controllers = new Dictionary<State, IController>()
             {
                 [State.FOLLOW] = new FollowController(this),
-                [State.FIGHT] = new FightController(this, this.events, this.metadata.Sword),
+                [State.FIGHT] = new FightController(this, this.loader, this.events, this.metadata.Sword),
             };
 
             // By default AI following the player
