@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="AI\AI_StateMachine.cs" />
     <Compile Include="AI\Controller\FightController.cs" />
+    <Compile Include="AI\Controller\IdleController.cs" />
     <Compile Include="AI\EventArgsLocationChanged.cs" />
     <Compile Include="Buffs\BuffManager.cs" />
     <Compile Include="CompanionManager.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="StateMachine\State\RecruitedState.cs" />
     <Compile Include="StateMachine\State\UnavailableState.cs" />
     <Compile Include="Utils\DialogueHelper.VariousKeyGenerator.cs" />
+    <Compile Include="Utils\Extensions.cs" />
     <Compile Include="Utils\Helper.cs" />
     <Compile Include="Internal\IUpdateable.cs" />
     <Compile Include="Loader\ContentLoader.cs" />
@@ -97,6 +99,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\CompanionDispositions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\Data\AnimationDescriptions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\Data\IdleBehaviors.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\Data\IdleNPCDefinitions.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Dialogue\Abigail.json">

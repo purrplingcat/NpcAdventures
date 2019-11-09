@@ -59,7 +59,7 @@ namespace NpcAdventure.StateMachine.State
                 this.StateMachine.Companion.setNewDialogue(dialogueText);
             this.CanCreateDialogue = true;
 
-            this.ai.Setup();
+            this.ai.Setup(this.StateMachine.ContentLoader);
         }
 
         /// <summary>
@@ -72,9 +72,9 @@ namespace NpcAdventure.StateMachine.State
 
             // And then play finish animation "end of route animation" when companion is recruited
             // Must be called via reflection, because they are private members of NPC class
-            NpcAdventureMod.Mod.Helper.Reflection.GetMethod(this.StateMachine.Companion, "finishEndOfRouteAnimation").Invoke();
+            NpcAdventureMod.Instance.Helper.Reflection.GetMethod(this.StateMachine.Companion, "finishEndOfRouteAnimation").Invoke();
             this.StateMachine.Companion.doingEndOfRouteAnimation.Value = false;
-            NpcAdventureMod.Mod.Helper.Reflection.GetField<Boolean>(this.StateMachine.Companion, "currentlyDoingEndOfRouteAnimation").SetValue(false);
+            NpcAdventureMod.Instance.Helper.Reflection.GetField<Boolean>(this.StateMachine.Companion, "currentlyDoingEndOfRouteAnimation").SetValue(false);
         }
 
         public override void Exit()

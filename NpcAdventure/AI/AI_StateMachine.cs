@@ -23,6 +23,7 @@ namespace NpcAdventure.AI
         {
             FOLLOW,
             FIGHT,
+            IDLE,
         }
 
         private const float MONSTER_DISTANCE = 9f;
@@ -33,7 +34,7 @@ namespace NpcAdventure.AI
         internal readonly CompanionMetaData metadata;
         private readonly IContentLoader loader;
         private Dictionary<State, IController> controllers;
-        private int idleTimer = 0;
+        private int changeStateCooldown = 0;
 
         internal AI_StateMachine(NPC npc, Character player, CompanionMetaData metadata, IContentLoader loader, IModEvents events, IMonitor monitor)
         {
@@ -59,6 +60,7 @@ namespace NpcAdventure.AI
             {
                 [State.FOLLOW] = new FollowController(this),
                 [State.FIGHT] = new FightController(this, this.loader, this.events, this.metadata.Sword),
+                [State.IDLE] = new IdleController(this, this.loader),
             };
 
             // By default AI following the player
@@ -90,7 +92,7 @@ namespace NpcAdventure.AI
 
         private void CheckPotentialStateChange()
         {
-            if (this.idleTimer == 0 && this.CurrentState != State.FIGHT && this.PlayerIsNear() && this.IsThereAnyMonster())
+            if (this.changeStateCooldown == 0 && this.CurrentState != State.FIGHT && this.PlayerIsNear() && this.IsThereAnyMonster())
             {
                 this.ChangeState(State.FIGHT);
                 this.monitor.Log("A 50ft monster is here!");
@@ -98,7 +100,17 @@ namespace NpcAdventure.AI
 
             if (this.CurrentState == State.FIGHT && this.CurrentController.IsIdle)
             {
-                this.idleTimer = 100;
+                this.changeStateCooldown = 100;
+                this.ChangeState(State.FOLLOW);
+            }
+
+            if (this.CurrentState == State.FOLLOW && this.CurrentController.IsIdle)
+            {
+                this.ChangeState(State.IDLE);
+            }
+
+            if (this.CurrentState == State.IDLE && this.CurrentController.IsIdle)
+            {
                 this.ChangeState(State.FOLLOW);
             }
         }
@@ -110,8 +122,8 @@ namespace NpcAdventure.AI
                 this.CheckPotentialStateChange();
             }
 
-            if (this.idleTimer > 0)
-                this.idleTimer--;
+            if (this.changeStateCooldown > 0)
+                this.changeStateCooldown--;
 
             if (this.CurrentController != null)
                 this.CurrentController.Update(e);
