@@ -27,6 +27,7 @@ namespace NpcAdventure.AI.Controller
         private readonly float backupRadius;
         private readonly double fightSpeechTriggerThres;
         private int weaponSwingCooldown = 0;
+        private int fightBubbleCooldown = 0;
         private bool defendFistUsed;
         private List<FarmerSprite.AnimationFrame>[] attackAnimation;
         private int attackSpeedPitch = 0;
@@ -178,7 +179,6 @@ namespace NpcAdventure.AI.Controller
         private void CheckMonsterToFight()
         {
             Monster monster = Helper.GetNearestMonsterToCharacter(this.follower, DEFEND_TILE_RADIUS);
-            string text;
 
             if (monster == null || !this.IsValidMonster(monster))
             {
@@ -188,18 +188,36 @@ namespace NpcAdventure.AI.Controller
                 return;
             }
 
-            if (Game1.random.NextDouble() < this.fightSpeechTriggerThres && DialogueHelper.GetBubbleString(this.bubbles, this.follower, "fight", out text))
+            if (this.fightBubbleCooldown == 0)
             {
-                bool isRed = this.ai.metadata.Profession == "warrior" && Game1.random.NextDouble() < 0.1;
-                this.follower.showTextAboveHead(text, isRed ? 2 : -1);
-            } else if (this.ai.metadata.Profession == "warrior" && Game1.random.NextDouble() < this.fightSpeechTriggerThres / 2)
-            {
-                this.follower.doEmote(12);
+                this.DoFightSpeak();
             }
 
             this.potentialIddle = false;
             this.leader = monster;
             this.pathFinder.GoalCharacter = this.leader;
+        }
+
+        private void DoFightSpeak()
+        {
+            if (Game1.random.NextDouble() < this.fightSpeechTriggerThres && DialogueHelper.GetBubbleString(this.bubbles, this.follower, "fight", out string text))
+            {
+                bool isRed = this.ai.metadata.Profession == "warrior" && Game1.random.NextDouble() < 0.1;
+                this.follower.showTextAboveHead(text, isRed ? 2 : -1);
+                this.fightBubbleCooldown = 400;
+            }
+            else if (this.ai.metadata.Profession == "warrior" && Game1.random.NextDouble() < this.fightSpeechTriggerThres / 2)
+            {
+                this.follower.clearTextAboveHead();
+                this.follower.doEmote(12);
+                this.fightBubbleCooldown = 350;
+            }
+            else if (Game1.random.NextDouble() > (this.fightSpeechTriggerThres + this.fightSpeechTriggerThres * .33f))
+            {
+                this.follower.clearTextAboveHead();
+                this.follower.doEmote(16);
+                this.fightBubbleCooldown = 300;
+            }
         }
 
         public bool CheckIdleState()
@@ -247,6 +265,8 @@ namespace NpcAdventure.AI.Controller
             if (this.leader == null)
                 this.CheckMonsterToFight();
 
+            if (this.fightBubbleCooldown > 0)
+                --this.fightBubbleCooldown;
 
             this.DoWeaponSwing();
             base.Update(e);
@@ -413,6 +433,7 @@ namespace NpcAdventure.AI.Controller
             this.events.World.NpcListChanged += this.World_NpcListChanged;
             this.events.Display.RenderedWorld += this.Display_RenderedWorld;
             this.weaponSwingCooldown = 0;
+            this.fightBubbleCooldown = 0;
             this.potentialIddle = false;
         }
 
