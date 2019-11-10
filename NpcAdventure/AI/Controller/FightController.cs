@@ -188,18 +188,18 @@ namespace NpcAdventure.AI.Controller
                 return;
             }
 
-            if (this.fightBubbleCooldown == 0)
-            {
-                this.DoFightSpeak();
-            }
-
             this.potentialIddle = false;
             this.leader = monster;
             this.pathFinder.GoalCharacter = this.leader;
+            this.DoFightSpeak();
         }
 
         private void DoFightSpeak()
         {
+            // Cooldown not expired? Say nothing
+            if (this.fightBubbleCooldown != 0)
+                return;
+
             if (Game1.random.NextDouble() < this.fightSpeechTriggerThres && DialogueHelper.GetBubbleString(this.bubbles, this.follower, "fight", out string text))
             {
                 bool isRed = this.ai.metadata.Profession == "warrior" && Game1.random.NextDouble() < 0.1;
@@ -300,7 +300,7 @@ namespace NpcAdventure.AI.Controller
             {
                 this.ai.monitor.Log("Critical dangerous: Using defense fists!");
                 this.defendFistUsed = true;
-                this.follower.doEmote(16);
+                this.DoFightSpeak();
                 this.DoDamage(true); // Force fist when no damage given to a monster with weapon
                 return;
             }
