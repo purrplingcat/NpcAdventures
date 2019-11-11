@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using NpcAdventure.Internal;
 using NpcAdventure.Loader;
 using NpcAdventure.Utils;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 
@@ -73,6 +74,9 @@ namespace NpcAdventure.AI.Controller
 
         public void Update(UpdateTickedEventArgs e)
         {
+            if (!Context.IsMultiplayer && !Context.IsPlayerFree)
+                return;
+
             if (this.currentBehavior != null)
                 this.currentBehavior.Update(e);
         }

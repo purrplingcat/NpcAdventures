@@ -86,7 +86,7 @@ namespace NpcAdventure.AI.Controller
 
         public virtual void Update(UpdateTickedEventArgs e)
         {
-            if (this.follower == null || this.leader == null || !Context.CanPlayerMove)
+            if (this.follower == null || this.leader == null || (!Context.IsPlayerFree && !Context.IsMultiplayer))
                 return;
 
             this.CheckIdleState();

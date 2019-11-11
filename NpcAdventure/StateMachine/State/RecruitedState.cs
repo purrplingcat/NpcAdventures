@@ -59,7 +59,7 @@ namespace NpcAdventure.StateMachine.State
                 this.StateMachine.Companion.setNewDialogue(dialogueText);
             this.CanCreateDialogue = true;
 
-            this.ai.Setup(this.StateMachine.ContentLoader);
+            this.ai.Setup();
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using NpcAdventure.Loader;
 using NpcAdventure.Utils;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Monsters;
@@ -259,7 +260,7 @@ namespace NpcAdventure.AI.Controller
 
         public override void Update(UpdateTickedEventArgs e)
         {
-            if (this.IsIdle)
+            if (this.IsIdle || (!Context.IsPlayerFree && !Context.IsMultiplayer))
                 return;
 
             if (this.leader == null)
