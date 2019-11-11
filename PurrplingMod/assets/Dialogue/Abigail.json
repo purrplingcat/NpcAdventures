@@ -1,11 +1,19 @@
 {
-  "companionAccepted": "Adventure with me?$u#$b#It's very interesting, Come on!$h",
-  "companionRejected": "It's interesting, but I must say no. Sorry.",
-  "companionRejectedNight": "Sorry, it's to late for adventure today. Maybe tomorrow$s",
-  "companionDismiss": "It was very fun, @.$h#$b#I hope to repeat it soon. See ya.$h",
-  "companionDismissAuto": "It's to late. I must to go#$b#But it was very fun, Good night.$h",
-  "companionRecruited": "Do you take me into mines?$6",
-  "companion_Town": "A town",
-  "companion_Town_fall": "The leaves covered footpaths.#$b#Pelican town is full of colors. It's beautiful.",
-  "companion_Town_fall_Rainy": "I love fall rain.$l#$b#Can we play in puddles? Splashing in rain watter is funny.$h"
+	"companionAccepted": "You want to go adventuring with me?$u#$b# Well @, what are you waiting for? Let's go!#$h",
+	
+	"companionRejected": "Sounds interesting, but unfortunately I can't go. Sorry.$s",
+	
+	"companionRejectedNight": "Sorry, it's too late to go exploring today.$s",
+	
+	"companionDismiss": "Thanks for bringing me with you @, it was exciting.$h#$b#I hope to do it again sometime. See ya.#$h",
+	
+	"companionDismissAuto": "Hey @, it's getting late and I'm tired.#$b# I'm going to go home now. If you ever need an adventure partner, I'll be ready.$1 Goodnight.$h",
+	
+	"companionRecruited": "Can we visit the mines @?$9 I've always wanted to explore them.#$6",
+	
+	"companion_Town": "A town",
+	
+	"companion_Town_fall": "The leaves are covering the footpaths.#$b#Pelican town is full of so many vibrant colors. It's beautiful.",
+	
+	"companion_Town_fall_Rainy": "I love when it rains during fall.$l#$b#It allows me to think clearly...$b and not to mention splashing about in rain water is heaps of fun!$h"
 }
