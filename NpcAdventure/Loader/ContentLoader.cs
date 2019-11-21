@@ -30,7 +30,7 @@ namespace NpcAdventure.Loader
         /// <example>
         /// var loader = new ContentLoader(helper.Content, helper.DirectoryPath, "assets", this.Monitor)
         /// </example>
-        public ContentLoader(IContentHelper helper, string modName, string assetsDir, string modRootDir, IMonitor monitor)
+        public ContentLoader(IContentHelper helper, IContentPackHelper contentPacks, string modName, string assetsDir, string modRootDir, IMonitor monitor)
         {
             this.Helper = helper;
             this.ModName = modName;
@@ -43,6 +43,11 @@ namespace NpcAdventure.Loader
             AssetsManager assetsManager = new AssetsManager(modName, assetsDir, helper, monitor);
             this.Helper.AssetLoaders.Add(assetsManager);
             this.Helper.AssetEditors.Add(assetsManager);
+
+            // Assign ContentPack manager
+            ContentPackManager contentPackManager = new ContentPackManager(modName, contentPacks, monitor);
+            //this.Helper.AssetLoaders.Add(contentPackManager);
+            this.Helper.AssetEditors.Add(contentPackManager);
         }
 
         /// <summary>

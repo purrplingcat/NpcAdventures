@@ -65,13 +65,12 @@ namespace NpcAdventure.Loader
         /// <param name="asset"></param>
         public void Edit<T>(IAssetData asset)
         {
-            string assetName = asset.AssetName.Replace(this.modName, this.modAssetDir);
             string locale = asset.Locale;
-            string fileName = $"{assetName}.{locale}.json"; // Localised filename like Dialogue/Abigail.de-De.json for German localisation
+            string fileName = $"{asset.AssetName.Replace(this.modName, this.modAssetDir)}.{locale}.json"; // Localised filename like Dialogue/Abigail.de-De.json for German localisation
 
             try
             {
-                this.monitor.VerboseLog($"Trying to load localised file {fileName} for {assetName}, locale {locale}");
+                this.monitor.VerboseLog($"Trying to load localised file {fileName} for {asset.AssetName}, locale {locale}");
 
                 var strings = asset.AsDictionary<string, string>().Data;
                 var localised = this.Helper.Load<Dictionary<string, string>>(fileName, ContentSource.ModFolder);
@@ -95,10 +94,10 @@ namespace NpcAdventure.Loader
         /// <returns></returns>
         public T Load<T>(IAssetInfo asset)
         {
-            string assetName = asset.AssetName.Replace(this.modName, this.modAssetDir);
-            string filenName = $"{assetName}.json"; // Asset file name like `Dialogue/Abigail.json`
+            string fileName = $"{asset.AssetName.Replace(this.modName, this.modAssetDir)}.json";
 
-            return this.Helper.Load<T>(filenName, ContentSource.ModFolder);
+            this.monitor.Log($"Trying to load asset {asset.AssetName} from file {fileName}");
+            return this.Helper.Load<T>(fileName, ContentSource.ModFolder);
         }
     }
 }

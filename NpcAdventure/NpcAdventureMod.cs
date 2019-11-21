@@ -31,7 +31,7 @@ namespace NpcAdventure
             this.DialogueDriver = new DialogueDriver(helper.Events);
             this.HintDriver = new HintDriver(helper.Events);
             this.StuffDriver = new StuffDriver(helper.Events, helper.Data, this.Monitor);
-            this.contentLoader = new ContentLoader(helper.Content, this.ModManifest.UniqueID, "assets", helper.DirectoryPath, this.Monitor);
+            this.contentLoader = new ContentLoader(helper.Content, helper.ContentPacks, this.ModManifest.UniqueID, "assets", helper.DirectoryPath, this.Monitor);
             this.companionManager = new CompanionManager(this.DialogueDriver, this.HintDriver, this.Monitor);
         }
 
