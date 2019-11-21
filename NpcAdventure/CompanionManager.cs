@@ -180,7 +180,7 @@ namespace NpcAdventure
         /// <param name="reflection"></param>
         public void InitializeCompanions(IContentLoader loader, IModEvents gameEvents, IReflectionHelper reflection)
         {
-            Dictionary<string, string> dispositions = loader.Load<Dictionary<string, string>>("CompanionDispositions");
+            Dictionary<string, string> dispositions = loader.Load<Dictionary<string, string>>("Data/CompanionDispositions");
 
             foreach (string npcName in dispositions.Keys)
             {

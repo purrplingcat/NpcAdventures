@@ -23,24 +23,32 @@ namespace NpcAdventure
         public override void Entry(IModHelper helper)
         {
             helper.Events.GameLoop.SaveLoaded += this.GameLoop_SaveLoaded;
+            helper.Events.Specialised.LoadStageChanged += this.Specialised_LoadStageChanged;
             helper.Events.GameLoop.ReturnedToTitle += this.GameLoop_ReturnedToTitle;
             helper.Events.GameLoop.DayEnding += this.GameLoop_DayEnding;
             helper.Events.GameLoop.DayStarted += this.GameLoop_DayStarted;
-            helper.Events.GameLoop.GameLaunched += this.GameLoop_GameLaunched;
 
             this.DialogueDriver = new DialogueDriver(helper.Events);
             this.HintDriver = new HintDriver(helper.Events);
             this.StuffDriver = new StuffDriver(helper.Events, helper.Data, this.Monitor);
-            this.contentLoader = new ContentLoader(helper.Content, helper.DirectoryPath, "assets", this.Monitor);
+            this.contentLoader = new ContentLoader(helper.Content, this.ModManifest.UniqueID, "assets", helper.DirectoryPath, this.Monitor);
             this.companionManager = new CompanionManager(this.DialogueDriver, this.HintDriver, this.Monitor);
         }
 
-        private void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)
+        private void Specialised_LoadStageChanged(object sender, LoadStageChangedEventArgs e)
+        {
+            if (e.NewStage == StardewModdingAPI.Enums.LoadStage.Loaded)
+            {
+                this.PreloadAssets();
+            }
+        }
+
+        private void PreloadAssets()
         {
             /* Preload assets to cache */
             this.Monitor.Log("Preloading assets...", LogLevel.Info);
 
-            var dispositions = this.contentLoader.LoadStrings("CompanionDispositions");
+            var dispositions = this.contentLoader.LoadStrings("Data/CompanionDispositions");
 
             this.contentLoader.LoadStrings("Data/AnimationDescriptions");
             this.contentLoader.LoadStrings("Data/IdleBehaviors");
@@ -59,7 +67,6 @@ namespace NpcAdventure
 
         private void GameLoop_DayStarted(object sender, DayStartedEventArgs e)
         {
-            this.StuffDriver.ReviveDeliveredBags();
             this.companionManager.NewDaySetup();
         }
 
@@ -72,6 +79,7 @@ namespace NpcAdventure
         private void GameLoop_ReturnedToTitle(object sender, StardewModdingAPI.Events.ReturnedToTitleEventArgs e)
         {
             this.companionManager.UninitializeCompanions();
+            this.contentLoader.InvalidateCache();
         }
 
         private void GameLoop_SaveLoaded(object sender, StardewModdingAPI.Events.SaveLoadedEventArgs e)

@@ -74,6 +74,7 @@
     <Compile Include="AI\Controller\FollowController.cs" />
     <Compile Include="Driver\HintDriver.cs" />
     <Compile Include="Driver\StuffDriver.cs" />
+    <Compile Include="Loader\AssetsManager.cs" />
     <Compile Include="Loader\IContentLoader.cs" />
     <Compile Include="Model\BagDumpInfo.cs" />
     <Compile Include="Model\BuffInfo.cs" />
@@ -99,7 +100,7 @@
     <Compile Include="Utils\Helper\DrawDuringUse.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\CompanionDispositions.json">
+    <None Include="assets\Data\CompanionDispositions.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Data\AnimationDescriptions.json">
