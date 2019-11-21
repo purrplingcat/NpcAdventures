@@ -40,14 +40,9 @@ namespace NpcAdventure.Loader
             this.monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
 
             // Assign asset source manager to load and edit mod's assets
-            AssetsManager assetsManager = new AssetsManager(modName, assetsDir, helper, monitor);
+            AssetsManager assetsManager = new AssetsManager(modName, assetsDir, helper, new ContentPackProvider(modName, contentPacks, monitor), monitor);
             this.Helper.AssetLoaders.Add(assetsManager);
             this.Helper.AssetEditors.Add(assetsManager);
-
-            // Assign ContentPack manager
-            ContentPackManager contentPackManager = new ContentPackManager(modName, contentPacks, monitor);
-            //this.Helper.AssetLoaders.Add(contentPackManager);
-            this.Helper.AssetEditors.Add(contentPackManager);
         }
 
         /// <summary>

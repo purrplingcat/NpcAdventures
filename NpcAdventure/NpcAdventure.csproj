@@ -77,7 +77,7 @@
     <Compile Include="Loader\AssetPatch.cs" />
     <Compile Include="Loader\AssetsManager.cs" />
     <Compile Include="Model\ContentPackData.cs" />
-    <Compile Include="Loader\ContentPackManager.cs" />
+    <Compile Include="Loader\ContentPackProvider.cs" />
     <Compile Include="Loader\IContentLoader.cs" />
     <Compile Include="Model\BagDumpInfo.cs" />
     <Compile Include="Model\BuffInfo.cs" />

@@ -8,17 +8,15 @@ using System.Threading.Tasks;
 
 namespace NpcAdventure.Loader
 {
-    class ContentPackManager : IAssetLoader, IAssetEditor
+    class ContentPackProvider
     {
         private readonly string modName;
-        private readonly IContentPackHelper helper;
         private readonly IMonitor monitor;
         private readonly List<AssetPatch> patches;
 
-        public ContentPackManager(string modName, IContentPackHelper helper, IMonitor monitor)
+        public ContentPackProvider(string modName, IContentPackHelper helper, IMonitor monitor)
         {
             this.modName = modName;
-            this.helper = helper;
             this.monitor = monitor;
             this.patches = this.LoadPatches(helper);
             
@@ -30,14 +28,29 @@ namespace NpcAdventure.Loader
 
             bool check = this.patches.Where((p) => p.Action.Equals("Edit") && asset.AssetNameEquals($"{this.modName}/{p.Target}")).Any();
 
-            this.monitor.VerboseLog($"Check: [{(check ? "x" : " ")}] asset {asset.AssetName} can be edited");
+            this.monitor.Log($"Check: [{(check ? "x" : " ")}] asset {asset.AssetName} can be edited by any content pack");
 
             return check;
         }
 
         public bool CanLoad<T>(IAssetInfo asset)
         {
-            throw new NotImplementedException();
+            if (!asset.AssetName.StartsWith(this.modName))
+                return false; // Do not check assets not owned by this mod
+
+            var toCheck = this.patches.Where((p) => p.Action.Equals("Load") && asset.AssetNameEquals($"{this.modName}/{p.Target}"));
+
+            if (toCheck.Count() > 1)
+            {
+                this.monitor.Log($"Multiple patches want to load {asset.AssetName} ({string.Join(", ", from entry in toCheck select entry.LogName)}). None will be applied.", LogLevel.Error);
+                return false;
+            }
+
+            bool check = toCheck.Any();
+
+            this.monitor.Log($"Check: [{(check ? "x" : " ")}] asset {asset.AssetName} can be replaced/loaded by any content pack");
+
+            return check;
         }
 
         public void Edit<T>(IAssetData asset)
@@ -49,7 +62,7 @@ namespace NpcAdventure.Loader
             {
                 try
                 {
-                    var data = patch.LoadData();
+                    var data = patch.LoadData<Dictionary<string, string>>();
 
                     foreach (var pair in data)
                     {
@@ -66,7 +79,9 @@ namespace NpcAdventure.Loader
 
         public T Load<T>(IAssetInfo asset)
         {
-            throw new NotImplementedException();
+            var toApply = this.patches.Where((p) => p.Action.Equals("Load") && asset.AssetNameEquals($"{this.modName}/{p.Target}")).First();
+
+            return toApply.LoadData<T>();
         }
 
         public List<AssetPatch> LoadPatches(IContentPackHelper helper)
@@ -76,11 +91,13 @@ namespace NpcAdventure.Loader
 
             foreach (var pack in packs)
             {
+                int entryNo = 0;
                 var metadata = pack.ReadJsonFile<ContentPackData>("content.json");
                 
                 foreach (var patch in metadata.Changes)
                 {
-                    patches.Add(new AssetPatch(patch, pack));
+                    patches.Add(new AssetPatch(patch, pack, $"entry #{entryNo} ({patch.Action} {patch.Target}) in {pack.Manifest.Name}"));
+                    entryNo++;
                 }
 
                 this.monitor.Log($"Loaded content pack {pack.Manifest.Name} v{pack.Manifest.Version} ({pack.Manifest.UniqueID})", LogLevel.Info);
