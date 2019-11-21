@@ -74,10 +74,11 @@
     <Compile Include="AI\Controller\FollowController.cs" />
     <Compile Include="Driver\HintDriver.cs" />
     <Compile Include="Driver\StuffDriver.cs" />
-    <Compile Include="Loader\AssetPatch.cs" />
+    <Compile Include="Loader\ContentPacks\AssetPatch.cs" />
     <Compile Include="Loader\AssetsManager.cs" />
+    <Compile Include="Loader\ContentPacks\ManagedContentPack.cs" />
     <Compile Include="Model\ContentPackData.cs" />
-    <Compile Include="Loader\ContentPackProvider.cs" />
+    <Compile Include="Loader\ContentPacks\ContentPackProvider.cs" />
     <Compile Include="Loader\IContentLoader.cs" />
     <Compile Include="Model\BagDumpInfo.cs" />
     <Compile Include="Model\BuffInfo.cs" />

@@ -86,7 +86,7 @@ namespace NpcAdventure.Loader
                 }
                 catch (ContentLoadException)
                 {
-                    this.monitor.Log($"No localization for file {fileName}.");
+                    this.monitor.Log($"No localization file {fileName} for {asset.AssetName}, locale {locale}");
                 }
             }
 
