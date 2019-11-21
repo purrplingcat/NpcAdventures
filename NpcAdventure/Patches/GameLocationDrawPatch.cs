@@ -10,13 +10,11 @@ using System.Threading.Tasks;
 
 namespace NpcAdventure.Patches
 {
-    [HarmonyPatch(typeof(GameLocation))]
-    [HarmonyPatch("draw")]
     internal class GameLocationDrawPatch
     {
         private static SpecialModEvents events;
 
-        static void Postfix(ref GameLocation __instance, SpriteBatch b)
+        internal static void Postfix(ref GameLocation __instance, SpriteBatch b)
         {
             var args = new LocationRenderedEventArgs
             {
