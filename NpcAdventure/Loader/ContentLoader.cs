@@ -15,7 +15,7 @@ namespace NpcAdventure.Loader
         private readonly string modRootDirectory;
         private readonly string assetsDir;
         private readonly IMonitor monitor;
-        private readonly Dictionary<string, object> loadedAssetsMap;
+        private readonly Dictionary<string, object> assetCache;
 
         private IContentHelper Helper { get; }
         private string ModName { get; }
@@ -27,16 +27,13 @@ namespace NpcAdventure.Loader
         /// <param name="modName">Path to mod's root directory, Like path/to/mod.</param>
         /// <param name="assetsDir">Path to mod's assets dir, like `assets`. Thats mean assets dir is `path/to/mod/assets` </param>
         /// <param name="monitor"></param>
-        /// <example>
-        /// var loader = new ContentLoader(helper.Content, helper.DirectoryPath, "assets", this.Monitor)
-        /// </example>
         public ContentLoader(IContentHelper helper, IContentPackHelper contentPacks, string modName, string assetsDir, string modRootDir, IMonitor monitor)
         {
             this.Helper = helper;
             this.ModName = modName;
             this.modRootDirectory = modRootDir;
             this.assetsDir = assetsDir;
-            this.loadedAssetsMap = new Dictionary<string, object>();
+            this.assetCache = new Dictionary<string, object>();
             this.monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
 
             // Assign asset source manager to load and edit mod's assets
@@ -68,14 +65,14 @@ namespace NpcAdventure.Loader
         {
             string assetPath = $"{this.ModName}/{assetName}";
             // Try to get asset from our map cache
-            if (this.loadedAssetsMap.TryGetValue(assetPath, out object asset))
+            if (this.assetCache.TryGetValue(assetPath, out object asset))
                 return (T)asset;
 
             try
             {
                 T newAsset = this.Helper.Load<T>(assetPath, ContentSource.GameContent);
 
-                this.loadedAssetsMap.Add(assetPath, (object)newAsset);
+                this.assetCache.Add(assetPath, (object)newAsset);
 
                 return newAsset;
             }
@@ -133,11 +130,11 @@ namespace NpcAdventure.Loader
         /// </summary>
         public void InvalidateCache()
         {
-            foreach (string assetPath in this.loadedAssetsMap.Keys)
+            foreach (string assetPath in this.assetCache.Keys)
                 this.Helper.InvalidateCache(assetPath); // Remove file from SMAPI's file cache
 
             // And clear our assets map
-            this.loadedAssetsMap.Clear();
+            this.assetCache.Clear();
         }
     }
 }

@@ -71,7 +71,7 @@ namespace NpcAdventure.Loader
             
             if (toCheck.Count == 1 && !toCheck.First().FromAssetExists() )
             {
-                this.monitor.Log($"Can't load cover for {asset.AssetName} ({toCheck.First().LogName}), because patch assets exists!", LogLevel.Error);
+                this.monitor.Log($"Can't load cover for {asset.AssetName} ({toCheck.First().LogName}), because patch assets exists! File '{toCheck.First().FromFile ?? "<dataset>"}' not found.", LogLevel.Error);
                 return false;
             }
 
@@ -103,10 +103,10 @@ namespace NpcAdventure.Loader
                         target[pair.Key] = pair.Value;
                     }
 
-                    this.monitor.Log($"Applied patch '{patch.LogName}' to asset {asset.AssetName}");
+                    this.monitor.Log($"EDIT: Applied patch '{patch.LogName}' to asset {asset.AssetName}");
                 } catch (Exception e)
                 {
-                    this.monitor.Log($"Cannot apply patch '{patch.LogName}': {e.Message}", LogLevel.Error);
+                    this.monitor.Log($"EDIT: Cannot apply patch '{patch.LogName}' to asset {asset.AssetName}: {e.Message}", LogLevel.Error);
                 }
             }
         }
@@ -121,7 +121,18 @@ namespace NpcAdventure.Loader
         {
             var toApply = this.GetPatchesForAsset(asset, "Load").First();
 
-            return toApply.LoadData<T>();
+            try
+            {    
+                var content = toApply.LoadData<T>();
+
+                this.monitor.Log($"LOAD: '{toApply.LogName}' covered asset {asset.AssetName}");
+
+                return content;
+            } catch (Exception e)
+            {
+                this.monitor.Log($"LOAD: Cannot cover asset {asset.AssetName} with '{toApply.LogName}': {e.Message}", LogLevel.Error);
+                return default;
+            }
         }
 
         /// <summary>
@@ -144,7 +155,10 @@ namespace NpcAdventure.Loader
         {
             var packs = helper.GetOwned();
             var patches = new List<AssetPatch>();
+            int skippedPacks = 0;
+            int skippedPatches = 0;
 
+            // Try to load content packs and their's patches
             foreach (var pack in packs)
             {
                 try
@@ -152,22 +166,75 @@ namespace NpcAdventure.Loader
                     int entryNo = 0;
                     var metadata = pack.ReadJsonFile<ContentPackData>("content.json");
                     var managedPack = new ManagedContentPack(pack);
+                    var problems = this.ValidateContentPack(metadata);
 
+                    if (problems.Count > 0)
+                    {
+                        skippedPacks++;
+                        this.monitor.Log($"Cannot load content pack `{pack.Manifest.Name} ({pack.Manifest.UniqueID})`, because: {Environment.NewLine}  - {string.Join(Environment.NewLine + "  - ", problems)}", LogLevel.Error);
+                        continue;
+                    }
+
+                    // Try to load patches from content pack
                     foreach (var patch in metadata.Changes)
                     {
-                        patches.Add(new AssetPatch(patch, managedPack, $"{pack.Manifest.Name} -> entry #{entryNo} ({patch.Action} {patch.Target})"));
+                        var patchProblems = this.ValidatePatchDefinition(patch);
+
+                        if (patchProblems.Count > 0)
+                        {
+                            skippedPatches++;
+                            this.monitor.Log($"Cannot load patch #{entryNo} in content pack `{pack.Manifest.Name} ({pack.Manifest.UniqueID})`, because: {Environment.NewLine}  - {string.Join(Environment.NewLine + "  - ", problems)}", LogLevel.Error);
+                            continue;
+                        }
+
+                        patches.Add(new AssetPatch(patch, managedPack, $"entry #{entryNo} ({patch.Action} {patch.Target}) from pack '{pack.Manifest.Name} ({pack.Manifest.UniqueID})'"));
                         entryNo++;
                     }
 
                     this.monitor.Log($"Loaded content pack {pack.Manifest.Name} v{pack.Manifest.Version} ({pack.Manifest.UniqueID})", LogLevel.Info);
                 } catch (Exception e)
                 {
-                    this.monitor.Log($"An error occured during parse content pack {pack.Manifest.Name}: ${e.Message}", LogLevel.Error);
+                    skippedPacks++;
+                    this.monitor.Log($"An error occured during parse content pack `{pack.Manifest.Name}` ({pack.Manifest.UniqueID}): {e.Message}", LogLevel.Error);
                 }
             }
 
-            this.monitor.Log($"SUMMARY: {patches.Count} patches in {packs.Count()} content packs", LogLevel.Info);
+            this.monitor.Log($"SUMMARY: {patches.Count - skippedPatches} patches ({skippedPatches} skipped) in {packs.Count() - skippedPacks} content packs ({skippedPacks} skipped)", LogLevel.Info);
             return patches;
+        }
+
+        private List<string> ValidateContentPack(ContentPackData metadata)
+        {
+            List<string> problems = new List<string>();
+
+            if (string.IsNullOrEmpty(metadata.Format))
+                problems.Add("Format version not defined!");
+
+            if (!string.IsNullOrEmpty(metadata.Format))
+            {
+                ISemanticVersion semVer = new SemanticVersion(metadata.Format);
+
+                if (!semVer.IsBetween(ContentPackData.MIN_FORMAT_VERSION, ContentPackData.FORMAT_VERSION))
+                    problems.Add($"Unsupported content.json format version {metadata.Format}. Supported versions: {ContentPackData.MIN_FORMAT_VERSION} - {ContentPackData.FORMAT_VERSION}.");
+            }
+            if (metadata.Changes == null || metadata.Changes.Count() == 0)
+                problems.Add("No changes defined.");
+
+            return problems;
+        }
+
+        private List<string> ValidatePatchDefinition(ContentPackData.DataChanges change)
+        {
+            List<string> problems = new List<string>();
+
+            if (string.IsNullOrEmpty(change.Action))
+                problems.Add($"No action defined in entry");
+            if (string.IsNullOrEmpty(change.Target))
+                problems.Add($"Target is not defined in entry");
+            if (string.IsNullOrEmpty(change.FromFile))
+                problems.Add("No content defined! `FromFile` must be set in entry");
+
+            return problems;
         }
     }
 }

@@ -70,6 +70,7 @@ namespace NpcAdventure.Loader
             string locale = asset.Locale;
             string fileName = $"{asset.AssetName.Replace(this.modName, this.modAssetDir)}.{locale}.json"; // Localised filename like Dialogue/Abigail.de-De.json for German localisation
 
+            // Load translation for this asset if it's translated to current locale
             if (!string.IsNullOrEmpty(asset.Locale))
             {
                 try
@@ -79,6 +80,7 @@ namespace NpcAdventure.Loader
                     var strings = asset.AsDictionary<string, string>().Data;
                     var localised = this.Helper.Load<Dictionary<string, string>>(fileName, ContentSource.ModFolder);
 
+                    // Patch asset's content with translated contend and keep non-translated parts
                     foreach (var pair in localised)
                     {
                         strings[pair.Key] = pair.Value;
@@ -105,11 +107,14 @@ namespace NpcAdventure.Loader
 
             this.monitor.Log($"Trying to load asset {asset.AssetName} from file {fileName}");
 
+            // Try load asset content cover from content pack (action load in patch) and replace original asset 
+            // with it or load new content asset into mod. if original not exist in mod
             if (this.ContentPacks.CanLoad<T>(asset))
             {
                 return this.ContentPacks.Load<T>(asset);
             }
 
+            // Load original mod asset
             return this.Helper.Load<T>(fileName, ContentSource.ModFolder);
         }
     }
