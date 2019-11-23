@@ -42,6 +42,8 @@ namespace NpcAdventure
             this.StuffDriver = new StuffDriver(this.Helper.Data, this.Monitor);
             this.contentLoader = new ContentLoader(this.Helper.Content, this.Helper.ContentPacks, this.ModManifest.UniqueID, "assets", this.Helper.DirectoryPath, this.Monitor);
             this.companionManager = new CompanionManager(this.DialogueDriver, this.HintDriver, this.Monitor);
+
+            this.StuffDriver.RegisterEvents(this.Helper.Events);
         }
 
         private void Specialised_LoadStageChanged(object sender, LoadStageChangedEventArgs e)
