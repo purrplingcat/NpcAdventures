@@ -22,16 +22,25 @@ namespace NpcAdventure
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            helper.Events.GameLoop.SaveLoaded += this.GameLoop_SaveLoaded;
-            helper.Events.Specialised.LoadStageChanged += this.Specialised_LoadStageChanged;
-            helper.Events.GameLoop.ReturnedToTitle += this.GameLoop_ReturnedToTitle;
-            helper.Events.GameLoop.DayEnding += this.GameLoop_DayEnding;
-            helper.Events.GameLoop.DayStarted += this.GameLoop_DayStarted;
+            this.RegisterEvents(helper.Events);
+        }
 
-            this.DialogueDriver = new DialogueDriver(helper.Events);
-            this.HintDriver = new HintDriver(helper.Events);
-            this.StuffDriver = new StuffDriver(helper.Events, helper.Data, this.Monitor);
-            this.contentLoader = new ContentLoader(helper.Content, helper.ContentPacks, this.ModManifest.UniqueID, "assets", helper.DirectoryPath, this.Monitor);
+        private void RegisterEvents(IModEvents events)
+        {
+            events.GameLoop.SaveLoaded += this.GameLoop_SaveLoaded;
+            events.Specialised.LoadStageChanged += this.Specialised_LoadStageChanged;
+            events.GameLoop.ReturnedToTitle += this.GameLoop_ReturnedToTitle;
+            events.GameLoop.DayEnding += this.GameLoop_DayEnding;
+            events.GameLoop.DayStarted += this.GameLoop_DayStarted;
+            events.GameLoop.GameLaunched += this.GameLoop_GameLaunched;
+        }
+
+        private void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            this.DialogueDriver = new DialogueDriver(this.Helper.Events);
+            this.HintDriver = new HintDriver(this.Helper.Events);
+            this.StuffDriver = new StuffDriver(this.Helper.Data, this.Monitor);
+            this.contentLoader = new ContentLoader(this.Helper.Content, this.Helper.ContentPacks, this.ModManifest.UniqueID, "assets", this.Helper.DirectoryPath, this.Monitor);
             this.companionManager = new CompanionManager(this.DialogueDriver, this.HintDriver, this.Monitor);
         }
 
