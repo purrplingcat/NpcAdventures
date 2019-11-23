@@ -44,7 +44,10 @@ namespace NpcAdventure
 
             //Harmony
             HarmonyInstance harmony = HarmonyInstance.Create("Purrplingcat.NpcAdventure");
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
+            harmony.Patch(
+                original: AccessTools.Method(typeof(GameLocation), "draw"),
+                postfix: new HarmonyMethod(typeof(Patches.GameLocationDrawPatch), nameof(Patches.GameLocationDrawPatch.Postfix))
+            );
 
             Patches.GameLocationDrawPatch.Setup(this.SpecialEvents);
 
