@@ -64,6 +64,7 @@ namespace NpcAdventure.StateMachine
         public StateFlag CurrentStateFlag { get; private set; }
         public Dictionary<int, SchedulePathDescription> BackedupSchedule { get; internal set; }
         public bool RecruitedToday { get; private set; }
+        public bool SuggestedToday { get; internal set; }
         public HashSet<string> SpokenDialogues { get; private set; }
 
         /// <summary>
@@ -144,6 +145,7 @@ namespace NpcAdventure.StateMachine
             DialogueHelper.SetupCompanionDialogues(this.Companion, this.ContentLoader.LoadStrings($"Dialogue/{this.Name}"));
 
             this.RecruitedToday = false;
+            this.SuggestedToday = false;
             this.SpokenDialogues.Clear();
             this.MakeAvailable();
         }

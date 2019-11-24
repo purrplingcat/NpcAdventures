@@ -209,5 +209,21 @@ namespace NpcAdventure.Utils
             speaker.CurrentDialogue.Push(dialogue);
             Game1.drawDialogue(speaker);
         }
+
+        public static void RemoveDialogueFromStack(NPC n, Dialogue dialogue)
+        {
+            Stack<Dialogue> temp = new Stack<Dialogue>(n.CurrentDialogue.Count);
+
+            while (n.CurrentDialogue.Count > 0)
+            {
+                Dialogue d = n.CurrentDialogue.Pop();
+
+                if (!d.Equals(dialogue))
+                    temp.Push(d);
+            }
+
+            while (temp.Count > 0)
+                n.CurrentDialogue.Push(temp.Pop());
+        }
     }
 }
