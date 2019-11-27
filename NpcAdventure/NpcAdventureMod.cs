@@ -6,6 +6,7 @@ using StardewValley;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using NpcAdventure.Model;
 
 namespace NpcAdventure
 {
@@ -14,6 +15,8 @@ namespace NpcAdventure
     {
         private CompanionManager companionManager;
         private ContentLoader contentLoader;
+        private Config config;
+
         private DialogueDriver DialogueDriver { get; set; }
         private HintDriver HintDriver { get; set; }
         private StuffDriver StuffDriver { get; set; }
@@ -23,6 +26,7 @@ namespace NpcAdventure
         public override void Entry(IModHelper helper)
         {
             this.RegisterEvents(helper.Events);
+            this.config = helper.ReadConfig<Config>();
         }
 
         private void RegisterEvents(IModEvents events)
@@ -41,7 +45,8 @@ namespace NpcAdventure
             this.HintDriver = new HintDriver(this.Helper.Events);
             this.StuffDriver = new StuffDriver(this.Helper.Data, this.Monitor);
             this.contentLoader = new ContentLoader(this.Helper.Content, this.Helper.ContentPacks, this.ModManifest.UniqueID, "assets", this.Helper.DirectoryPath, this.Monitor);
-            this.companionManager = new CompanionManager(this.DialogueDriver, this.HintDriver, this.Monitor);
+            this.companionManager = new CompanionManager(this.DialogueDriver, this.HintDriver, this.config, this.Monitor);
+            this.StuffDriver.RegisterEvents(this.Helper.Events);
         }
 
         private void Specialised_LoadStageChanged(object sender, LoadStageChangedEventArgs e)
