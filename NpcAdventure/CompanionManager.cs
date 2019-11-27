@@ -143,7 +143,6 @@ namespace NpcAdventure
             catch (InvalidStateException e)
             {
                 this.monitor.Log($"Error while trying to setup new day: {e.Message}");
-                this.monitor.ExitGameImmediately(e.Message);
             }
         }
 

@@ -29,10 +29,7 @@ namespace NpcAdventure.Utils
 
         public static bool SpouseHasBeenKissedToday(NPC spouse)
         {
-            return (bool)spouse
-                .GetType()
-                .GetField("hasBeenKissedToday",
-                          BindingFlags.NonPublic | BindingFlags.Instance).GetValue(spouse);
+            return spouse.hasBeenKissedToday.Value;
         }
 
         public static bool IsSpouseMarriedToFarmer(NPC spouse, Farmer farmer)
