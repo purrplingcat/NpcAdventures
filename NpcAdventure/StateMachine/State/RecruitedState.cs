@@ -75,6 +75,9 @@ namespace NpcAdventure.StateMachine.State
 
         private void Display_RenderingHud(object sender, RenderingHudEventArgs e)
         {
+            if (!this.StateMachine.CompanionManager.Config.ShowHUD)
+                return;
+
             var skills = this.StateMachine.Metadata.PersonalSkills;
             string toolTipedSkill = "";
             bool drawTooltip = false;

@@ -9,6 +9,7 @@ using System;
 using Harmony;
 using System.Reflection;
 using NpcAdventure.Events;
+using NpcAdventure.Model;
 
 namespace NpcAdventure
 {
@@ -20,6 +21,8 @@ namespace NpcAdventure
         public static IMonitor GameMonitor { get; private set; }
 
         private ContentLoader contentLoader;
+        private Config config;
+
         private DialogueDriver DialogueDriver { get; set; }
         private HintDriver HintDriver { get; set; }
         private StuffDriver StuffDriver { get; set; }
@@ -29,19 +32,30 @@ namespace NpcAdventure
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            helper.Events.GameLoop.SaveLoaded += this.GameLoop_SaveLoaded;
-            helper.Events.GameLoop.ReturnedToTitle += this.GameLoop_ReturnedToTitle;
-            helper.Events.GameLoop.DayEnding += this.GameLoop_DayEnding;
-            helper.Events.GameLoop.DayStarted += this.GameLoop_DayStarted;
-            helper.Events.GameLoop.GameLaunched += this.GameLoop_GameLaunched;
+            this.RegisterEvents(helper.Events);
+            this.config = helper.ReadConfig<Config>();
+        }
 
+        private void RegisterEvents(IModEvents events)
+        {
+            events.GameLoop.SaveLoaded += this.GameLoop_SaveLoaded;
+            events.Specialized.LoadStageChanged += this.Specialized_LoadStageChanged;
+            events.GameLoop.ReturnedToTitle += this.GameLoop_ReturnedToTitle;
+            events.GameLoop.DayEnding += this.GameLoop_DayEnding;
+            events.GameLoop.DayStarted += this.GameLoop_DayStarted;
+            events.GameLoop.GameLaunched += this.GameLoop_GameLaunched;
+        }
+
+        private void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)
+        {
             this.SpecialEvents = new SpecialModEvents();
-            this.DialogueDriver = new DialogueDriver(helper.Events);
-            this.HintDriver = new HintDriver(helper.Events);
-            this.StuffDriver = new StuffDriver(helper.Events, helper.Data, this.Monitor);
-            this.contentLoader = new ContentLoader(helper.Content, helper.DirectoryPath, "assets", this.Monitor);
-            this.companionManager = new CompanionManager(this.DialogueDriver, this.HintDriver, this.Monitor);
-
+            this.DialogueDriver = new DialogueDriver(this.Helper.Events);
+            this.HintDriver = new HintDriver(this.Helper.Events);
+            this.StuffDriver = new StuffDriver(this.Helper.Data, this.Monitor);
+            this.contentLoader = new ContentLoader(this.Helper.Content, this.Helper.ContentPacks, this.ModManifest.UniqueID, "assets", this.Helper.DirectoryPath, this.Monitor);
+            this.companionManager = new CompanionManager(this.DialogueDriver, this.HintDriver, this.config, this.Monitor);
+            this.StuffDriver.RegisterEvents(this.Helper.Events);
+            
             //Harmony
             HarmonyInstance harmony = HarmonyInstance.Create("Purrplingcat.NpcAdventure");
             harmony.Patch(
@@ -50,16 +64,22 @@ namespace NpcAdventure
             );
 
             Patches.GameLocationDrawPatch.Setup(this.SpecialEvents);
-
-            NpcAdventureMod.GameMonitor = this.Monitor;
         }
 
-        private void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)
+        private void Specialized_LoadStageChanged(object sender, LoadStageChangedEventArgs e)
+        {
+            if (e.NewStage == StardewModdingAPI.Enums.LoadStage.Loaded)
+            {
+                this.PreloadAssets();
+            }
+        }
+
+        private void PreloadAssets()
         {
             /* Preload assets to cache */
             this.Monitor.Log("Preloading assets...", LogLevel.Info);
 
-            var dispositions = this.contentLoader.LoadStrings("CompanionDispositions");
+            var dispositions = this.contentLoader.LoadStrings("Data/CompanionDispositions");
 
             this.contentLoader.LoadStrings("Data/AnimationDescriptions");
             this.contentLoader.LoadStrings("Data/IdleBehaviors");
@@ -78,7 +98,6 @@ namespace NpcAdventure
 
         private void GameLoop_DayStarted(object sender, DayStartedEventArgs e)
         {
-            this.StuffDriver.ReviveDeliveredBags();
             this.companionManager.NewDaySetup();
         }
 
@@ -91,6 +110,7 @@ namespace NpcAdventure
         private void GameLoop_ReturnedToTitle(object sender, StardewModdingAPI.Events.ReturnedToTitleEventArgs e)
         {
             this.companionManager.UninitializeCompanions();
+            this.contentLoader.InvalidateCache();
         }
 
         private void GameLoop_SaveLoaded(object sender, StardewModdingAPI.Events.SaveLoadedEventArgs e)
