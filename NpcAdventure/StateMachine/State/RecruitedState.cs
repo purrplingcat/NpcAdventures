@@ -50,6 +50,12 @@ namespace NpcAdventure.StateMachine.State
             this.StateMachine.Companion.eventActor = true;
             this.StateMachine.Companion.farmerPassesThrough = true;
 
+            if (this.StateMachine.Companion.isMarried() && Patches.SpouseReturnHomePatch.recruitedSpouses.IndexOf(this.StateMachine.Companion.Name) < 0)
+            {
+                // Avoid returning recruited wife/husband to FarmHouse when is on Farm and it's after 1pm
+                Patches.SpouseReturnHomePatch.recruitedSpouses.Add(this.StateMachine.Companion.Name);
+            }
+
             this.Events.GameLoop.UpdateTicked += this.GameLoop_UpdateTicked;
             this.Events.GameLoop.TimeChanged += this.GameLoop_TimeChanged;
             this.Events.Player.Warped += this.Player_Warped;
@@ -152,6 +158,12 @@ namespace NpcAdventure.StateMachine.State
         {
             this.BuffManager.ReleaseBuffs();
             this.ai.Dispose();
+
+            if (Patches.SpouseReturnHomePatch.recruitedSpouses.IndexOf(this.StateMachine.Companion.Name) >= 0)
+            {
+                // Allow dissmised wife/husband to return to FarmHouse when is on Farm
+                Patches.SpouseReturnHomePatch.recruitedSpouses.Remove(this.StateMachine.Companion.Name);
+            }
 
             this.StateMachine.Companion.eventActor = false;
             this.StateMachine.Companion.farmerPassesThrough = false;

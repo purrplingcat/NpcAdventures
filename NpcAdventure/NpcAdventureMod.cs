@@ -58,12 +58,10 @@ namespace NpcAdventure
             
             //Harmony
             HarmonyInstance harmony = HarmonyInstance.Create("Purrplingcat.NpcAdventure");
-            harmony.Patch(
-                original: AccessTools.Method(typeof(GameLocation), "draw"),
-                postfix: new HarmonyMethod(typeof(Patches.GameLocationDrawPatch), nameof(Patches.GameLocationDrawPatch.Postfix))
-            );
-
-            Patches.GameLocationDrawPatch.Setup(this.SpecialEvents);
+            
+            Patches.SpouseReturnHomePatch.Setup(harmony);
+            Patches.CompanionSayHiPatch.Setup(harmony, this.companionManager);
+            Patches.GameLocationDrawPatch.Setup(harmony, this.SpecialEvents);
         }
 
         private void Specialized_LoadStageChanged(object sender, LoadStageChangedEventArgs e)
@@ -117,6 +115,9 @@ namespace NpcAdventure
                 return;
             this.companionManager.UninitializeCompanions();
             this.contentLoader.InvalidateCache();
+
+            // Clean data in patches
+            Patches.SpouseReturnHomePatch.recruitedSpouses.Clear();
         }
 
         private void GameLoop_SaveLoaded(object sender, StardewModdingAPI.Events.SaveLoadedEventArgs e)

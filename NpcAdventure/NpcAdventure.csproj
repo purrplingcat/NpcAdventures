@@ -96,6 +96,8 @@
     <Compile Include="Model\CompanionMetaData.cs" />
     <Compile Include="Objects\Package.cs" />
     <Compile Include="Patches\GameLocationDrawPatch.cs" />
+    <Compile Include="Patches\CompanionSayHiPatch.cs" />
+    <Compile Include="Patches\SpouseReturnHomePatch.cs" />
     <Compile Include="StateMachine\StateFeatures\IRequestedDialogueCreator.cs" />
     <Compile Include="StateMachine\StateFeatures\IDialogueDetector.cs" />
     <Compile Include="StateMachine\StateFeatures\ICompanionIntegrator.cs" />
