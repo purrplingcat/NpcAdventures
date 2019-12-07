@@ -146,6 +146,9 @@
     <None Include="assets\Dialogue\AbigailSpouse.fr-FR.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\Dialogue\Abigail.zh-CN.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\Dialogue\AbigailSpouse.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -153,6 +156,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Dialogue\Alex.fr-FR.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\Dialogue\AbigailSpouse.zh-CN.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Dialogue\Alex.json">
@@ -164,6 +170,9 @@
     <None Include="assets\Dialogue\Elliott.fr-FR.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\Dialogue\Alex.zh-CN.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\Dialogue\Elliott.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -171,6 +180,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Dialogue\Emily.fr-FR.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\Dialogue\Elliott.zh-CN.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Dialogue\Emily.json">
@@ -182,10 +194,16 @@
     <None Include="assets\Dialogue\Haley.fr-FR.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\Dialogue\Emily.zh-CN.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\Dialogue\Haley.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Dialogue\Haley.pt-BR.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\Dialogue\Haley.zh-CN.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Dialogue\Harvey.fr-FR.json">
@@ -197,6 +215,9 @@
     <None Include="assets\Dialogue\Harvey.pt-BR.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\Dialogue\Harvey.zh-CN.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\Dialogue\Leah.fr-FR.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -204,6 +225,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Dialogue\Leah.pt-BR.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\Dialogue\Leah.zh-CN.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Dialogue\Maru.fr-FR.json">
@@ -215,10 +239,16 @@
     <None Include="assets\Dialogue\Maru.pt-BR.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\Dialogue\Maru.zh-CN.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\Dialogue\Penny.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Dialogue\Penny.pt-BR.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\Dialogue\Penny.zh-CN.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Dialogue\Penny_.fr-FR.json">
@@ -236,10 +266,16 @@
     <None Include="assets\Dialogue\Sebastian.fr-FR.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\Dialogue\Sam.zh-CN.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\Dialogue\Sebastian.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Dialogue\Sebastian.pt-BR.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\Dialogue\Sebastian.zh-CN.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Dialogue\Shane.fr-FR.json">
@@ -251,6 +287,9 @@
     <None Include="assets\Dialogue\Shane.pt-BR.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\Dialogue\Shane.zh-CN.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\Strings\SpeechBubbles.fr-FR.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -260,6 +299,9 @@
     <None Include="assets\Strings\SpeechBubbles.pt-BR.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\Strings\SpeechBubbles.zh-CN.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\Strings\Strings.fr-FR.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -267,6 +309,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Strings\Strings.pt-BR.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\Strings\Strings.zh-CN.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="manifest.origin.json" />

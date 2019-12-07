@@ -1,0 +1,11 @@
+{
+  "companionAccepted": "你想和我一起去冒险吗?$u#$b# 好吧 @, 那你还在等什么?我们走!$h",
+  "companionRejected": "听起来不错, 但我不能去. 抱歉.$s",
+  "companionRejectedNight": "抱歉, 今天去探险的话已经太晚了.$s",
+  "companionDismiss": "谢谢你带我来 @, 这真令人兴奋.$h#$b#我希望有机会我能再来一次,再见.$h",
+  "companionDismissAuto": "嘿 @, 时间不早了,我很累了.#$b# 我现在要回家了. 如果你需要一个冒险伙伴, 晚安.$h",
+  "companionRecruited": "我们能去山洞吗 @?$9 我一直想去探索那个地方.",
+  "companion_Town": "城镇",
+  "companion_Town_fall": "树叶覆盖着道路.#$b#鹈鹕镇充满了生机勃勃的色彩.很美.",
+  "companion_Town_fall_Rainy": "我喜欢秋天下雨的时候.$l#$b#那能让我保持冷静的思考...#$b#在雨中戏水是非常有趣的!$h"
+}
