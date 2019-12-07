@@ -1,0 +1,11 @@
+{
+  "companionAccepted": "Tu veux partir à l'aventure avec moi ?$u#$b# Bah @, qu'est ce qu'on attend ? Go !$h",
+  "companionRejected": "Je trouves ça cool mais je peux pas, désolé.$s",
+  "companionRejectedNight": "Désolé il est un peu tard pour aujourd'hui.$s",
+  "companionDismiss": "Merci pour cette aventure @, c'était vivifiant.$h#$b#On refait ça bientôt j'espère ? A plus.$h",
+  "companionDismissAuto": "Hey @, la nuit tombe et je suis crevée.#$b# C'était cool mais je vais rentrer, bonne nuit :)$h",
+  "companionRecruited": "On va aux mines @?$9 J'adore les explorer avec toi.$6",
+  "companion_Town": "Petite ville...",
+  "companion_Town_fall": "C'est trop beau quand les feuilles couvrent les chemins.#$b#La ville vibre des couleurs de l'automne.",
+  "companion_Town_fall_Rainy": "J'aime vraiment quand il pleut en automne.$l#$b#Ça me libère l'esprit...#$b#sans même parler du fun que j'ai à sauter dans les flaques !$h"
+}

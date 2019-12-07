@@ -1,0 +1,10 @@
+﻿{
+  "companionAccepted": "Très bonne idée !$h En plus il faut que je collecte des échantillons dehors.",
+  "companionRejected": "Je peux pas. J'ai du travail au labo.",
+  "companionRejectedNight": "Pas maintenant, je travaille sur un truc important.",
+  "companionDismiss": "Ok ! Et merci, j'ai pu collecter ce dont j'avais besoin.",
+  "companionDismissAuto": "Il est l'heure que j'y aille. Merci d'avoir revigoré ma journée @!$h",
+  "companionRecruited": "Je me demande si l'on va decouvrir quelquechose.$h",
+  "heal": "J'vais te rafistoler.$3",
+  "nomedkits": "Faut que je passe à la clinique, je n'ai plus de médikit.$6"
+}

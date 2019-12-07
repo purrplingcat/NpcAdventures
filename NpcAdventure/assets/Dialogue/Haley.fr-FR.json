@@ -1,0 +1,8 @@
+{
+  "companionAccepted": "D'accord, évitons juste les mines. Je n'ai pas envie de me salir.",
+  "companionRejected": "Non, ça à l'air ennuyant..$2",
+  "companionRejectedNight": "Il est trop tard pour faire quoi que ce soit.$3",
+  "companionDismiss": "...Haan, je commençais à m'amuser.#$b#Bon on se voit plus tard alors !$h",
+  "companionDismissAuto": "*Baille*#$4#Désolé @ Je suis trop fatiguée pour continuer. A plus tard.",
+  "companionRecruited": "Super !#$b#Je pourrais peut-être en profiter pour faire quelques photos !$h"
+}
