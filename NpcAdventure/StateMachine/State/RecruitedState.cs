@@ -198,7 +198,7 @@ namespace NpcAdventure.StateMachine.State
 
         private void GameLoop_UpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (e.IsMultipleOf(25))
+            if (e.IsMultipleOf(20))
                 this.FixProblemsWithNPC();
 
             this.ai.Update(e);
@@ -208,8 +208,10 @@ namespace NpcAdventure.StateMachine.State
         {
             this.StateMachine.Companion.movementPause = 0;
             this.StateMachine.Companion.followSchedule = false;
+            this.StateMachine.Companion.Schedule = null;
             this.StateMachine.Companion.controller = null;
             this.StateMachine.Companion.temporaryController = null;
+            this.StateMachine.Companion.eventActor = true;
         }
 
         private void Player_Warped(object sender, WarpedEventArgs e)
