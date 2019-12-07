@@ -5,7 +5,7 @@
   "recruitedWant.dismiss": "你现在可以走了.谢谢你的帮助,再见",
   "recruitedWant.nothing": "(结束对话)",
   "spouseBuffDescription": "+2 运气 (和发光), 因为你结婚了 {0}",
-  "bagItemsSentLetter": "嗨 {0},^^你把一些东西忘在我包里了. 我把它们给你了.^Yesterday's 冒险太棒了,我期待着下一次.^^    - {1}",
+  "bagItemsSentLetter": "嗨 {0},^^你把一些东西忘在我包里了. 我把它们给你了.^ 昨天的冒险太棒了,我期待着下一次.^^    - {1}",
   "healed": "{0} 治疗了你! (+{1} Health)",
   "lifeSaved": "{0} 这次救了你的命 耐心一点.",
   "skill.warrior": "勇士 ({0}'s skill)",
