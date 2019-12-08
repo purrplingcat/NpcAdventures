@@ -13,5 +13,6 @@
   "skill.doctor": "Doutor ({0} de habilidade)",
   "skillDescription.doctor": "Pode te curar quando sua vida está abaixo de  30%.",
   "skill.fighter": "Lutador ({0} de habilidade)",
-  "skillDescription.fighter": "Luta com espadas."
+  "skillDescription.fighter": "Luta com espadas.",
+  "recruitedCompanionHint": "Compagnon recruté: {0}"
 }
