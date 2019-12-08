@@ -13,5 +13,6 @@
   "skill.doctor": "Docteur (Compétence de {0})",
   "skillDescription.doctor": "Peut soigner dans les situations de dangers.",
   "skill.fighter": "Combattant (Compétence de {0})",
-  "skillDescription.fighter": "Peut se battre avec son épée."
+  "skillDescription.fighter": "Peut se battre avec son épée.",
+  "recruitedCompanionHint": "Compagnon recruté: {0}"
 }
