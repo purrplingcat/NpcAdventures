@@ -72,6 +72,7 @@ namespace NpcAdventure.StateMachine.State
                 this.StateMachine.CompanionManager.Hud.AddSkill(skill, text);
             }
 
+            this.StateMachine.CompanionManager.Hud.AssignCompanion(this.StateMachine.Companion);
             this.ai.Setup();
         }
 
@@ -111,7 +112,7 @@ namespace NpcAdventure.StateMachine.State
 
             this.ai = null;
             this.dismissalDialogue = null;
-            this.StateMachine.CompanionManager.Hud.Skills.Clear();
+            this.StateMachine.CompanionManager.Hud.Reset();
         }
 
         private void GameLoop_TimeChanged(object sender, TimeChangedEventArgs e)

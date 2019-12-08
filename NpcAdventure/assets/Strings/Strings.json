@@ -13,5 +13,6 @@
   "skill.doctor": "Doctor ({0}'s skill)",
   "skillDescription.doctor": "Can heal you when your health is unde 30%.",
   "skill.fighter": "Fighter ({0}'s skill)",
-  "skillDescription.fighter": "Can fight with sword."
+  "skillDescription.fighter": "Can fight with sword.",
+  "recruitedCompanionHint": "Recruited companion: {0}"
 }
