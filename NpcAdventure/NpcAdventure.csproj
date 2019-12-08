@@ -97,6 +97,7 @@
     <Compile Include="AI\Controller\IdleController.LookAroundBehavior.cs" />
     <Compile Include="AI\EventArgsLocationChanged.cs" />
     <Compile Include="Buffs\BuffManager.cs" />
+    <Compile Include="Commander.cs" />
     <Compile Include="CompanionManager.cs" />
     <Compile Include="AI\Controller\IController.cs" />
     <Compile Include="Compatibility\CustomKissingModProxy.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="Driver\DialogueDriver.cs" />
     <Compile Include="AI\Controller\FollowController.cs" />
     <Compile Include="Driver\HintDriver.cs" />
+    <Compile Include="Driver\MailDriver.cs" />
     <Compile Include="Driver\StuffDriver.cs" />
     <Compile Include="Events\ISpecialModEvents.cs" />
     <Compile Include="Events\SpecialModEvents.cs" />
@@ -121,15 +123,28 @@
     <Compile Include="Model\BagDumpInfo.cs" />
     <Compile Include="Model\BuffInfo.cs" />
     <Compile Include="Model\CompanionMetaData.cs" />
+    <Compile Include="Patches\QuestPatch.cs" />
+    <Compile Include="Story\Messaging\GameMasterMessage.cs" />
+    <Compile Include="Story\Messaging\IGameMasterMessage.cs" />
+    <Compile Include="Story\Messaging\RecruitMessage.cs" />
+    <Compile Include="Story\GameMasterState.cs" />
     <Compile Include="Objects\Package.cs" />
     <Compile Include="Patches\GameLocationDrawPatch.cs" />
     <Compile Include="Patches\CompanionSayHiPatch.cs" />
     <Compile Include="Patches\SpouseReturnHomePatch.cs" />
+    <Compile Include="Patches\MailBoxPatch.cs" />
     <Compile Include="StateMachine\StateFeatures\IRequestedDialogueCreator.cs" />
     <Compile Include="StateMachine\StateFeatures\IDialogueDetector.cs" />
     <Compile Include="StateMachine\StateFeatures\ICompanionIntegrator.cs" />
     <Compile Include="StateMachine\State\RecruitedState.cs" />
     <Compile Include="StateMachine\State\UnavailableState.cs" />
+    <Compile Include="Story\GameMaster.cs" />
+    <Compile Include="Story\IGameMaster.cs" />
+    <Compile Include="Story\IScenario.cs" />
+    <Compile Include="Story\Scenario\AdventureBegins.cs" />
+    <Compile Include="Story\Scenario\BaseScenario.cs" />
+    <Compile Include="Story\Scenario\QuestScenario.cs" />
+    <Compile Include="Story\StoryHelper.cs" />
     <Compile Include="Utils\DialogueHelper.VariousKeyGenerator.cs" />
     <Compile Include="Utils\Extensions.cs" />
     <Compile Include="Utils\Helper.cs" />
@@ -154,10 +169,16 @@
     <None Include="assets\Data\AnimationDescriptions.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\Data\Events.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\Data\IdleBehaviors.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Data\IdleNPCDefinitions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\Data\Quests.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Dialogue\Abigail.fr-FR.json">
@@ -308,6 +329,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Strings\SpeechBubbles.fr-FR.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\Strings\Mail.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Strings\SpeechBubbles.json">
