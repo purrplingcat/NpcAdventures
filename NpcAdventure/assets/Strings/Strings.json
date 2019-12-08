@@ -11,7 +11,7 @@
   "skill.warrior": "Warrior ({0}'s skill)",
   "skillDescription.warrior": "Can fight with sword and use critical defense in danger.",
   "skill.doctor": "Doctor ({0}'s skill)",
-  "skillDescription.doctor": "Can heal you when your health is unde 30%.",
+  "skillDescription.doctor": "Can heal you when your health is under 30%.",
   "skill.fighter": "Fighter ({0}'s skill)",
   "skillDescription.fighter": "Can fight with sword.",
   "recruitedCompanionHint": "Recruited companion: {0}"

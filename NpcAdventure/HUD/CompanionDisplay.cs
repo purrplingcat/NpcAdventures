@@ -66,20 +66,21 @@ namespace NpcAdventure.HUD
         public void DrawSkills(SpriteBatch spriteBatch)
         {
             Rectangle titleSafeArea = Game1.graphics.GraphicsDevice.Viewport.GetTitleSafeArea();
+            Vector2 position = new Vector2(Game1.viewport.Width - 70 - IClickableMenu.borderWidth, 370);
 
             for (int i = 0; i < this.Skills.Count; i++)
             {
                 var skill = this.Skills[i];
-                float xOffset = 96;
-                float yOffset = 52;
-                float iconOffset = 20;
-                Vector2 iconPosition = new Vector2(titleSafeArea.Left + xOffset + iconOffset + (i * 76), titleSafeArea.Bottom - yOffset);
-                Vector2 framePosition = new Vector2(titleSafeArea.Left + xOffset + (i * 76), titleSafeArea.Bottom - (yOffset + iconOffset) - 4);
+                float xOffset = 50;
+                float iconOffset = 16;
+                float iconGrid = 68;
+                Vector2 iconPosition = new Vector2(position.X - xOffset + iconOffset - (i * iconGrid), position.Y);
+                Vector2 framePosition = new Vector2(position.X - xOffset - (i * iconGrid), position.Y - iconOffset - 3);
 
                 if (Game1.isOutdoorMapSmallerThanViewport())
                 {
-                    iconPosition.X = Math.Max(titleSafeArea.Left + xOffset + iconOffset + (i * 76), -Game1.viewport.X + xOffset + iconOffset + (i * 76));
-                    framePosition.X = Math.Max(titleSafeArea.Left + xOffset + (i * 76), -Game1.viewport.X + xOffset + (i * 76));
+                    iconPosition.X = Math.Min(position.X, -Game1.viewport.X + Game1.currentLocation.map.Layers[0].LayerWidth * 64 - 70 - IClickableMenu.borderWidth) - xOffset + iconOffset - (i * iconGrid);
+                    framePosition.X = Math.Min(position.X, -Game1.viewport.X + Game1.currentLocation.map.Layers[0].LayerWidth * 64 - 70 - IClickableMenu.borderWidth) - xOffset - (i * iconGrid);
                 }
 
                 skill.UpdatePosition(framePosition, iconPosition);
@@ -89,11 +90,11 @@ namespace NpcAdventure.HUD
 
         public void DrawAvatar(SpriteBatch spriteBatch)
         {
-            Vector2 position = new Vector2(0, Game1.viewport.Height - 64 - IClickableMenu.borderWidth + 4);
+            Vector2 position = new Vector2(Game1.viewport.Width - 70 - IClickableMenu.borderWidth, 318);
             if (Game1.isOutdoorMapSmallerThanViewport())
-                position.X = Math.Max(position.X, (float)(-Game1.viewport.X));
+                position.X = Math.Min(position.X, -Game1.viewport.X + Game1.currentLocation.map.Layers[0].LayerWidth * 64 - 70 - IClickableMenu.borderWidth);
             Utility.makeSafe(ref position, 64, 64);
-            this.avatar.bounds = new Rectangle((int)position.X + 16, (int)position.Y, 64, 64);
+            this.avatar.bounds = new Rectangle((int)position.X + 16, (int)position.Y, 64, 96);
             this.avatar.draw(spriteBatch, Color.White, 1);
         }
 

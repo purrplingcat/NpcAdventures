@@ -40,8 +40,8 @@ namespace NpcAdventure.HUD
                     return;
             }
 
-            spriteBatch.Draw(Game1.mouseCursors, this.framePosition, new Rectangle(384, 373, 18, 18), Color.White * 1f, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
-            spriteBatch.Draw(Game1.mouseCursors, this.iconPosition, icon, Color.White * 1f, 0f, Vector2.Zero, 3f, SpriteEffects.None, 1f);
+            spriteBatch.Draw(Game1.mouseCursors, this.framePosition, new Rectangle(384, 373, 18, 18), Color.White * 1f, 0f, Vector2.Zero, 3.4f, SpriteEffects.None, 1f);
+            spriteBatch.Draw(Game1.mouseCursors, this.iconPosition, icon, Color.White * 1f, 0f, Vector2.Zero, 2.8f, SpriteEffects.None, 1f);
         }
 
         public void PerformHoverAction(int x, int y)
