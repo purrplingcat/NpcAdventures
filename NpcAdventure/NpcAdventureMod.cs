@@ -10,6 +10,7 @@ using Harmony;
 using System.Reflection;
 using NpcAdventure.Events;
 using NpcAdventure.Model;
+using NpcAdventure.HUD;
 
 namespace NpcAdventure
 {
@@ -17,6 +18,7 @@ namespace NpcAdventure
     public class NpcAdventureMod : Mod
     {
         private CompanionManager companionManager;
+        private CompanionDisplay companionHud;
 
         public static IMonitor GameMonitor { get; private set; }
 
@@ -44,6 +46,20 @@ namespace NpcAdventure
             events.GameLoop.DayEnding += this.GameLoop_DayEnding;
             events.GameLoop.DayStarted += this.GameLoop_DayStarted;
             events.GameLoop.GameLaunched += this.GameLoop_GameLaunched;
+            events.GameLoop.UpdateTicked += this.GameLoop_UpdateTicked;
+            events.Display.RenderedHud += this.Display_RenderedHud;
+        }
+
+        private void Display_RenderedHud(object sender, RenderedHudEventArgs e)
+        {
+            if (Context.IsWorldReady && this.companionHud != null)
+                this.companionHud.Draw(e.SpriteBatch);
+        }
+
+        private void GameLoop_UpdateTicked(object sender, UpdateTickedEventArgs e)
+        {
+            if (Context.IsWorldReady && this.companionHud != null)
+                this.companionHud.Update(e);
         }
 
         private void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)
@@ -53,7 +69,8 @@ namespace NpcAdventure
             this.HintDriver = new HintDriver(this.Helper.Events);
             this.StuffDriver = new StuffDriver(this.Helper.Data, this.Monitor);
             this.contentLoader = new ContentLoader(this.Helper.Content, this.Helper.ContentPacks, this.ModManifest.UniqueID, "assets", this.Helper.DirectoryPath, this.Monitor);
-            this.companionManager = new CompanionManager(this.DialogueDriver, this.HintDriver, this.config, this.Monitor);
+            this.companionHud = new CompanionDisplay(this.config);
+            this.companionManager = new CompanionManager(this.DialogueDriver, this.HintDriver, this.companionHud, this.config, this.Monitor);
             this.StuffDriver.RegisterEvents(this.Helper.Events);
             
             //Harmony

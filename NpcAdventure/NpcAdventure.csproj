@@ -83,6 +83,8 @@
     <Compile Include="Driver\StuffDriver.cs" />
     <Compile Include="Events\ISpecialModEvents.cs" />
     <Compile Include="Events\SpecialModEvents.cs" />
+    <Compile Include="HUD\CompanionDisplay.cs" />
+    <Compile Include="HUD\CompanionSkill.cs" />
     <Compile Include="Internal\IDrawable.cs" />
     <Compile Include="Loader\ContentPacks\AssetPatch.cs" />
     <Compile Include="Loader\AssetsManager.cs" />
