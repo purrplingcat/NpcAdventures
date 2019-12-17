@@ -4,5 +4,11 @@
   "companionRejectedNight": "Not now, I'm exhausted.",
   "companionDismiss": "I should probably be practicing right now anyway.",
   "companionDismissAuto": "I should probably go, I have work tomorrow. Bye.",
-  "companionRecruited": "The clouds look great this time of year, don't they?"
+  "companionRecruited": "The clouds look great this time of year, don't they?",
+  "companion_Beach": "The sand is getting inside my shoe's holes. I think it’s time for new ones...$s",
+  "companion_Farm": "Your place is so quiet. Perfect for playing guitar!",
+  "companion_Forest": "This place makes being in the middle of nowhere not so bad after all.",
+  "companion_Mine": "Do you want to go down the mine? Really?$8#$b#...$9#$b#I’m not scared, of course. Just... Cautious.$7",
+  "companion_Mountain": "The view here sure is inspiring. I should come more often.$l",
+  "companion_Town": "Do you think we have time for some skating? But be careful to not let the mayor see us..."
 }
