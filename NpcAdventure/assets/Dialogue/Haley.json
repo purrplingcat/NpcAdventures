@@ -4,5 +4,11 @@
   "companionRejectedNight": "It's too late to be doing anything now.$3",
   "companionDismiss": "...Awww, I was just starting to enjoy myself too.#$b#Well I guess I'll see you later!$h",
   "companionDismissAuto": "*Yawns*#$4#Sorry @ I'm too tired to continue. I'll see you later.",
-  "companionRecruited": "Yay!#$b#Maybe I can take some photos along the way!$h"
+  "companionRecruited": "Yay!#$b#Maybe I can take some photos along the way!$h",
+  "companion_Beach_summer": "We are getting a suntan today? Good idea!$h",
+  "companion_Farm": "You sure do have a lot of dir… land here. That’s why you are always dirty, I guess.",
+  "companion_Forest": "I think there is plenty of room here to build a mall.#$b#...$7#$b#What?$u",
+  "companion_Mine": "It’s pretty dark here. Luckily I’m used to it. Watch for the steps!",
+  "companion_Mountain": "This is not a place to come wearing heels. *sigh*$s",
+  "companion_Town": "Let me get a change of clothes since we are here."
 }
