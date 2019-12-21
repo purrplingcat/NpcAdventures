@@ -30,7 +30,7 @@ namespace NpcAdventure.StateMachine.State
 
         public RecruitedState(CompanionStateMachine stateMachine, IModEvents events, ISpecialModEvents specialEvents, IMonitor monitor) : base(stateMachine, events, monitor)
         {
-            this.BuffManager = new BuffManager(stateMachine.Companion, stateMachine.CompanionManager.Farmer, stateMachine.ContentLoader);
+            this.BuffManager = new BuffManager(stateMachine.Companion, stateMachine.CompanionManager.Farmer, stateMachine.ContentLoader, this.monitor);
             this.SpecialEvents = specialEvents;
         }
 
@@ -61,11 +61,6 @@ namespace NpcAdventure.StateMachine.State
             this.Events.Player.Warped += this.Player_Warped;
             this.SpecialEvents.RenderedLocation += this.SpecialEvents_RenderedLocation;
 
-            if (this.BuffManager.HasAssignableBuffs())
-                this.BuffManager.AssignBuffs();
-            else
-                this.monitor.Log($"Companion {this.StateMachine.Name} has no buffs defined!", LogLevel.Alert);
-
             if (DialogueHelper.GetVariousDialogueString(this.StateMachine.Companion, "companionRecruited", out string dialogueText))
                 this.StateMachine.Companion.setNewDialogue(dialogueText);
             this.CanCreateDialogue = true;
@@ -74,11 +69,12 @@ namespace NpcAdventure.StateMachine.State
             {
                 string text = this.StateMachine.ContentLoader.LoadString($"Strings/Strings:skill.{skill}", this.StateMachine.Companion.displayName)
                         + Environment.NewLine
-                        + this.StateMachine.ContentLoader.LoadString($"Strings/Strings:skillDescription.{skill}");
+                        + this.StateMachine.ContentLoader.LoadString($"Strings/Strings:skillDescription.{skill}").Replace("#", Environment.NewLine);
                 this.StateMachine.CompanionManager.Hud.AddSkill(skill, text);
             }
 
             this.StateMachine.CompanionManager.Hud.AssignCompanion(this.StateMachine.Companion);
+            this.BuffManager.AssignBuffs();
             this.ai.Setup();
         }
 
