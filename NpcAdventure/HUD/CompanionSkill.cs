@@ -9,6 +9,8 @@ namespace NpcAdventure.HUD
     {
         private Vector2 framePosition;
         private Vector2 iconPosition;
+        private int ticks;
+        private Color glowColor;
 
         public CompanionSkill(string type, string description)
         {
@@ -20,9 +22,11 @@ namespace NpcAdventure.HUD
         public int Index { get; set; }
         public bool ShowTooltip { get; private set; }
         public string HoverText { get; set; }
+        public bool Glowing { get => this.ticks > 0; }
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            Color glowing = this.ticks > 0 ? this.glowColor : Color.White;
             Rectangle icon;
 
             switch (this.Type)
@@ -40,7 +44,7 @@ namespace NpcAdventure.HUD
                     return;
             }
 
-            spriteBatch.Draw(Game1.mouseCursors, this.framePosition, new Rectangle(384, 373, 18, 18), Color.White * 1f, 0f, Vector2.Zero, 3.4f, SpriteEffects.None, 1f);
+            spriteBatch.Draw(Game1.mouseCursors, this.framePosition, new Rectangle(384, 373, 18, 18), glowing * 1f, 0f, Vector2.Zero, 3.4f, SpriteEffects.None, 1f);
             spriteBatch.Draw(Game1.mouseCursors, this.iconPosition, icon, Color.White * 1f, 0f, Vector2.Zero, 2.8f, SpriteEffects.None, 1f);
         }
 
@@ -57,6 +61,12 @@ namespace NpcAdventure.HUD
             this.ShowTooltip = false;
         }
 
+        public void Glow(Color color, int duration)
+        {
+            this.glowColor = color;
+            this.ticks = duration * 60;
+        }
+
         internal void UpdatePosition(Vector2 framePosition, Vector2 iconPosition)
         {
             this.framePosition = framePosition;
@@ -65,7 +75,7 @@ namespace NpcAdventure.HUD
 
         public void Update(UpdateTickedEventArgs e)
         {
-
+            this.ticks = this.ticks > 0 ? --this.ticks : this.ticks;
         }
     }
 }

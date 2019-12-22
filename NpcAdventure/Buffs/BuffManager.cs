@@ -50,16 +50,15 @@ namespace NpcAdventure.Buffs
             if (married && this.Farmer.getFriendshipHeartLevelForNPC(this.Companion.Name) >= 10)
             {
                 string wifeOrHusband = this.ContentLoader.LoadString($"Strings/Strings:spouse{(this.Companion.Gender == 1 ? "Wife" : "Husband")}");
-                desc += Environment.NewLine + this.ContentLoader.LoadString("Strings/Strings:spouseBuffDescription", wifeOrHusband + " " + this.Companion.displayName).Replace("#", Environment.NewLine);
+                desc += ("##" + this.ContentLoader.LoadString("Strings/Strings:spouseBuffDescription", wifeOrHusband + " " + this.Companion.displayName)).Replace("#", Environment.NewLine);
                 buffAttrs[4] += 1; // extra luck
                 buffAttrs[8] += 1; // extra magnetic radius
             }
 
             // Main buff indicator
-            Buff buff = new Buff(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 30, this.Companion.Name, this.Companion.displayName)
+            Buff buff = new Buff(desc, DURATION, this.Companion.Name, 21)
             {
-                millisecondsDuration = DURATION,
-                description = desc,
+                displaySource = this.Companion.displayName,
             };
 
             // Stat buffs
@@ -70,12 +69,8 @@ namespace NpcAdventure.Buffs
                 30, this.Companion.Name, this.Companion.displayName)
             {
                 millisecondsDuration = DURATION,
+                glow = married ? new Color(114, 0, 0, 50) : Color.White,
             };
-
-            if (married)
-            {
-                buff.glow = new Color(114, 0, 0, 50);
-            }
 
             Game1.buffsDisplay.addOtherBuff(buff);
             Game1.buffsDisplay.addOtherBuff(statBuff);

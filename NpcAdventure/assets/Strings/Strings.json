@@ -11,7 +11,7 @@
   "skill.warrior": "Warrior ({0}'s skill)",
   "skillDescription.warrior": "Can fight with sword and use critical defense in danger.",
   "skill.doctor": "Doctor ({0}'s skill)",
-  "skillDescription.doctor": "Can heal you when your health is under 30%. Just talk with your companion if you are injured.",
+  "skillDescription.doctor": "Can heal you when your health is under 30%.#Just talk with your companion if you are injured.",
   "skill.fighter": "Fighter ({0}'s skill)",
   "skillDescription.fighter": "Can fight with sword.",
   "recruitedCompanionHint": "Companion: {0}",
@@ -19,5 +19,6 @@
   "companionState_idle": "Status: Idle",
   "companionState_fight": "Status: Fight",
   "spouseWife": "wife",
-  "spouseHusband": "husband"
+  "spouseHusband": "husband",
+  "hudSkillUsed": "(Skill's effect used)"
 }
