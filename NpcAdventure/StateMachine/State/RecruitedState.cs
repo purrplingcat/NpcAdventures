@@ -15,6 +15,7 @@ using StardewModdingAPI;
 using NpcAdventure.AI;
 using Microsoft.Xna.Framework.Graphics;
 using NpcAdventure.Events;
+using NpcAdventure.Internal;
 
 namespace NpcAdventure.StateMachine.State
 {
@@ -192,11 +193,25 @@ namespace NpcAdventure.StateMachine.State
             this.TryPushLocationDialogue(e.NewLocation);
         }
 
+        private Dialogue GenerateLocationDialogue(GameLocation location, NPC companion)
+        {
+            if (DialogueHelper.GenerateStaticDialogue(companion, location, "companionOnce") is CompanionDialogue dialogueOnce
+                && !this.StateMachine.CompanionManager.Farmer.hasOrWillReceiveMail(dialogueOnce.Tag))
+            {
+                // Remember only once spoken dialogue
+                dialogueOnce.Remember = true;
+                return dialogueOnce;
+            }
+
+            // Generate standard companion various dialogue if no once dialogue defined or once dialogue spoken
+            return DialogueHelper.GenerateDialogue(companion, location, "companion");
+        }
+
         private bool TryPushLocationDialogue(GameLocation location)
         {
             NPC companion = this.StateMachine.Companion;
-            Dialogue newDialogue = DialogueHelper.GenerateDialogue(companion, location, "companion");
             Stack<Dialogue> temp = new Stack<Dialogue>(this.StateMachine.Companion.CurrentDialogue.Count);
+            Dialogue newDialogue = this.GenerateLocationDialogue(location, companion);
 
             if ((newDialogue == null && this.currentLocationDialogue == null) || (newDialogue != null && newDialogue.Equals(this.currentLocationDialogue)))
                 return false;
