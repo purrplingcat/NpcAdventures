@@ -4,5 +4,14 @@
   "companionRejectedNight": "I'm going to the saloon tonight.",
   "companionDismiss": "I guess I'll head to the saloon. What else is there to do?",
   "companionDismissAuto": "I'm going to go to the saloon now. Bye.",
-  "companionRecruited": "I don't have all day."
+  "companionRecruited": "I don't have all day.",
+  "companion_Beach": "I'm really not the biggest fan of sand and surf, but there's something peaceful about this beach.",
+  "companion_Beach~1": "Wouldn't it be cool if they set up a tiki bar here?#$b#Like the saloon, but with beach themed food and drinks.#$b#Yeah, and non-alcoholic options. For the kids and stuff, and maybe us big kids too.$h",
+  "companion_Beach~2": "I can't even remember the last time I went fishing.#$b#I wonder if Willy could give me some tips?",
+  "companion_Forest": "This fresh air is doing wonders for my mood.$h#$b#I appreciate the invite today, @.",
+  "companion_Mine": "Ugh. Seriously, @, the mines?$a#$b#Couldn't we just hang out at the saloon?$s",
+  "companion_Mine~1": "It's so dark and dingy in here.$s#$b#Like I'm not depressed enough already.$s",
+  "companion_Mine~2": "Oh. We're at the mines.#$b#It's a good thing I know how to fight.$6",
+  "companion_Mine~3": "I must have slept okay last night, because this isn't totally bumming me out.$6#$b#Let's mine some ore! Or whatever.$h",
+  "companion_Saloon": "Ah, my ol' home away from home.$h#$b#Good choice, @.$h"
 }
