@@ -84,7 +84,7 @@ namespace NpcAdventure.HUD
 
         public void DrawSkills(SpriteBatch spriteBatch)
         {
-            Vector2 position = new Vector2(Game1.viewport.Width - 80 - IClickableMenu.borderWidth, 370);
+            Vector2 position = new Vector2(Game1.viewport.Width - 80 - IClickableMenu.borderWidth, 390);
             var skills = this.Skills.Values.ToList();
 
             for (int i = 0; i < skills.Count; i++)
@@ -110,7 +110,7 @@ namespace NpcAdventure.HUD
         public void DrawAvatar(SpriteBatch spriteBatch)
         {
             Rectangle icon;
-            Vector2 position = new Vector2(Game1.viewport.Width - 70 - IClickableMenu.borderWidth, 318);
+            Vector2 position = new Vector2(Game1.viewport.Width - 70 - IClickableMenu.borderWidth, 334);
             if (Game1.isOutdoorMapSmallerThanViewport())
                 position.X = Math.Min(position.X, -Game1.viewport.X + Game1.currentLocation.map.Layers[0].LayerWidth * 64 - 70 - IClickableMenu.borderWidth);
             Utility.makeSafe(ref position, 64, 64);

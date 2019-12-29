@@ -63,6 +63,7 @@ You can add your custom NPC as companion to this mod via content pack. See [docu
 - English (corashirou, [smirkii](https://www.nexusmods.com/users/75542598), [purrplingcat](https://www.nexusmods.com/users/68185132))
 - Portuguese Brazilian ([andril11](https://www.nexusmods.com/users/68848663))
 - French ([Reikounet](https://www.nexusmods.com/users/70092158))
+- Chinese ([wu574932346](https://www.nexusmods.com/users/67777356))
 
 ## Feature preview
 
@@ -99,6 +100,7 @@ More features comming soon...
 - [smirkii](https://www.nexusmods.com/users/75542598) - author of dialogues and texts
 - [andril11](https://www.nexusmods.com/users/68848663) - Portuguese translation
 - [Reikounet](https://www.nexusmods.com/users/70092158) - French translation
+- [wu574932346](https://www.nexusmods.com/users/67777356) - Chinese translation
 
 [library]: docs/library.gif
 [ask2follow]: docs/asktofollow.gif
