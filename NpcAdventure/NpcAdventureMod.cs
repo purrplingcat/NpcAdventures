@@ -68,7 +68,7 @@ namespace NpcAdventure
             this.DialogueDriver = new DialogueDriver(this.Helper.Events);
             this.HintDriver = new HintDriver(this.Helper.Events);
             this.StuffDriver = new StuffDriver(this.Helper.Data, this.Monitor);
-            this.contentLoader = new ContentLoader(this.Helper.Content, this.Helper.ContentPacks, this.ModManifest.UniqueID, "assets", this.Helper.DirectoryPath, this.Monitor);
+            this.contentLoader = new ContentLoader(this.Helper.Content, this.Helper.ContentPacks, this.ModManifest.UniqueID, "assets", this.Monitor); // TODO: In feature/adventure-begins moved to Entry(). Dont't forget make compatible args
             this.companionHud = new CompanionDisplay(this.config, this.contentLoader);
             this.companionManager = new CompanionManager(this.DialogueDriver, this.HintDriver, this.companionHud, this.config, this.Monitor);
             this.StuffDriver.RegisterEvents(this.Helper.Events);

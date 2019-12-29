@@ -32,15 +32,15 @@ namespace NpcAdventure.StateMachine.State
             if (leader.getFriendshipHeartLevelForNPC(n.Name) < this.StateMachine.CompanionManager.Config.HeartThreshold || Game1.timeOfDay >= 2200)
             {
                 Dialogue rejectionDialogue = new Dialogue(
-                    DialogueHelper.GetDialogueString(
-                        n, Game1.timeOfDay >= 2200 ? "companionRejectedNight" : "companionRejected"), n);
+                    DialogueHelper.GetSpecificDialogueText(
+                        n, leader, Game1.timeOfDay >= 2200 ? "companionRejectedNight" : "companionRejected"), n);
 
                 this.rejectionDialogue = rejectionDialogue;
                 DialogueHelper.DrawDialogue(rejectionDialogue);
             }
             else
             {
-                Dialogue acceptalDialogue = new Dialogue(DialogueHelper.GetDialogueString(n, "companionAccepted"), n);
+                Dialogue acceptalDialogue = new Dialogue(DialogueHelper.GetSpecificDialogueText(n, leader, "companionAccepted"), n);
 
                 this.acceptalDialogue = acceptalDialogue;
                 DialogueHelper.DrawDialogue(acceptalDialogue);

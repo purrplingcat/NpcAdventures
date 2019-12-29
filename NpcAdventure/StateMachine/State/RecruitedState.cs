@@ -6,14 +6,12 @@ using System.Collections.Generic;
 using System.Linq;
 using StardewValley.Locations;
 using Microsoft.Xna.Framework;
-using System.Reflection;
 using StardewValley.Menus;
 using StardewValley.Objects;
 using System;
 using NpcAdventure.Buffs;
 using StardewModdingAPI;
 using NpcAdventure.AI;
-using Microsoft.Xna.Framework.Graphics;
 using NpcAdventure.Events;
 using NpcAdventure.Internal;
 
@@ -131,17 +129,15 @@ namespace NpcAdventure.StateMachine.State
             if (e.NewTime >= 2200)
             {
                 NPC companion = this.StateMachine.Companion;
-                Dialogue dismissalDialogue = new Dialogue(DialogueHelper.GetDialogueString(companion, "companionDismissAuto"), companion);
+                Dialogue dismissalDialogue = new Dialogue(DialogueHelper.GetSpecificDialogueText(companion, this.StateMachine.CompanionManager.Farmer, "companionDismissAuto"), companion);
                 this.dismissalDialogue = dismissalDialogue;
                 this.StateMachine.Companion.doEmote(24);
                 this.StateMachine.Companion.updateEmote(Game1.currentGameTime);
                 DialogueHelper.DrawDialogue(dismissalDialogue);
             }
 
-            MineShaft mines = this.StateMachine.Companion.currentLocation as MineShaft;
-
             // Fix spawn ladder if area is infested and all monsters is killed but NPC following us
-            if (mines != null && mines.mustKillAllMonstersToAdvance())
+            if (this.StateMachine.Companion.currentLocation is MineShaft mines && mines.mustKillAllMonstersToAdvance())
             {
                 var monsters = from c in mines.characters where c.IsMonster select c;
                 if (monsters.Count() == 0)
@@ -151,6 +147,10 @@ namespace NpcAdventure.StateMachine.State
                         mines.createLadderAt(vector2, "newArtifact");
                 }
             }
+
+            // Try to push new or change location dialogue randomly
+            if (Game1.random.Next(3) == 1)
+                this.TryPushLocationDialogue(this.StateMachine.Companion.currentLocation);
         }
 
         private void GameLoop_UpdateTicked(object sender, UpdateTickedEventArgs e)
@@ -174,7 +174,6 @@ namespace NpcAdventure.StateMachine.State
         private void Player_Warped(object sender, WarpedEventArgs e)
         {
             NPC companion = this.StateMachine.Companion;
-            Farmer farmer = this.StateMachine.CompanionManager.Farmer;
             Dictionary<string, string> bubbles = this.StateMachine.ContentLoader.LoadStrings("Strings/SpeechBubbles");
 
             // Warp companion to farmer if it's needed
@@ -186,30 +185,22 @@ namespace NpcAdventure.StateMachine.State
                 companion.showTextAboveHead(bubble, preTimer: 250);
 
             // Push new location dialogue
-            this.TryPushLocationDialogue(e.NewLocation);
+            this.TryPushLocationDialogue(e.NewLocation, true);
         }
 
-        private Dialogue GenerateLocationDialogue(GameLocation location, NPC companion)
+        private bool TryPushLocationDialogue(GameLocation location, bool warped = false)
         {
-            if (DialogueHelper.GenerateStaticDialogue(companion, location, "companionOnce") is CompanionDialogue dialogueOnce
-                && !this.StateMachine.CompanionManager.Farmer.hasOrWillReceiveMail(dialogueOnce.Tag))
+            Stack<Dialogue> temp = new Stack<Dialogue>(this.StateMachine.Companion.CurrentDialogue.Count);
+            Dialogue newDialogue = this.StateMachine.GenerateLocationDialogue(location, warped ? "-Enter" : "");
+            bool isSameDialogue = this.currentLocationDialogue is CompanionDialogue curr && newDialogue is CompanionDialogue newd && curr.Kind == newd.Kind;
+
+            if (warped && newDialogue == null)
             {
-                // Remember only once spoken dialogue
-                dialogueOnce.Remember = true;
-                return dialogueOnce;
+                // Try generate regular location dialogue if no enter location dialogue not defined or already spoken
+                newDialogue = this.StateMachine.GenerateLocationDialogue(location);
             }
 
-            // Generate standard companion various dialogue if no once dialogue defined or once dialogue spoken
-            return DialogueHelper.GenerateDialogue(companion, location, "companion");
-        }
-
-        private bool TryPushLocationDialogue(GameLocation location)
-        {
-            NPC companion = this.StateMachine.Companion;
-            Stack<Dialogue> temp = new Stack<Dialogue>(this.StateMachine.Companion.CurrentDialogue.Count);
-            Dialogue newDialogue = this.GenerateLocationDialogue(location, companion);
-
-            if ((newDialogue == null && this.currentLocationDialogue == null) || (newDialogue != null && newDialogue.Equals(this.currentLocationDialogue)))
+            if (isSameDialogue || (newDialogue == null && this.currentLocationDialogue == null))
                 return false;
 
             // Remove old location dialogue
@@ -265,7 +256,7 @@ namespace NpcAdventure.StateMachine.State
             switch (action)
             {
                 case "dismiss":
-                    Dialogue dismissalDialogue = new Dialogue(DialogueHelper.GetDialogueString(companion, "companionDismiss"), companion);
+                    Dialogue dismissalDialogue = new Dialogue(DialogueHelper.GetSpecificDialogueText(companion, leader, "companionDismiss"), companion);
                     this.dismissalDialogue = dismissalDialogue;
                     DialogueHelper.DrawDialogue(dismissalDialogue);
                     break;
