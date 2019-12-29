@@ -1,10 +1,17 @@
 ﻿{
-  "companionAccepted": "Que ideia excelente!$h Eu já ia mesmo sair pra coletar umas amostras de solo.",
-  "companionRejected": "Não posso ir agora, tenho que analisar umas amostras.",
-  "companionRejectedNight": "Agora não. Tenho um projeto importante pra terminar.",
-  "companionDismiss": "Eu já coletei amostras o suficiente por enquanto. Obrigada @.",
-  "companionDismissAuto": "Já está na hora de eu voltar pra casa. Obrigada pelo dia divertido @!$h",
-  "companionRecruited": "Eu penso se vamos conseguir descobrir algo novo.$h",
-  "heal": "Vamos cuidar dos machucados.$3",
-  "nomedkits": "Os band-aids acabaram, preciso passar na Clínica do Harvey.$6"
+  "companionAccepted": "Que ideia excelente!$h Eu estava me preparando pra coletar algumas amostras de solo.",
+  "companionRejected": "Agora eu não posso. Eu tenho coisas importantes no laboratório pra fazer.",
+  "companionRejectedNight": "Agora não. Eu estou trabalhando em um projeto importante.",
+  "companionDismiss": "Eu já coletei amostras o suficiente por agora. Obrigada.",
+  "companionDismissAuto": "Já é hora de eu ir pra casa. Obrigada pelo dia excepcional @!$h",
+  "companionRecruited": "Eu penso se vamos acabar descobrindo algo novo.$h",
+  "heal": "Deixa eu te ajudar aqui.$3",
+  "nomedkits": "Eu vou ter que passar na clínica do Harvey, meus band-aids acabaram de vez.$6",
+  "companion_Forest_Night": "Esss lugar é muito assustador, @.$s#$b#Mas essa atmosfera me dá uma bela Idea pra uma invenção! Eu deveria ter trazido meu caderno de notas...#$b#Mas bem, talvez eu não vá esquecer. Talvez.$h",
+  "companion_Beach_Night": "Wow, olha pra esse céu!$h#$b#O jeito que a lua reflete no oceano, tudo é tão nítido. É quase mágico, não acha @?$l",
+  "companionOnce_Mine": "Ah as minas! Eu sempre tenho medo demais pra vir aqui, Eu não sou muito de lutar.#$b#Mas eu aprendi algumas coisas sobre primeiros socorros na clínica, então eu posso ajudar você se se machucar!#$b#Tá bom, vamos lá! Descobertas aguardam!$h",
+  "companion_Mine": "As minas, isso é tão empolgante!$l#$b#Você pensa que vamos ver algo novo?",
+  "companion_Mine~1": "Eu me sinto melhor com alguém que sabe lutar aqui, @.#$b#Comigo sabendo curar, seremos uma bela dupla!$h",
+  "companion_Mine~2": "Obrigada por me trazer aqui hoje, @.#$b#Eu sempre preciso de mais metal para os meus projetos!$h"
 }
+ 
