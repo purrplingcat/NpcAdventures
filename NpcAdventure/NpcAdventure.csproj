@@ -166,22 +166,10 @@
     <None Include="assets\Dialogue\Abigail.pt-BR.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\Dialogue\AbigailSpouse.fr-FR.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="assets\Dialogue\Abigail.zh-CN.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\Dialogue\AbigailSpouse.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\Dialogue\AbigailSpouse.pt-BR.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="assets\Dialogue\Alex.fr-FR.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\Dialogue\AbigailSpouse.zh-CN.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\Dialogue\Alex.json">
@@ -310,9 +298,6 @@
     <None Include="assets\Dialogue\Shane.pt-BR.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="assets\Strings\Buffs.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="assets\Dialogue\Shane.zh-CN.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -349,11 +334,10 @@
   <ItemGroup>
     <Compile Include="StateMachine\CompanionState.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <None Include="assets\Data\Buffs.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <Folder Include="assets\Buffs\" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="preparenightbuild.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
