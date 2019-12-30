@@ -22,6 +22,9 @@ namespace NpcAdventure.StateMachine.State
         private AI_StateMachine ai;
         private Dialogue dismissalDialogue;
         private Dialogue currentLocationDialogue;
+        private Dialogue recruitedDialogue;
+        private int dialoguePushTime;
+        private int timeOfRecruit;
 
         public bool CanCreateDialogue { get; private set; }
         private BuffManager BuffManager { get; set; }
@@ -36,6 +39,7 @@ namespace NpcAdventure.StateMachine.State
         public override void Entry()
         {
             this.ai = new AI_StateMachine(this.StateMachine, this.StateMachine.CompanionManager.Hud, this.Events, this.monitor);
+            this.timeOfRecruit = Game1.timeOfDay;
 
             if (this.StateMachine.Companion.doingEndOfRouteAnimation.Value)
                 this.FinishScheduleAnimation();
@@ -60,9 +64,11 @@ namespace NpcAdventure.StateMachine.State
             this.Events.Player.Warped += this.Player_Warped;
             this.SpecialEvents.RenderedLocation += this.SpecialEvents_RenderedLocation;
 
-            if (DialogueHelper.GetVariousDialogueString(this.StateMachine.Companion, "companionRecruited", out string dialogueText))
-                this.StateMachine.Companion.setNewDialogue(dialogueText);
+            this.recruitedDialogue = DialogueHelper.GenerateDialogue(this.StateMachine.Companion, "companionRecruited");
             this.CanCreateDialogue = true;
+
+            if (this.recruitedDialogue != null)
+                this.StateMachine.Companion.CurrentDialogue.Push(this.recruitedDialogue);
 
             foreach (string skill in this.StateMachine.Metadata.PersonalSkills)
             {
@@ -148,9 +154,30 @@ namespace NpcAdventure.StateMachine.State
                 }
             }
 
-            // Try to push new or change location dialogue randomly
-            if (Game1.random.Next(3) == 1)
+            // Try to push new or change location dialogue randomly until or no location dialogue was pushed
+            int until = this.dialoguePushTime + (Game1.random.Next(1, 3) * 10);
+            if ((e.NewTime > until || this.currentLocationDialogue == null))
                 this.TryPushLocationDialogue(this.StateMachine.Companion.currentLocation);
+
+            // Remove recruited dialogue if this dialogue not spoken until a hour from while companion was recruited
+            if (this.recruitedDialogue != null && e.NewTime > this.timeOfRecruit + 100)
+            {
+                // TODO: Use here Remove old dialogue method when rebased onto branch or merged branch which has this util
+                Stack<Dialogue> temp = new Stack<Dialogue>(this.StateMachine.Companion.CurrentDialogue.Count);
+
+                while (this.StateMachine.Companion.CurrentDialogue.Count > 0)
+                {
+                    Dialogue d = this.StateMachine.Companion.CurrentDialogue.Pop();
+
+                    if (!d.Equals(this.recruitedDialogue))
+                        temp.Push(d);
+                    else
+                        this.monitor.Log($"Recruited dialogue was removed from {this.StateMachine.Name}'s stack due to NPC was recruited a hour ago and dialogue still not spoken.");
+                }
+
+                while (temp.Count > 0)
+                    this.StateMachine.Companion.CurrentDialogue.Push(temp.Pop());
+            }
         }
 
         private void GameLoop_UpdateTicked(object sender, UpdateTickedEventArgs e)
@@ -188,11 +215,10 @@ namespace NpcAdventure.StateMachine.State
             this.TryPushLocationDialogue(e.NewLocation, true);
         }
 
-        private bool TryPushLocationDialogue(GameLocation location, bool warped = false)
+        private void TryPushLocationDialogue(GameLocation location, bool warped = false)
         {
             Stack<Dialogue> temp = new Stack<Dialogue>(this.StateMachine.Companion.CurrentDialogue.Count);
-            Dialogue newDialogue = this.StateMachine.GenerateLocationDialogue(location, warped ? "-Enter" : "");
-            bool isSameDialogue = this.currentLocationDialogue is CompanionDialogue curr && newDialogue is CompanionDialogue newd && curr.Kind == newd.Kind;
+            Dialogue newDialogue = this.StateMachine.GenerateLocationDialogue(location, warped ? "Enter" : "");
 
             if (warped && newDialogue == null)
             {
@@ -200,8 +226,12 @@ namespace NpcAdventure.StateMachine.State
                 newDialogue = this.StateMachine.GenerateLocationDialogue(location);
             }
 
+            bool isSameDialogue = this.currentLocationDialogue is CompanionDialogue curr
+                                  && newDialogue is CompanionDialogue newd
+                                  && curr.Kind == newd.Kind;
+
             if (isSameDialogue || (newDialogue == null && this.currentLocationDialogue == null))
-                return false;
+                return;
 
             // Remove old location dialogue
             while (this.StateMachine.Companion.CurrentDialogue.Count > 0)
@@ -210,6 +240,8 @@ namespace NpcAdventure.StateMachine.State
 
                 if (!d.Equals(this.currentLocationDialogue))
                     temp.Push(d);
+                else
+                    this.monitor.Log($"Old location dialogue was removed from {this.StateMachine.Name}'s stack");
             }
 
             while (temp.Count > 0)
@@ -219,11 +251,10 @@ namespace NpcAdventure.StateMachine.State
 
             if (newDialogue != null)
             {
+                this.dialoguePushTime = Game1.timeOfDay;
                 this.StateMachine.Companion.CurrentDialogue.Push(newDialogue); // Push new location dialogue
-                return true;
+                this.monitor.Log($"New location dialogue pushed to {this.StateMachine.Name}'s stack");
             }
-
-            return false;
         }
 
         public void CreateRequestedDialogue()
