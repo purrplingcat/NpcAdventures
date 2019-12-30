@@ -116,6 +116,16 @@ namespace NpcAdventure.Utils
             return GetVariableRawDialogue(n, $"{key}_{l.Name}", out rawDialogue);
         }
 
+        /// <summary>
+        /// Returns a specific speech bubble for an NPC.
+        /// 
+        /// Definition pattern: `<type>_<npc>`
+        /// </summary>
+        /// <param name="bubbles"></param>
+        /// <param name="n"></param>
+        /// <param name="type"></param>
+        /// <param name="text"></param>
+        /// <returns></returns>
         internal static bool GetBubbleString(Dictionary<string, string> bubbles, NPC n, string type, out string text)
         {
             bool fullyfill = GetRawDialogue(bubbles, $"{type}_{n.Name}", out KeyValuePair<string, string> rawDialogue);
@@ -125,9 +135,19 @@ namespace NpcAdventure.Utils
             return fullyfill;
         }
 
+        /// <summary>
+        /// Returns a location speech bubble for an NPC. This bubble definition must be prefixed with `ambient_`.
+        /// 
+        /// Whole definition pattern: `ambient_<location>_<npc>`
+        /// </summary>
+        /// <param name="bubbles"></param>
+        /// <param name="n"></param>
+        /// <param name="l"></param>
+        /// <param name="text"></param>
+        /// <returns></returns>
         internal static bool GetBubbleString(Dictionary<string, string> bubbles, NPC n, GameLocation l, out string text)
         {
-            return GetBubbleString(bubbles, n, l.Name, out text);
+            return GetBubbleString(bubbles, n, $"ambient_{l.Name}", out text);
         }
 
         public static Dialogue GenerateDialogue(NPC n, string key)
