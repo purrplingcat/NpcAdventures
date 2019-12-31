@@ -62,6 +62,7 @@ namespace NpcAdventure.StateMachine.State
             this.Events.GameLoop.UpdateTicked += this.GameLoop_UpdateTicked;
             this.Events.GameLoop.TimeChanged += this.GameLoop_TimeChanged;
             this.Events.Player.Warped += this.Player_Warped;
+            this.Events.Input.ButtonPressed += this.Input_ButtonPressed;
             this.SpecialEvents.RenderedLocation += this.SpecialEvents_RenderedLocation;
 
             this.recruitedDialogue = DialogueHelper.GenerateDialogue(this.StateMachine.Companion, "companionRecruited");
@@ -81,6 +82,22 @@ namespace NpcAdventure.StateMachine.State
             this.StateMachine.CompanionManager.Hud.AssignCompanion(this.StateMachine.Companion);
             this.BuffManager.AssignBuffs();
             this.ai.Setup();
+
+            if (this.BuffManager.HasProsthetics())
+            {
+                var key = this.StateMachine.CompanionManager.Config.ChangeBuffButton;
+                var desc = this.StateMachine.ContentLoader.LoadString("Strings/Strings:prosteticsChangeButton", key, this.StateMachine.Companion.displayName);
+                this.StateMachine.CompanionManager.Hud.AddKey(key, desc);
+            }
+
+        }
+
+        private void Input_ButtonPressed(object sender, ButtonPressedEventArgs e)
+        {
+            if (e.IsDown(this.StateMachine.CompanionManager.Config.ChangeBuffButton))
+            {
+                this.BuffManager.ChangeBuff();
+            }
         }
 
         private void SpecialEvents_RenderedLocation(object sender, ILocationRenderedEventArgs e)
@@ -119,6 +136,7 @@ namespace NpcAdventure.StateMachine.State
             this.CanCreateDialogue = false;
 
             this.SpecialEvents.RenderedLocation -= this.SpecialEvents_RenderedLocation;
+            this.Events.Input.ButtonPressed -= this.Input_ButtonPressed;
             this.Events.GameLoop.UpdateTicked -= this.GameLoop_UpdateTicked;
             this.Events.GameLoop.TimeChanged -= this.GameLoop_TimeChanged;
             this.Events.Player.Warped -= this.Player_Warped;

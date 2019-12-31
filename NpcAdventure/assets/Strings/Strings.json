@@ -20,5 +20,6 @@
   "companionState_fight": "Status: Fight",
   "spouseWife": "wife",
   "spouseHusband": "husband",
-  "hudSkillUsed": "(Skill's effect used)"
+  "hudSkillUsed": "(Skill's effect used)",
+  "prosteticsChangeButton": "Press '{0}' to change {1}'s prostetic buff."
 }
