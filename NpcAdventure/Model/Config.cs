@@ -12,5 +12,7 @@ namespace NpcAdventure.Model
         public SButton ChangeBuffButton { get; set; } = SButton.G;
         public int HeartThreshold { get; set; } = 5;
         public bool ShowHUD { get; set; } = true;
+        public bool EnableDebug { get; set; } = false;
+        public bool AdventureMode { get; set; } = true;
     }
 }

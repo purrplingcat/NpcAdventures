@@ -21,5 +21,9 @@
   "spouseWife": "wife",
   "spouseHusband": "husband",
   "hudSkillUsed": "(Skill's effect used)",
+  "newObjective": "New Journal Entry",
+  "objectiveUpdate": "Journal Updated",
+  "questObjective.recruitment": "{0}/{1} companions recruited",
+  "hudSkillUsed": "(Skill's effect used)",
   "prosteticsChangeButton": "Press '{0}' to change {1}'s prostetic buff."
 }

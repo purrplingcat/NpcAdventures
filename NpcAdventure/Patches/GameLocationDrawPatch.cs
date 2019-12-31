@@ -21,7 +21,7 @@ namespace NpcAdventure.Patches
                 SpriteBatch = b
             };
 
-            events.HandleRenderedLocation(__instance, args);
+            events.FireRenderedLocation(__instance, args);
         }
 
         internal static void Setup(HarmonyInstance harmony, ISpecialModEvents events)

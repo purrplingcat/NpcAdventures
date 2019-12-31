@@ -10,19 +10,20 @@ namespace NpcAdventure.StateMachine.State
     {
         private Dialogue acceptalDialogue;
         private Dialogue rejectionDialogue;
+        private bool recruitRequestsEnabled;
 
-        public bool CanCreateDialogue { get; private set; }
+        public bool CanCreateDialogue { get => this.recruitRequestsEnabled && this.StateMachine.CompanionManager.CanRecruit(); }
 
         public AvailableState(CompanionStateMachine stateMachine, IModEvents events, IMonitor monitor) : base(stateMachine, events, monitor) {}
 
         public override void Entry()
         {
-            this.CanCreateDialogue = true;
+            this.recruitRequestsEnabled = true;
         }
 
         public override void Exit()
         {
-            this.CanCreateDialogue = false;
+            this.recruitRequestsEnabled = false;
             this.acceptalDialogue = null;
             this.rejectionDialogue = null;
         }
