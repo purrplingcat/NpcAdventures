@@ -123,6 +123,7 @@
     <Compile Include="Model\BagDumpInfo.cs" />
     <Compile Include="Model\BuffInfo.cs" />
     <Compile Include="Model\CompanionMetaData.cs" />
+    <Compile Include="Patches\GetCharacterPatch.cs" />
     <Compile Include="Patches\QuestPatch.cs" />
     <Compile Include="Story\Messaging\GameMasterMessage.cs" />
     <Compile Include="Story\Messaging\IGameMasterMessage.cs" />

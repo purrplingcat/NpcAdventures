@@ -93,6 +93,7 @@ namespace NpcAdventure
             Patches.SpouseReturnHomePatch.Setup(harmony);
             Patches.CompanionSayHiPatch.Setup(harmony, this.companionManager);
             Patches.GameLocationDrawPatch.Setup(harmony, this.SpecialEvents);
+            Patches.GetCharacterPatch.Setup(harmony, this.companionManager);
 
             if (this.config.EnableDebug)
                 this.commander.SetupCommands(this.Helper.ConsoleCommands);
