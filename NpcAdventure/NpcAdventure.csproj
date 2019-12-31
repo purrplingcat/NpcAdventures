@@ -99,7 +99,7 @@
     <Compile Include="Buffs\BuffManager.cs" />
     <Compile Include="CompanionManager.cs" />
     <Compile Include="AI\Controller\IController.cs" />
-    <Compile Include="Compatibility\CustomKissing.cs" />
+    <Compile Include="Compatibility\CustomKissingModProxy.cs" />
     <Compile Include="Compatibility\TPMC.cs" />
     <Compile Include="Driver\DialogueDriver.cs" />
     <Compile Include="AI\Controller\FollowController.cs" />

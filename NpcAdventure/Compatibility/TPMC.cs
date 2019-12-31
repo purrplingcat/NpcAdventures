@@ -1,9 +1,4 @@
 ﻿using StardewModdingAPI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NpcAdventure.Compatibility
 {
@@ -14,11 +9,11 @@ namespace NpcAdventure.Compatibility
     {
         public static TPMC Instance { get; private set; }
 
-        public CustomKissing CustomKissing { get; }
+        public ICustomKissingModApi CustomKissing { get; }
 
         private TPMC(IModRegistry registry)
         {
-            this.CustomKissing = new CustomKissing(registry);
+            this.CustomKissing = new CustomKissingModProxy(registry);
         }
 
         public static void Setup(IModRegistry registry)
