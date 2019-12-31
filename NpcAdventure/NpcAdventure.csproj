@@ -145,6 +145,9 @@
     <Compile Include="Utils\Helper\DrawDuringUse.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\Data\Buffs.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\Data\CompanionDispositions.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -301,6 +304,9 @@
     <None Include="assets\Dialogue\Shane.zh-CN.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\Strings\Buffs.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\Strings\SpeechBubbles.fr-FR.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -334,9 +340,7 @@
   <ItemGroup>
     <Compile Include="StateMachine\CompanionState.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="assets\Buffs\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="preparenightbuild.js" />
   </ItemGroup>
