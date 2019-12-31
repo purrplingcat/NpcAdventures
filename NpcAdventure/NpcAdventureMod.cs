@@ -11,6 +11,7 @@ using System.Reflection;
 using NpcAdventure.Events;
 using NpcAdventure.Model;
 using NpcAdventure.HUD;
+using NpcAdventure.Compatibility;
 
 namespace NpcAdventure
 {
@@ -64,6 +65,10 @@ namespace NpcAdventure
 
         private void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)
         {
+            // Setup third party mod compatibility bridge
+            TPMC.Setup(this.Helper.ModRegistry);
+
+            // Mod's services and drivers
             this.SpecialEvents = new SpecialModEvents();
             this.DialogueDriver = new DialogueDriver(this.Helper.Events);
             this.HintDriver = new HintDriver(this.Helper.Events);
@@ -73,7 +78,7 @@ namespace NpcAdventure
             this.companionManager = new CompanionManager(this.DialogueDriver, this.HintDriver, this.companionHud, this.config, this.Monitor);
             this.StuffDriver.RegisterEvents(this.Helper.Events);
             
-            //Harmony
+            // Harmony
             HarmonyInstance harmony = HarmonyInstance.Create("Purrplingcat.NpcAdventure");
             
             Patches.SpouseReturnHomePatch.Setup(harmony);
