@@ -6,6 +6,8 @@
 
 Go to an adventure with Pelican Town's villagers! Recruit bachelorete or bachlor and go to adventure togehter.
 
+**Looking for user guide? See [Documentation](docs/index.md)**
+
 ## Features
 
 - Ask NPC to a follow farmer (5 hearts and more required)
