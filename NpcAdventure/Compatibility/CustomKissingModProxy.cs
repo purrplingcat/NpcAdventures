@@ -13,10 +13,18 @@ namespace NpcAdventure.Compatibility
     /// </summary>
     internal class CustomKissingModProxy : ICustomKissingModApi
     {
+        private const string MINIMUM_VERSION = "1.2.0";
         private readonly ICustomKissingModApi api;
 
-        public CustomKissingModProxy(IModRegistry registry)
+        public CustomKissingModProxy(IModRegistry registry, IMonitor monitor)
         {
+            IModInfo modInfo = registry.Get("Digus.CustomKissingMod");
+
+            if (modInfo != null && modInfo.Manifest.Version.IsOlderThan(MINIMUM_VERSION))
+            {
+                monitor.Log($"Couldn't work correctly with Custom Kissing Mod version {modInfo.Manifest.Version} (requires >= {MINIMUM_VERSION}). Don't worry, this issue doesn't affect stability, but update is recommended :)", LogLevel.Warn);
+            }
+
             this.api = registry.GetApi<ICustomKissingModApi>("Digus.CustomKissingMod");
         }
         public bool CanKissNpc(Farmer who, NPC npc)

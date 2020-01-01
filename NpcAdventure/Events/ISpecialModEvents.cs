@@ -14,8 +14,9 @@ namespace NpcAdventure.Events
         event EventHandler<IQuestReloadObjectiveArgs> ReloadObjective;
     }
 
-    public interface IQuestReloadObjectiveArgs : IQuestCompletedArgs
+    public interface IQuestReloadObjectiveArgs
     {
+        Quest Quest { get; }
     }
 
     public interface IQuestCompletedArgs

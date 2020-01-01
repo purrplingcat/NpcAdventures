@@ -1,5 +1,6 @@
 ﻿using Harmony;
 using NpcAdventure.Events;
+using NpcAdventure.Internal;
 using StardewValley;
 using System.Linq;
 
@@ -7,7 +8,8 @@ namespace NpcAdventure.Patches
 {
     internal class MailBoxPatch
     {
-        private static SpecialModEvents events;
+        private static readonly SetOnce<SpecialModEvents> events = new SetOnce<SpecialModEvents>();
+        private static SpecialModEvents Events { get => events.Value; set => events.Value = value; }
 
         /// <summary>
         /// This patches mailbox read method on gamelocation and allow call custom logic 
@@ -15,7 +17,7 @@ namespace NpcAdventure.Patches
         /// </summary>
         /// <param name="__instance">Game location</param>
         /// <returns></returns>
-        internal static bool Prefix(ref GameLocation __instance)
+        internal static bool Before_mailbox(ref GameLocation __instance)
         {
             if (Game1.mailbox.Count > 0)
             {
@@ -32,7 +34,7 @@ namespace NpcAdventure.Patches
                         Player = Game1.player,
                     };
 
-                    events.FireMailOpen(__instance, args);
+                    Events.FireMailOpen(__instance, args);
 
                     return false;
                 }
@@ -43,11 +45,11 @@ namespace NpcAdventure.Patches
 
         internal static void Setup(HarmonyInstance harmony, SpecialModEvents events)
         {
-            MailBoxPatch.events = events;
+            Events = events;
 
             harmony.Patch(
                 original: AccessTools.Method(typeof(GameLocation), nameof(GameLocation.mailbox)),
-                prefix: new HarmonyMethod(typeof(MailBoxPatch), nameof(MailBoxPatch.Prefix))
+                prefix: new HarmonyMethod(typeof(MailBoxPatch), nameof(MailBoxPatch.Before_mailbox))
             );
         }
     }

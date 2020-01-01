@@ -1,4 +1,5 @@
 ﻿using Harmony;
+using NpcAdventure.Internal;
 using StardewValley;
 using System.Reflection;
 
@@ -14,11 +15,12 @@ namespace NpcAdventure.Patches
     /// </summary>
     internal class GetCharacterPatch
     {
-        private static CompanionManager manager;
+        private static readonly SetOnce<CompanionManager> manager = new SetOnce<CompanionManager>();
+        private static CompanionManager Manager { get => manager.Value; set => manager.Value = value; }
 
-        internal static void Postfix(ref NPC __result, string name)
+        internal static void After_getCharacterFromName(ref NPC __result, string name)
         {
-            if (__result == null && manager.PossibleCompanions.TryGetValue(name, out var csm) && csm.Companion?.currentLocation != null)
+            if (__result == null && Manager.PossibleCompanions.TryGetValue(name, out var csm) && csm.Companion?.currentLocation != null)
             {
                 __result = csm.Companion;
             }
@@ -26,15 +28,17 @@ namespace NpcAdventure.Patches
 
         internal static void Setup(HarmonyInstance harmony, CompanionManager manager)
         {
-            bool matchMethod(MethodInfo m) => m.Name == "getCharacterFromName" && m.ReturnType == typeof(NPC) && !m.IsGenericMethod;
-            MethodInfo getCharacterByNameMethod = AccessTools.GetDeclaredMethods(typeof(Game1)).Find(matchMethod);
-            
-            GetCharacterPatch.manager = manager;
+            Manager = manager;
             
             harmony.Patch(
-                original: getCharacterByNameMethod,
-                postfix: new HarmonyMethod(typeof(GetCharacterPatch), nameof(GetCharacterPatch.Postfix))
+                original: AccessTools.GetDeclaredMethods(typeof(Game1)).Find(MatchGetCharacterFromNameMethod),
+                postfix: new HarmonyMethod(typeof(GetCharacterPatch), nameof(GetCharacterPatch.After_getCharacterFromName))
             );
+        }
+
+        private static bool MatchGetCharacterFromNameMethod(MethodInfo m)
+        {
+            return m.Name == nameof(Game1.getCharacterFromName) && m.ReturnType == typeof(NPC) && !m.IsGenericMethod;
         }
     }
 }

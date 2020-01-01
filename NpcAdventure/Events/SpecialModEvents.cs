@@ -37,18 +37,33 @@ namespace NpcAdventure.Events
         }
     }
 
-    internal class QuestReloadObjectiveArgs : QuestCompletedArgs, IQuestReloadObjectiveArgs
+    internal class QuestReloadObjectiveArgs : IQuestReloadObjectiveArgs
     {
+        public QuestReloadObjectiveArgs(Quest quest)
+        {
+            this.Quest = quest;
+        }
 
+        public Quest Quest { get; }
     }
     internal class QuestCompletedArgs : IQuestCompletedArgs
     {
-        public Quest Quest { get; internal set; }
+
+        public QuestCompletedArgs(Quest quest)
+        {
+            this.Quest = quest;
+        }
+
+        public Quest Quest { get; }
     }
 
     internal class LocationRenderedEventArgs : ILocationRenderedEventArgs
     {
-        public SpriteBatch SpriteBatch { get; internal set; }
+        public LocationRenderedEventArgs(SpriteBatch spriteBatch)
+        {
+            this.SpriteBatch = spriteBatch;
+        }
+        public SpriteBatch SpriteBatch { get; }
     }
 
     internal class MailEventArgs : IMailEventArgs
