@@ -5,11 +5,14 @@
   "companionDismiss": "I should probably be practicing right now anyway.",
   "companionDismissAuto": "I should probably go, I have work tomorrow. Bye.",
   "companionRecruited": "The clouds look great this time of year, don't they?",
-  "companion_Beach": "The sand is getting inside my shoe's holes. I think it’s time for new ones...$s",
+  "companionSuggest": "Nice day, hum, @?#$q -1 -1#If you are free, do you wanna hang out?#$r -1 0 Yes#Sure, let's find some trouble!#$r -1 0 No#Hmmmm, probably not today. Don't count me out next time though.",
+  "companionSuggest_Yes": "Cool! I want to find a trinket for Vincent. $h",
+  "companionSuggest_No": "Sure thing, we can try another day..",
+  "companion_Beach": "The sand is getting inside my shoe's holes. I think it's time for new ones...$s",
   "companion_Farm": "Your place is so quiet. Perfect for playing guitar!",
   "companion_Farm_Spouse": "I think I'm better at hanging out than at farming, @. We should go out more.$h",
   "companion_Forest": "This place makes being in the middle of nowhere not so bad after all.",
-  "companion_Mine": "Do you want to go down the mine? Really?$8#$b#...$9#$b#I’m not scared, of course. Just... Cautious.$7",
+  "companion_Mine": "Do you want to go down the mine? Really?$8#$b#...$9#$b#I'm not scared, of course. Just... Cautious.$7",
   "companion_Mountain": "The view here sure is inspiring. I should come more often.$l",
   "companion_Town": "Do you think we have time for some skating? But be careful to not let the mayor see us..."
 }

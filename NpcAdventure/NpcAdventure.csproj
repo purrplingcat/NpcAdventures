@@ -363,7 +363,9 @@
   <ItemGroup>
     <Compile Include="StateMachine\CompanionState.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="assets\Buffs\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="preparenightbuild.js" />
   </ItemGroup>
