@@ -78,12 +78,25 @@ namespace NpcAdventure.Driver
 
                 if (actionButtonPressed && farmerBox.Intersects(npcBox) && isNpcAtCursorTile)
                 {
-                    if (Helper.CanRequestDialog(farmer, npc))
+                    if (Helper.CanRequestDialog(farmer, npc) && !CheckForNewNonMarriageDialogue(farmer, npc))
+                    {
                         this.RequestDialogue(farmer, npc, 0);
+                    }
                     break;
                 }
             }
 
+        }
+
+        private static bool CheckForNewNonMarriageDialogue(Farmer farmer, NPC npc)
+        {
+            if (Helper.IsSpouseMarriedToFarmer(npc, farmer) || !farmer.friendshipData.ContainsKey(npc.Name))
+                return false;
+
+            if (npc.checkForNewCurrentDialogue(farmer.friendshipData[npc.Name].Points / 250, false))
+                return true;
+            
+            return npc.checkForNewCurrentDialogue(farmer.friendshipData[npc.Name].Points / 250, true);
         }
 
         private void WatchDialogue()
