@@ -30,12 +30,14 @@ namespace NpcAdventure.Compatibility
         }
         public bool CanKissNpc(Farmer who, NPC npc)
         {
+            bool married = Helper.IsSpouseMarriedToFarmer(npc, who);
+
             if (this.api != null)
             {
-                return this.api.CanKissNpc(who, npc);
+                return married || this.api.CanKissNpc(who, npc);
             }
 
-            return false;
+            return married;
         }
 
         public bool HasRequiredFriendshipToKiss(Farmer who, NPC npc)

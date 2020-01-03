@@ -93,7 +93,7 @@ namespace NpcAdventure
                 && csm.Name == e.Npc?.Name
                 && csm.CanDialogueRequestResolve()
                 && e.Npc.CurrentDialogue.Count == 0
-                && Helper.CanRequestDialog(this.Farmer, e.Npc))
+                && Helper.CanRequestDialog(this.Farmer, e.Npc, csm.CurrentStateFlag == StateFlag.RECRUITED))
             {
                 this.hintDriver.ShowHint(HintDriver.Hint.DIALOGUE);
             }

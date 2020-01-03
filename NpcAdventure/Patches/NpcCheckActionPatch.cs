@@ -16,8 +16,7 @@ namespace NpcAdventure.Patches
 
         internal static void Before_checkAction(NPC __instance, ref bool __state, Farmer who)
         {
-            bool isMarried = Helper.IsSpouseMarriedToFarmer(__instance, who);
-            bool canKiss = (isMarried || (bool)TPMC.Instance?.CustomKissing.CanKissNpc(who, __instance)) && (bool)TPMC.Instance?.CustomKissing.HasRequiredFriendshipToKiss(who, __instance);
+            bool canKiss = (bool)TPMC.Instance?.CustomKissing.CanKissNpc(who, __instance) && (bool)TPMC.Instance?.CustomKissing.HasRequiredFriendshipToKiss(who, __instance);
             bool recruited = Manager.PossibleCompanions.TryGetValue(__instance.Name, out var csm) && csm.CurrentStateFlag == StateFlag.RECRUITED;
 
             __state = __instance.hasBeenKissedToday || (!canKiss && recruited);
