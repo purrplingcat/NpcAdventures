@@ -309,14 +309,14 @@ namespace NpcAdventure.StateMachine
         /// <summary>
         /// Resolve dialogue request
         /// </summary>
-        public void ResolveDialogueRequest()
+        public bool ResolveDialogueRequest()
         {
             // Can this companion to resolve player's dialogue request?
             if (!this.CanDialogueRequestResolve())
-                return;
+                return false;
 
             // Handle dialogue request resolution in current machine state
-            (this.currentState as IRequestedDialogueCreator).CreateRequestedDialogue();
+            return (this.currentState as IActionPerformer).PerformAction();
         }
 
         /// <summary>
@@ -325,7 +325,7 @@ namespace NpcAdventure.StateMachine
         /// <returns>True if dialogue request can be resolved</returns>
         public bool CanDialogueRequestResolve()
         {
-            return this.currentState is IRequestedDialogueCreator dcreator && dcreator.CanCreateDialogue;
+            return this.currentState is IActionPerformer dcreator && dcreator.CanPerformAction;
         }
     }
 

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace NpcAdventure.StateMachine.StateFeatures
 {
-    interface IRequestedDialogueCreator
+    interface IActionPerformer
     {
-        bool CanCreateDialogue { get; }
-        void CreateRequestedDialogue();
+        bool CanPerformAction { get; }
+        bool PerformAction();
     }
 }

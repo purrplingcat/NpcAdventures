@@ -98,6 +98,7 @@ namespace NpcAdventure
             Patches.CompanionSayHiPatch.Setup(harmony, this.CompanionManager);
             Patches.GameLocationDrawPatch.Setup(harmony, this.SpecialEvents);
             Patches.GetCharacterPatch.Setup(harmony, this.CompanionManager);
+            Patches.NpcCheckActionPatch.Setup(harmony, this.CompanionManager);
         }
 
         private void Specialized_LoadStageChanged(object sender, LoadStageChangedEventArgs e)

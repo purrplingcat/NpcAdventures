@@ -8,14 +8,14 @@ using System;
 
 namespace NpcAdventure.StateMachine.State
 {
-    internal class AvailableState : CompanionState, IRequestedDialogueCreator, IDialogueDetector
+    internal class AvailableState : CompanionState, IActionPerformer, IDialogueDetector
     {
         private Dialogue acceptalDialogue;
         private Dialogue rejectionDialogue;
         private Dialogue suggestionDialogue;
         private bool recruitRequestsEnabled;
 
-        public bool CanCreateDialogue { get => this.recruitRequestsEnabled && this.StateMachine.CompanionManager.CanRecruit(); }
+        public bool CanPerformAction { get => this.recruitRequestsEnabled && this.StateMachine.CompanionManager.CanRecruit(); }
 
         private int doNotAskUntil;
 
@@ -51,7 +51,7 @@ namespace NpcAdventure.StateMachine.State
             bool matchesTimeRange = e.NewTime < 2200 && e.NewTime > (married ? 800 : 1000);
 
             if (!suggested
-                && this.CanCreateDialogue
+                && this.CanPerformAction
                 && matchesTimeRange
                 && this.suggestionDialogue == null
                 && heartLevel >= threshold
@@ -152,12 +152,18 @@ namespace NpcAdventure.StateMachine.State
             }
         }
 
-        public void CreateRequestedDialogue()
+        public bool PerformAction()
         {
             Farmer leader = this.StateMachine.CompanionManager.Farmer;
             NPC companion = this.StateMachine.Companion;
             GameLocation location = this.StateMachine.CompanionManager.Farmer.currentLocation;
             string question = this.StateMachine.ContentLoader.LoadString("Strings/Strings:askToFollow", companion.displayName);
+
+            if (companion.isMoving())
+            {
+                companion.Halt();
+                companion.facePlayer(leader);
+            }
 
             location.createQuestionDialogue(question, location.createYesNoResponses(), (_, answer) =>
             {
@@ -171,6 +177,8 @@ namespace NpcAdventure.StateMachine.State
                     this.ReactOnAnswer(this.StateMachine.Companion, leader);
                 }
             }, null);
+
+            return true;
         }
 
         public void OnDialogueSpeaked(Dialogue speakedDialogue)
