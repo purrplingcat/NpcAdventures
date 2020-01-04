@@ -42,15 +42,15 @@ namespace NpcAdventure.Utils
                    && spouse.getSpouse()?.spouse == spouse.Name;
         }
 
-        public static bool CanRequestDialog(Farmer farmer, NPC npc)
+        public static bool CanRequestDialog(Farmer farmer, NPC npc, bool overrideKissCheck = false)
         {
             // Can't request dialogue if giftable object is in farmer's hands or npc has current dialogues
             bool forbidden = (farmer.ActiveObject != null && farmer.ActiveObject.canBeGivenAsGift()) || npc.CurrentDialogue.Count > 0;
             bool isMarried = IsSpouseMarriedToFarmer(npc, farmer);
-            bool canKiss = isMarried || ((bool)TPMC.Instance?.CustomKissing.CanKissNpc(farmer, npc) && (bool)TPMC.Instance?.CustomKissing.HasRequiredFriendshipToKiss(farmer, npc));
+            bool canKiss = isMarried || (bool)TPMC.Instance?.CustomKissing.CanKissNpc(farmer, npc);
 
             // Kiss spouse first if she/he facing kissable                     
-            forbidden |= canKiss && !SpouseHasBeenKissedToday(npc) && (npc.FacingDirection == 3 || npc.FacingDirection == 1);
+            forbidden |= canKiss && !SpouseHasBeenKissedToday(npc) && (npc.FacingDirection == 3 || npc.FacingDirection == 1) && !overrideKissCheck;
             // Check for possibly marriage dialogues to show if farmer is married to this spouse
             forbidden |= isMarried && npc.shouldSayMarriageDialogue.Value && npc.currentMarriageDialogue.Count > 0;
             // Can't request dialogue for invisible, sleeaping NPCs or farmer is riding horse

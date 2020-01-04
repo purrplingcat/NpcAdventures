@@ -1,4 +1,5 @@
-﻿using StardewModdingAPI;
+﻿using NpcAdventure.Utils;
+using StardewModdingAPI;
 using StardewValley;
 using System;
 using System.Collections.Generic;
@@ -29,22 +30,24 @@ namespace NpcAdventure.Compatibility
         }
         public bool CanKissNpc(Farmer who, NPC npc)
         {
+            bool married = Helper.IsSpouseMarriedToFarmer(npc, who);
+
             if (this.api != null)
             {
-                return this.api.CanKissNpc(who, npc);
+                return married || this.api.CanKissNpc(who, npc);
             }
 
-            return false;
+            return married;
         }
 
         public bool HasRequiredFriendshipToKiss(Farmer who, NPC npc)
         {
-            if (this.api != null)
+            if (this.api != null && !Helper.IsSpouseMarriedToFarmer(npc, who))
             {
                 return this.api.HasRequiredFriendshipToKiss(who, npc);
             }
 
-            return false;
+            return who.getFriendshipHeartLevelForNPC(npc.Name) > 9;
         }
     }
 

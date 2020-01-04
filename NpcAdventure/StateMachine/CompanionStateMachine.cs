@@ -309,23 +309,23 @@ namespace NpcAdventure.StateMachine
         /// <summary>
         /// Resolve dialogue request
         /// </summary>
-        public void ResolveDialogueRequest()
+        public bool CheckAction(Farmer who, GameLocation location)
         {
             // Can this companion to resolve player's dialogue request?
-            if (!this.CanDialogueRequestResolve())
-                return;
+            if (!this.CanPerformAction())
+                return false;
 
             // Handle dialogue request resolution in current machine state
-            (this.currentState as IRequestedDialogueCreator).CreateRequestedDialogue();
+            return (this.currentState as IActionPerformer).PerformAction(who, location);
         }
 
         /// <summary>
         /// Can request a dialogue for this companion in current state?
         /// </summary>
         /// <returns>True if dialogue request can be resolved</returns>
-        public bool CanDialogueRequestResolve()
+        public bool CanPerformAction()
         {
-            return this.currentState is IRequestedDialogueCreator dcreator && dcreator.CanCreateDialogue;
+            return this.currentState is IActionPerformer dcreator && dcreator.CanPerformAction;
         }
     }
 

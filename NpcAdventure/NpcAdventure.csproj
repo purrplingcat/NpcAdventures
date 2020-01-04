@@ -124,6 +124,7 @@
     <Compile Include="Model\BuffInfo.cs" />
     <Compile Include="Model\CompanionMetaData.cs" />
     <Compile Include="Patches\GetCharacterPatch.cs" />
+    <Compile Include="Patches\NpcCheckActionPatch.cs" />
     <Compile Include="Patches\QuestPatch.cs" />
     <Compile Include="Internal\SetOnce.cs" />
     <Compile Include="Story\Messaging\GameMasterMessage.cs" />
@@ -135,7 +136,7 @@
     <Compile Include="Patches\CompanionSayHiPatch.cs" />
     <Compile Include="Patches\SpouseReturnHomePatch.cs" />
     <Compile Include="Patches\MailBoxPatch.cs" />
-    <Compile Include="StateMachine\StateFeatures\IRequestedDialogueCreator.cs" />
+    <Compile Include="StateMachine\StateFeatures\IActionPerformer.cs" />
     <Compile Include="StateMachine\StateFeatures\IDialogueDetector.cs" />
     <Compile Include="StateMachine\StateFeatures\ICompanionIntegrator.cs" />
     <Compile Include="StateMachine\State\RecruitedState.cs" />

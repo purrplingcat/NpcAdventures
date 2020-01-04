@@ -17,7 +17,7 @@ using NpcAdventure.Internal;
 
 namespace NpcAdventure.StateMachine.State
 {
-    internal class RecruitedState : CompanionState, IRequestedDialogueCreator, IDialogueDetector
+    internal class RecruitedState : CompanionState, IActionPerformer, IDialogueDetector
     {
         private AI_StateMachine ai;
         private Dialogue dismissalDialogue;
@@ -26,7 +26,7 @@ namespace NpcAdventure.StateMachine.State
         private int dialoguePushTime;
         private int timeOfRecruit;
 
-        public bool CanCreateDialogue { get; private set; }
+        public bool CanPerformAction { get; private set; }
         private BuffManager BuffManager { get; set; }
         public ISpecialModEvents SpecialEvents { get; }
 
@@ -60,7 +60,7 @@ namespace NpcAdventure.StateMachine.State
             this.SpecialEvents.RenderedLocation += this.SpecialEvents_RenderedLocation;
 
             this.recruitedDialogue = DialogueHelper.GenerateDialogue(this.StateMachine.Companion, "companionRecruited");
-            this.CanCreateDialogue = true;
+            this.CanPerformAction = true;
 
             if (this.recruitedDialogue != null)
                 this.StateMachine.Companion.CurrentDialogue.Push(this.recruitedDialogue);
@@ -121,7 +121,7 @@ namespace NpcAdventure.StateMachine.State
 
             this.StateMachine.Companion.eventActor = false;
             this.StateMachine.Companion.farmerPassesThrough = false;
-            this.CanCreateDialogue = false;
+            this.CanPerformAction = false;
 
             this.SpecialEvents.RenderedLocation -= this.SpecialEvents_RenderedLocation;
             this.Events.Input.ButtonPressed -= this.Input_ButtonPressed;
@@ -263,13 +263,11 @@ namespace NpcAdventure.StateMachine.State
             }
         }
 
-        public void CreateRequestedDialogue()
+        public bool PerformAction(Farmer who, GameLocation location)
         {
             if (this.ai != null && this.ai.PerformAction())
-                return;
+                return true;
 
-            Farmer leader = this.StateMachine.CompanionManager.Farmer;
-            GameLocation location = this.StateMachine.CompanionManager.Farmer.currentLocation;
             string question = this.StateMachine.ContentLoader.LoadString("Strings/Strings:recruitedWant");
             Response[] responses =
             {
@@ -282,10 +280,12 @@ namespace NpcAdventure.StateMachine.State
                 if (answer != "nothing")
                 {
                     this.StateMachine.Companion.Halt();
-                    this.StateMachine.Companion.facePlayer(leader);
-                    this.ReactOnAsk(this.StateMachine.Companion, leader, answer);
+                    this.StateMachine.Companion.facePlayer(who);
+                    this.ReactOnAsk(this.StateMachine.Companion, who, answer); ;
                 }
             }, this.StateMachine.Companion);
+
+            return true;
         }
 
         private void ReactOnAsk(NPC companion, Farmer leader, string action)

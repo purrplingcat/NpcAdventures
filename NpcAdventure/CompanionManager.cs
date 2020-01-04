@@ -48,7 +48,6 @@ namespace NpcAdventure
             this.PossibleCompanions = new Dictionary<string, CompanionStateMachine>();
             this.Config = config ?? throw new ArgumentNullException(nameof(config));
 
-            this.dialogueDriver.DialogueRequested += this.DialogueDriver_DialogueRequested;
             this.dialogueDriver.DialogueChanged += this.DialogueDriver_DialogueChanged;
             this.hintDriver.CheckHint += this.HintDriver_CheckHint;
         }
@@ -92,25 +91,22 @@ namespace NpcAdventure
             if (this.PossibleCompanions.TryGetValue(e.Npc.Name, out CompanionStateMachine csm)
                 && this.CanRecruit()
                 && csm.Name == e.Npc?.Name
-                && csm.CanDialogueRequestResolve()
+                && csm.CanPerformAction()
                 && e.Npc.CurrentDialogue.Count == 0
-                && Helper.CanRequestDialog(this.Farmer, e.Npc))
+                && Helper.CanRequestDialog(this.Farmer, e.Npc, csm.CurrentStateFlag == StateFlag.RECRUITED))
             {
                 this.hintDriver.ShowHint(HintDriver.Hint.DIALOGUE);
             }
         }
 
-        /// <summary>
-        /// Handle requested dialogue event
-        /// </summary>
-        /// <param name="sender">Who sent this event?</param>
-        /// <param name="e">Dialogue event arguments</param>
-        private void DialogueDriver_DialogueRequested(object sender, DialogueRequestArgs e)
+        public bool CheckAction(Farmer who, NPC withWhom, GameLocation location)
         {
-            if (this.PossibleCompanions.TryGetValue(e.WithWhom.Name, out CompanionStateMachine csm) && csm.Name == e.WithWhom.Name)
+            if (this.PossibleCompanions.TryGetValue(withWhom.Name, out CompanionStateMachine csm) && csm.Name == withWhom.Name)
             {
-                csm.ResolveDialogueRequest();
+                return csm.CheckAction(who, location);
             }
+
+            return false;
         }
 
         internal bool CanRecruit()
