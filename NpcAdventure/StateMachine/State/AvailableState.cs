@@ -152,17 +152,15 @@ namespace NpcAdventure.StateMachine.State
             }
         }
 
-        public bool PerformAction()
+        public bool PerformAction(Farmer who, GameLocation location)
         {
-            Farmer leader = this.StateMachine.CompanionManager.Farmer;
             NPC companion = this.StateMachine.Companion;
-            GameLocation location = this.StateMachine.CompanionManager.Farmer.currentLocation;
             string question = this.StateMachine.ContentLoader.LoadString("Strings/Strings:askToFollow", companion.displayName);
 
             if (companion.isMoving())
             {
                 companion.Halt();
-                companion.facePlayer(leader);
+                companion.facePlayer(who);
             }
 
             location.createQuestionDialogue(question, location.createYesNoResponses(), (_, answer) =>
@@ -172,9 +170,9 @@ namespace NpcAdventure.StateMachine.State
                     if (!this.StateMachine.Companion.doingEndOfRouteAnimation.Value)
                     {
                         this.StateMachine.Companion.Halt();
-                        this.StateMachine.Companion.facePlayer(leader);
+                        this.StateMachine.Companion.facePlayer(who);
                     }
-                    this.ReactOnAnswer(this.StateMachine.Companion, leader);
+                    this.ReactOnAnswer(this.StateMachine.Companion, who);
                 }
             }, null);
 

@@ -263,13 +263,11 @@ namespace NpcAdventure.StateMachine.State
             }
         }
 
-        public bool PerformAction()
+        public bool PerformAction(Farmer who, GameLocation location)
         {
             if (this.ai != null && this.ai.PerformAction())
                 return true;
 
-            Farmer leader = this.StateMachine.CompanionManager.Farmer;
-            GameLocation location = this.StateMachine.CompanionManager.Farmer.currentLocation;
             string question = this.StateMachine.ContentLoader.LoadString("Strings/Strings:recruitedWant");
             Response[] responses =
             {
@@ -282,8 +280,8 @@ namespace NpcAdventure.StateMachine.State
                 if (answer != "nothing")
                 {
                     this.StateMachine.Companion.Halt();
-                    this.StateMachine.Companion.facePlayer(leader);
-                    this.ReactOnAsk(this.StateMachine.Companion, leader, answer);
+                    this.StateMachine.Companion.facePlayer(who);
+                    this.ReactOnAsk(this.StateMachine.Companion, who, answer); ;
                 }
             }, this.StateMachine.Companion);
 

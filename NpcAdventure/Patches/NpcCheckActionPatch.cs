@@ -1,10 +1,8 @@
 ﻿using Harmony;
 using NpcAdventure.Compatibility;
 using NpcAdventure.Internal;
-using NpcAdventure.Utils;
 using StardewValley;
 using System;
-using System.Linq;
 using static NpcAdventure.StateMachine.CompanionStateMachine;
 
 namespace NpcAdventure.Patches
@@ -19,25 +17,24 @@ namespace NpcAdventure.Patches
             bool canKiss = (bool)TPMC.Instance?.CustomKissing.CanKissNpc(who, __instance) && (bool)TPMC.Instance?.CustomKissing.HasRequiredFriendshipToKiss(who, __instance);
             bool recruited = Manager.PossibleCompanions.TryGetValue(__instance.Name, out var csm) && csm.CurrentStateFlag == StateFlag.RECRUITED;
 
+            // Save has been kissed flag to state for use in postfix (we want to know previous has kissed state before kiss)
+            // Mark as kissed when we are recruited companion and we can't kiss them (
             __state = __instance.hasBeenKissedToday || (!canKiss && recruited);
-
-            Console.WriteLine($"{__instance.Name} kissed today: {__state}");
         }
 
         [HarmonyPriority(-1000)]
         [HarmonyAfter("Digus.CustomKissingMod")]
         internal static void After_checkAction(ref NPC __instance, ref bool __result, bool __state, Farmer who, GameLocation l)
         {
-            Console.WriteLine($"{__instance.Name} {who.Name} {l.Name} {__result} kissed {__state}");
-            Console.WriteLine($"farmer sprite frame: {who.FarmerSprite.CurrentFrame} | dialogues: {__instance.CurrentDialogue.Count()}");
-
             if (__instance.CurrentDialogue.Count > 0)
                 return;
 
+            // Check our action when vanilla check action don't triggered or spouse was kissed today and farmer try to kiss again
             if (!__result || (__result && __state && who.FarmerSprite.CurrentFrame == 101))
             {
                 __result = Manager.CheckAction(who, __instance, l);
 
+                // Cancel kiss when spouse was kissed today and we did our action
                 if (__result && who.FarmerSprite.CurrentFrame == 101)
                 {
                     who.completelyStopAnimatingOrDoingAction();
@@ -46,8 +43,6 @@ namespace NpcAdventure.Patches
                     __instance.facePlayer(who);
                 }
             }
-
-            Console.WriteLine(__result);
         }
 
         internal static void Setup(HarmonyInstance harmony, CompanionManager manager)

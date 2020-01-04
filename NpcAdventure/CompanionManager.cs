@@ -91,7 +91,7 @@ namespace NpcAdventure
             if (this.PossibleCompanions.TryGetValue(e.Npc.Name, out CompanionStateMachine csm)
                 && this.CanRecruit()
                 && csm.Name == e.Npc?.Name
-                && csm.CanDialogueRequestResolve()
+                && csm.CanPerformAction()
                 && e.Npc.CurrentDialogue.Count == 0
                 && Helper.CanRequestDialog(this.Farmer, e.Npc, csm.CurrentStateFlag == StateFlag.RECRUITED))
             {
@@ -103,7 +103,7 @@ namespace NpcAdventure
         {
             if (this.PossibleCompanions.TryGetValue(withWhom.Name, out CompanionStateMachine csm) && csm.Name == withWhom.Name)
             {
-                return csm.ResolveDialogueRequest();
+                return csm.CheckAction(who, location);
             }
 
             return false;
