@@ -135,6 +135,7 @@ namespace NpcAdventure.AI.Controller
 
         protected void SetMovementDirectionAnimation(int dir)
         {
+            string footStepSound = Utility.isOnScreen(this.follower.getTileLocationPoint(), 1, this.follower.currentLocation) ? "Cowboy_Footstep" : "";
             if (dir < 0 || dir > 3)
                 return;
 
@@ -143,13 +144,13 @@ namespace NpcAdventure.AI.Controller
             switch (dir)
             {
                 case 0:
-                    this.follower.Sprite.AnimateUp(Game1.currentGameTime, 0, ""); break;
+                    this.follower.Sprite.AnimateUp(Game1.currentGameTime, 0, footStepSound); break;
                 case 1:
-                    this.follower.Sprite.AnimateRight(Game1.currentGameTime, 0, ""); break;
+                    this.follower.Sprite.AnimateRight(Game1.currentGameTime, 0, footStepSound); break;
                 case 2:
-                    this.follower.Sprite.AnimateDown(Game1.currentGameTime, 0, ""); break;
+                    this.follower.Sprite.AnimateDown(Game1.currentGameTime, 0, footStepSound); break;
                 case 3:
-                    this.follower.Sprite.AnimateLeft(Game1.currentGameTime, 0, ""); break;
+                    this.follower.Sprite.AnimateLeft(Game1.currentGameTime, 0, footStepSound); break;
             }
         }
         protected void SetMovingOnlyOneDirection(int dir)

@@ -9,6 +9,7 @@ using NpcAdventure.Objects;
 using NpcAdventure.StateMachine.StateFeatures;
 using NpcAdventure.Utils;
 using StardewModdingAPI;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Objects;
@@ -65,6 +66,7 @@ namespace NpcAdventure.StateMachine
         public Dictionary<int, SchedulePathDescription> BackedupSchedule { get; internal set; }
         public bool RecruitedToday { get; private set; }
         public bool SuggestedToday { get; internal set; }
+        public bool CanSuggestToday { get; private set; }
         public HashSet<string> SpokenDialogues { get; private set; }
 
         /// <summary>
@@ -146,8 +148,12 @@ namespace NpcAdventure.StateMachine
 
             this.RecruitedToday = false;
             this.SuggestedToday = false;
+            this.CanSuggestToday = Game1.random.NextDouble() > .5f
+                                   && !(this.Companion.isMarried() && SDate.Now().DayOfWeek == DayOfWeek.Monday);
             this.SpokenDialogues.Clear();
             this.MakeAvailable();
+            if (this.CanSuggestToday)
+                this.Monitor.Log($"{this.Name} can suggest adventure today!");
         }
 
         /// <summary>

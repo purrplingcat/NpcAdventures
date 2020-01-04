@@ -46,11 +46,11 @@ namespace NpcAdventure.StateMachine.State
 
             int heartLevel = this.StateMachine.CompanionManager.Farmer.getFriendshipHeartLevelForNPC(this.StateMachine.Companion.Name);
             int threshold = this.StateMachine.CompanionManager.Config.HeartSuggestThreshold;
-            bool suggested = this.StateMachine.SuggestedToday;
             bool married = Helper.IsSpouseMarriedToFarmer(this.StateMachine.Companion, this.StateMachine.CompanionManager.Farmer);
             bool matchesTimeRange = e.NewTime < 2200 && e.NewTime > (married ? 800 : 1000);
 
-            if (!suggested
+            if (!this.StateMachine.SuggestedToday
+                && this.StateMachine.CanSuggestToday
                 && this.CanPerformAction
                 && matchesTimeRange
                 && this.suggestionDialogue == null
