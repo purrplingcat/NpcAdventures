@@ -121,7 +121,6 @@
     <Compile Include="Loader\ContentPacks\ContentPackProvider.cs" />
     <Compile Include="Loader\IContentLoader.cs" />
     <Compile Include="Model\BagDumpInfo.cs" />
-    <Compile Include="Model\BuffInfo.cs" />
     <Compile Include="Model\CompanionMetaData.cs" />
     <Compile Include="Patches\GetCharacterPatch.cs" />
     <Compile Include="Patches\NpcCheckActionPatch.cs" />
