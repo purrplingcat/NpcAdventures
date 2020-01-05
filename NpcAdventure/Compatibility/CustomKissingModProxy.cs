@@ -32,7 +32,9 @@ namespace NpcAdventure.Compatibility
         {
             bool married = Helper.IsSpouseMarriedToFarmer(npc, who);
 
-            if (this.api != null)
+            // Check for friendship exists here because bug in Custom Kissing Mod. 
+            // Custom Kissing Mod don't check if farmer already met that NPC. 
+            if (this.api != null && who.friendshipData.ContainsKey(npc.Name))
             {
                 return married || this.api.CanKissNpc(who, npc);
             }
