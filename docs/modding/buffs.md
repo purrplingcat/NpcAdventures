@@ -12,6 +12,8 @@ Asset `Data/Buffs`
 }
 ```
 
+NOTE: All values is integer.
+
 **Example**
 ```js
 {
