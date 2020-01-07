@@ -24,7 +24,7 @@ IMPORTANT: You must go out from your Farm house, otherwise you will not receive 
 
 ### Modders
 
-There are some changes in mod's code. You must do some edits in your content pack for make it compatible with new version. Follow [Modder's upgrade guide](upgrading.md).
+There are some changes in mod's code. You must do some edits in your content pack for make it compatible with new version. Follow [Modder's upgrade guide](../modding/upgrading.md).
 
 ## See also
 

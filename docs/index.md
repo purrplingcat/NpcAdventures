@@ -10,7 +10,8 @@
 ## Modder guide
 
 1. [How to create a content pack](modding/content-packs.md)
-2. Assets
+2. [Modder's upgrade guide](modding/upgrading.md)
+3. Assets
     1. [Companion dispositions](modding/dispositions.md)
     2. [Dialogues](modding/dialogues.md)
     3. [Events](modding/events.md)
