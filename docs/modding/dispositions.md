@@ -54,14 +54,16 @@ Definition structure is a dictionary of NPC, where key is NPC name and value rep
 
 ## Edit dispositions in content pack
 
-**assets/data/myOwnCompanionDispositions.json**
+File `assets/data/myOwnCompanionDispositions.json`:
+
 ```json
 {
   "Biglydz": "recruitable/warrior//5/0/40"
 }
 ```
 
-**content.json**
+File `content.json`:
+
 ```json
 {
   "Format": "1.0",
