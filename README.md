@@ -109,10 +109,10 @@ More features comming soon...
 - [Reikounet](https://www.nexusmods.com/users/70092158) - French translation
 - [wu574932346](https://www.nexusmods.com/users/67777356) - Chinese translation
 
-[library]: docs/library.gif
-[ask2follow]: docs/asktofollow.gif
-[usebag]: docs/usebag.gif
-[dialogues]: /docs/dialogues.gif
-[release]: docs/release.gif
-[delivery]: docs/delivery.gif
-[heal]: docs/harveyheal.gif
+[library]: docs/images/library.gif
+[ask2follow]: docs/images/asktofollow.gif
+[usebag]: docs/images/usebag.gif
+[dialogues]: /docs/images/dialogues.gif
+[release]: docs/images/release.gif
+[delivery]: docs/images/delivery.gif
+[heal]: docs/images/harveyheal.gif
