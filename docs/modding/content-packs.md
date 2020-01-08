@@ -72,7 +72,8 @@ Under key `Changes` we must define content definitions. It's a list of dicts wit
 ## Release a content pack
 See [content packs](https://stardewvalleywiki.com/Modding:Content_packs) on the wiki for general info. Suggestions:
 
-Add specific install steps in your mod description to help players:
+- Prefix your content pack folder with `[NA]`, like `[NA] Ashley companion`
+- Add specific install steps in your mod description to help players:
 
 ```
 [size=5]Install[/size]
