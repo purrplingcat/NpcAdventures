@@ -26,7 +26,8 @@ Go to an adventure with Pelican Town's villagers! Recruit bachelorete or bachlor
 - Better critical defense fist fight animation and sound
 - Support for content packs and localizations. You can add custom NPC as companion (see [how to create content pack](https://github.com/purrplingcat/PurrplingMod/wiki/Content-packs) on wiki)
 - User configuration (via `config.json`, see [SMAPI docs](https://stardewvalleywiki.com/Modding:Player_Guide/Getting_Started#Configure_mods))
-- [NEW] Every companion NPC grants a buffs
+- Every companion NPC grants a buffs
+- [NEW] Two gameplay modes: Adventure (default) and classic
 
 Next features comming soon...
 
@@ -64,6 +65,16 @@ You can add your custom NPC as companion to this mod via content pack. See [docu
 
 - Works with Stardew Valley 1.4 on Linux/Mac/Windows.
 - Works in **single player** ONLY.
+
+### Compatibility with other mods
+
+#### Known compatible mods
+
+- **Custom Kissing Mod** by *Digus* - 100% compatible (from version 0.9.0 with version 1.2.0 and newer of Custom Kissing Mod.
+
+#### Known not compatible mods:
+
+- **Automatic gates** - Companion can stuck in gate when gate is automatic closed after farmer.
 
 ## Translations
 
