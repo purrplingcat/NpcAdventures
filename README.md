@@ -68,8 +68,9 @@ You can add your custom NPC as companion to this mod via content pack. See [docu
 
 ### Compatibility with other mods
 
-- **Custom Kissing Mod** by *Digus* - 100% compatible (from version 0.9.0 with version 1.2.0 and newer of Custom Kissing Mod.
-- **Automatic gates** - NOT COMPATIBLE! Companion can stuck in gate when gate is automatic closed after farmer.
+- ✅ **Custom Kissing Mod** by *Digus* - 100% compatible (from version 0.9.0 with version 1.2.0 and newer of Custom Kissing Mod.
+- ⚠️ **Automatic gates** - NOT COMPATIBLE! Companion can stuck in gate when gate is automatic closed after farmer.
+- ⚠️ **Json Assets** - CAN'T USE CUSTOM ITEMS FOR COMPANIONS. Can't use custom weapons in disposition file from JA in your content packs, because this mod not exported stacit item ids.
 
 ## Translations
 
