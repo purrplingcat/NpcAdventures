@@ -68,13 +68,8 @@ You can add your custom NPC as companion to this mod via content pack. See [docu
 
 ### Compatibility with other mods
 
-#### Known compatible mods
-
 - **Custom Kissing Mod** by *Digus* - 100% compatible (from version 0.9.0 with version 1.2.0 and newer of Custom Kissing Mod.
-
-#### Known not compatible mods:
-
-- **Automatic gates** - Companion can stuck in gate when gate is automatic closed after farmer.
+- **Automatic gates** - NOT COMPATIBLE! Companion can stuck in gate when gate is automatic closed after farmer.
 
 ## Translations
 
