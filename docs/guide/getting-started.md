@@ -14,7 +14,7 @@
 
 ### Players
 
-There are one big change. You can't recruit companions until you recive an invitation from Marlon and you don't see his event. You can get invitation when:
+There is one big change. You can't recruit companions until you recive an invitation from Marlon and you don't see his event. You can get invitation when:
 
 - You have access to Adventurer's guild
 - Reached 10 level of mines
