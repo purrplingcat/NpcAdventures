@@ -15,7 +15,7 @@ In this file you can define which idle activities is declared for an NPC compani
 | Position | Parameter      | Type         | Description                                                                                                                                                     |
 | -------- | -------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 0        | behaviors      | string[]     | List of behaviors delimited by space, which companion can to do. This behaviors is defined in `Data/IdleBehaviors`                                              |
-| 1        | tendencies     | int[]        | List of tendencies which describes how tendency has companion to do this behavior. Index (position) of tendency cresponds to index (position) of behavior.      |
+| 1        | tendencies     | float[]        | List of tendencies which describes how tendency has companion to do this behavior. Index (position) of tendency cresponds to index (position) of behavior.      |
 | 2        | duration range | int[2]       | Min duration and max duration of doing current behavior. Total duration is generated randomly between this numbers. Delimited by space |
 
 **IMPORTANT:** *Count of behaviors = count of tendencies*
