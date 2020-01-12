@@ -45,6 +45,26 @@ NOTE: All listed ask&recruit dialogue keys has a variant with suffix `_Spouse` f
 "companionRecruited_Spouse": "I can't wait to go on an adventure with you @!$h#Shall we go into the mines today?$6",
 ```
 
+## Suggestion dialogues
+
+```js
+{
+  "companionSuggest": "<companion suggest dialogue>#$q -1 -1#<question for farmer>#$r -1 0 Yes#<yes farmer answer text>#$r -1 0 No#<no farmer answer text>",
+  "companionSuggest_Yes": "<companion's reaction to farmer accepted>",
+  "companionSuggest_No": "<companion's reaction to farmer rejected>",
+}
+```
+
+**Example**
+
+```js
+{
+  "companionSuggest": "I'm getting the itch for an adventure.#$q -1 -1#Hey @, wanna tag team for a little bit?#$r -1 0 Yes#Sure, lets find some trouble!#$r -1 0 No#Hmmmm, probably not today. Don't count me out next time though.",
+  "companionSuggest_Yes": "I knew you'd be down! Where should we go first?$h",
+  "companionSuggest_No": "Boo. Guess I'll need to find some fun with someone else today.",
+}
+```
+
 ## Location various dialogues
 
 The dialogue key for companion for specific game location has this format:
