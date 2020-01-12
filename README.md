@@ -1,4 +1,4 @@
-![following][library]
+[![following][library]](https://www.youtube.com/watch?v=gFX9OVSS3fg)
 
 # It's time to adventure (NPC Adventures)
 
@@ -30,6 +30,8 @@ Go to an adventure with Pelican Town's villagers! Recruit bachelorete or bachlor
 - [NEW] Two gameplay modes: Adventure (default) and classic
 
 Next features comming soon...
+
+**Watch [trailer video](https://www.youtube.com/watch?v=gFX9OVSS3fg) for this mod**
 
 ## Install
 - [Install the latest version of SMAPI](https://smapi.io).
@@ -84,6 +86,10 @@ You can add your custom NPC as companion to this mod via content pack. See [docu
 **Asking NPC to a follow farmer**
 
 ![Ask to follow farmer][ask2follow]
+
+**Companion follows you**
+
+![following][library]
 
 **Various dialogues for different locations**
 
