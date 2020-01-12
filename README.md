@@ -27,7 +27,14 @@ Go to an adventure with Pelican Town's villagers! Recruit bachelorete or bachlor
 - Support for content packs and localizations. You can add custom NPC as companion (see [how to create content pack](https://github.com/purrplingcat/PurrplingMod/wiki/Content-packs) on wiki)
 - User configuration (via `config.json`, see [SMAPI docs](https://stardewvalleywiki.com/Modding:Player_Guide/Getting_Started#Configure_mods))
 - Every companion NPC grants a buffs
-- [NEW] Two gameplay modes: Adventure (default) and classic
+- [NEW] Two gameplay modes: Adventure (default) and classic (like alpha versions)
+- [NEW] Location dialogues can be assigned by time update in game
+- [NEW] Prostetic (changeable) buffs for Maru (hold `G` to change buff)
+- [NEW] Recruitable villagers can suggest you an adventure (requires 7 hearts and more. Can be changed in config)
+- [NEW] Companion introduction quests (visit Marlon, recruit 1 companion, recruit 5 companions and recruit 10 companions) - ADVENTURE MODE ONLY!
+- [NEW] Debug mode for developers and content pack creators (by default disabled, you can enable it in config)
+- [NEW] Added debug command `npcadventure_eligible` for eligible player to recruit, DEBUG AND ADVENTURE MODE ONLY!-
+- [NEW] New documentation for players and modders/content creators
 
 Next features comming soon...
 
@@ -58,6 +65,12 @@ Next features comming soon...
 All listed NPCs can figth with sword! **Married spouse** grants additional buffs **+1 Luck** and **+1 Magnetic** radius
 
 For some NPCs listed above we're missing companion dialogues. You can help us and you can create it. How? Fork this repo and see [Dialogue wiki](https://github.com/purrplingcat/PurrplingMod/wiki/Dialogues). You can get inspiration [from code](https://github.com/purrplingcat/PurrplingMod/tree/master/PurrplingMod/assets/Dialogue). Are you created dialogues? Just send us a PR.
+
+## Adventure mode
+
+By default this mod is played in adventure mode. This mode brings quests and events to interaction with your companions. For enable companion asking you must reach **10 level of mines**, have granted access to **Adventurer's guild** and received **letter from Marlon with invitation** and seen **Adventure begins** event with Marlon. Then you can ask villagers to companion. Marlon's letter you will receive morning when you reached level 10 and you have an access to Adventurer's guild. You already reached level and you have access and you installed/updated this mod? You will receive letter morning immediately (must to go out from FarmHouse to receive it tomorrow).
+
+Worried about adventure mode? Do you want old companion functionality like was in alpha versions? Don't be sad, just **disable adventure mode** in [configuration](docs/guide/configuration.md). By disabling adventure mode you disable also all quest lines and companion events!
 
 ## Custom NPCs
 
