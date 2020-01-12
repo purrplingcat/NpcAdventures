@@ -9,10 +9,19 @@
   "companionSuggest_Yes": "Perfect! Why don't you choose where do we start?$h",
   "companionSuggest_No": "It's a shame that you are busy. Bye, then.",
   "companion_Beach_summer": "We are getting a suntan today? Good idea!$h",
+  "companion_Bugland": "You have got to be kidding!$5#$b#Remind me again why I agreed to come with you today, @?$3",
+  "companion_Bugland~1": "I stepped on something...$2#$b#It crunched.$2",
+  "companion_Desert": "A friend of my sister lives out here, she has gorgeous hair.#$b#Not better than mine, but really nice!$11",
+  "companion_Desert~1": "It's so hot!#$b#I love warm weather, but this is ridiculous.$2",
   "companion_Farm": "You sure do have a lot of dir… land here. That's why you are always dirty, I guess.",
   "companion_Farm_Spouse": "Our porch is dirty again. I should… Oh, you're right, dear. Today we have some walking to do instead.$h",
   "companion_Forest": "I think there is plenty of room here to build a mall.#$b#...$7#$b#What?$u",
   "companion_Mine": "It's pretty dark here. Luckily I'm used to it. Watch for the steps!",
   "companion_Mountain": "This is not a place to come wearing heels. *sigh*$s",
-  "companion_Town": "Let me get a change of clothes since we are here."
+  "companion_Sewer": "An okay day has now turned into a terrible one, so thank you for that.$3#$b#I can actually feel myself getting dirtier.$2",
+  "companion_Sewer~1": "@, are you punishing me for something?$2#$b#Just tell me what I did so I can apologize and we can leave.$2",
+  "companion_Town": "Let me get a change of clothes since we are here.",
+  "companion_Town_fall": "Pelican Town isn't the most exciting place in the world, but nobody can deny how beautiful it looks this time of year!$1",
+  "companion_Town_fall~1": "I always take too many pictures of fall leaves.#$b#Walking through a small town with the distant sound of the sea, and all the warm autumn colors swirling around our feet. It's just so romantic.$4",
+  "companion_Town_spring": "I absolutely love all the flower petals floating through the air in spring.#$b#I never get tired of it.$4"
 }
