@@ -4,8 +4,9 @@
 
 **THIS MOD IS IN BETA VERSION!** It's relatively stable, but may cause some bugs and issues. Found any defect? Report it and help improvement this mod. Any idea? Create a proposal on Github. Thanks.
 
-Go to an adventure with Pelican Town's villagers! Recruit bachelorete or bachlor and go to adventure togehter.
+Go to an adventure with Pelican Town's villagers! Recruit bachelorete or bachlor and go to an adventure togehter.
 
+**Watch [trailer video](https://www.youtube.com/watch?v=gFX9OVSS3fg) for this mod**
 **Looking for user guide? See [Documentation](docs/index.md)**
 
 ## Features
@@ -37,8 +38,6 @@ Go to an adventure with Pelican Town's villagers! Recruit bachelorete or bachlor
 - [NEW] New documentation for players and modders/content creators
 
 Next features comming soon...
-
-**Watch [trailer video](https://www.youtube.com/watch?v=gFX9OVSS3fg) for this mod**
 
 ## Install
 - [Install the latest version of SMAPI](https://smapi.io).
