@@ -6,6 +6,8 @@
 
 Go to an adventure with Pelican Town's villagers! Recruit bachelorete or bachlor and go to adventure togehter.
 
+**Looking for user guide? See [Documentation](docs/index.md)**
+
 ## Features
 
 - Ask NPC to a follow farmer (5 hearts and more required)
@@ -24,7 +26,8 @@ Go to an adventure with Pelican Town's villagers! Recruit bachelorete or bachlor
 - Better critical defense fist fight animation and sound
 - Support for content packs and localizations. You can add custom NPC as companion (see [how to create content pack](https://github.com/purrplingcat/PurrplingMod/wiki/Content-packs) on wiki)
 - User configuration (via `config.json`, see [SMAPI docs](https://stardewvalleywiki.com/Modding:Player_Guide/Getting_Started#Configure_mods))
-- [NEW] Every companion NPC grants a buffs
+- Every companion NPC grants a buffs
+- [NEW] Two gameplay modes: Adventure (default) and classic
 
 Next features comming soon...
 
@@ -62,6 +65,12 @@ You can add your custom NPC as companion to this mod via content pack. See [docu
 
 - Works with Stardew Valley 1.4 on Linux/Mac/Windows.
 - Works in **single player** ONLY.
+
+### Compatibility with other mods
+
+- ✅ **Custom Kissing Mod** by *Digus* - 100% compatible (from version 0.9.0 with version 1.2.0 and newer of Custom Kissing Mod.
+- ⚠️ **Automatic gates** - NOT COMPATIBLE! Companion can stuck in gate when gate is automatic closed after farmer.
+- ⚠️ **Json Assets** - CAN'T USE CUSTOM ITEMS FOR COMPANIONS. Can't use custom weapons in disposition file from JA in your content packs, because this mod not exported stacit item ids.
 
 ## Translations
 
@@ -107,10 +116,10 @@ More features comming soon...
 - [Reikounet](https://www.nexusmods.com/users/70092158) - French translation
 - [wu574932346](https://www.nexusmods.com/users/67777356) - Chinese translation
 
-[library]: docs/library.gif
-[ask2follow]: docs/asktofollow.gif
-[usebag]: docs/usebag.gif
-[dialogues]: /docs/dialogues.gif
-[release]: docs/release.gif
-[delivery]: docs/delivery.gif
-[heal]: docs/harveyheal.gif
+[library]: docs/images/library.gif
+[ask2follow]: docs/images/asktofollow.gif
+[usebag]: docs/images/usebag.gif
+[dialogues]: /docs/images/dialogues.gif
+[release]: docs/images/release.gif
+[delivery]: docs/images/delivery.gif
+[heal]: docs/images/harveyheal.gif
