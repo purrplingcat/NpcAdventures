@@ -3,15 +3,15 @@
   "companionRejected": "No thank you. I feel the spirits are unhappy with me today.",
   "companionRejectedNight": "Don't you know it's dangerous to explore at night?",
   "companionDismiss": "Alright, I'll see you later!",
-  "companionDismissAuto": "Sorry @ I have to go. Haley is terrible at cooking and if I'm not there she'll burn the house down!",
+  "companionDismissAuto": "Sorry, @, I have to go. Haley is terrible at cooking and if I'm not there she'll burn the house down!",
   "companionRecruited": "Lead the way.$h",
   "companionSuggest": "What a wonderful day! I feel the urge to go walk and admire the Valley..#$q -1 -1#Would you accompany me?#$r -1 0 Yes#That would be nice. Let's go!#$r -1 0 No# Today I can't. But thanks for inviting me.",
   "companionSuggest_Yes": "I knew you would enjoy this day as much as I!$h",
   "companionSuggest_No": "It's ok. I know we will have many other opportunities in the future..",
   "companion_Beach": "Oh, I want to look for some urchins! Did you know they make beautiful dyes?",
-  "companion_Farm": "I hope all your crops are organic, @. I'm sure they'll taste better that way",
+  "companion_Farm": "I hope all your crops are organic, @. I'm sure they'll taste better that way.",
   "companion_Forest": "This forest is always brimming with powerful energies. I wonder why...",
   "companion_Mine": "I should use this opportunity to gather some crystals.$h",
-  "companion_Mountain": "I think Linus choose such a nice place to live, don't you agree?",
+  "companion_Mountain": "I think Linus chose such a nice place to live, don't you agree?",
   "companion_Town": "I'm glad that Gus let me take this day off. Let's have some fun!$h"
 }
