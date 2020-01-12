@@ -22,11 +22,11 @@ Target mod id `purrplingcat.npcadventure`. Optional we can define a minimum vers
   "Version": "1.0.0",
   "Description": "One or two sentences about the mod.",
   "UniqueID": "purrplingcat.npcadventures-test-cp",
-  "MinimumApiVersion": "2.11.0",
+  "MinimumApiVersion": "3.1.0",
   "UpdateKeys": [],
   "ContentPackFor": {
     "UniqueID": "purrplingcat.npcadventure",
-    "MinimumVersion": "0.6.0"
+    "MinimumVersion": "0.10.0"
   }
 }
 ```
