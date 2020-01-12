@@ -1,9 +1,9 @@
 {
   "companionAccepted": "I suppose I could take a short break from work today.",
-  "companionRejected": "Terribly sorry @. I'm fully-booked out for today.$s",
-  "companionRejectedNight": "It's far too dangerous to explore the valley at night @. You could get hurt.$u",
-  "companionDismiss": "Time for me to head back to the clinic. Thanks for a fun time @.$h",
-  "companionDismissAuto": "I'm absolutely exhausted. I've got to get some rest. Sleep is very important you know so don't stay out too late. Take care.",
+  "companionRejected": "Terribly sorry, @. I'm fully booked out for today.$s",
+  "companionRejectedNight": "It's far too dangerous to explore the valley at night, @. You could get hurt.$u",
+  "companionDismiss": "Time for me to head back to the clinic. Thanks for a fun time, @.$h",
+  "companionDismissAuto": "I'm absolutely exhausted. I've got to get some rest. Sleep is very important, you know, so don't stay out too late. Take care.",
   "companionRecruited": "Let's get going! I've brought my first-aid kit just in case.$h",
   "companionSuggest": "I think I'm lacking some exercise in my routine. I should take a walk.#$q -1 -1#It would be nice to have company.#$r -1 0 Yes#That would be nice. Let's go!#$r -1 0 No# Today I can't. But thanks for inviting me.",
   "companionSuggest_Yes": "Just make sure to listen to your body and tell me if you need a break, ok?$h",
