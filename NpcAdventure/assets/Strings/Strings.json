@@ -1,19 +1,19 @@
 ﻿{
-  "askToFollow": "Ask {0} to follow?",
+  "askToFollow": "Ask {0} to follow you?",
   "recruitedWant": "What do you want?",
   "recruitedWant.bag": "Can I use your bag?",
-  "recruitedWant.dismiss": "You can go now. Thank you for support, bye",
+  "recruitedWant.dismiss": "You can go now. Thank you for the support! Bye!",
   "recruitedWant.nothing": "(Nothing)",
-  "spouseBuffDescription": "Adventure with your {0} is very magnetising!#You got +1 extra luck, +1 extra magnetic radius and lovely glowing.",
-  "bagItemsSentLetter": "Hi {0},^^You forgot some items in my bag. I've sent them back to you.^Yesterday's adventure was fine and I look forward to the next.^^    - {1}",
+  "spouseBuffDescription": "Adventure with your {0} is very magnetising!#You got +1 extra luck, +1 extra magnetic radius and a lovely glow.",
+  "bagItemsSentLetter": "Hi {0},^^You forgot some items in my bag. I've sent them back to you.^Yesterday's adventure was fun and I look forward to the next.^^    - {1}",
   "healed": "{0} healed you! (+{1} Health)",
-  "lifeSaved": "{0} saved your life for this time! Be patient.",
+  "lifeSaved": "{0} saved your life... this time! Be patient.", //the phrasing was confusing, not sure if this keeps the meaning you want
   "skill.warrior": "Warrior ({0}'s skill)",
-  "skillDescription.warrior": "Can fight with sword and use critical defense in danger.",
+  "skillDescription.warrior": "Can fight with a sword and use critical defense in danger.",
   "skill.doctor": "Doctor ({0}'s skill)",
   "skillDescription.doctor": "Can heal you when your health is under 30%.#Just talk with your companion if you are injured.",
   "skill.fighter": "Fighter ({0}'s skill)",
-  "skillDescription.fighter": "Can fight with sword.",
+  "skillDescription.fighter": "Can fight with a sword.",
   "recruitedCompanionHint": "Companion: {0}",
   "companionState_follow": "Status: Follow",
   "companionState_idle": "Status: Idle",
@@ -25,5 +25,5 @@
   "objectiveUpdate": "Journal Updated",
   "questObjective.recruitment": "{0}/{1} companions recruited",
   "hudSkillUsed": "(Skill's effect used)",
-  "prosteticsChangeButton": "Press '{0}' to change {1}'s prostetic buff."
+  "prosteticsChangeButton": "Press '{0}' to change {1}'s prosthetic buff."
 }
