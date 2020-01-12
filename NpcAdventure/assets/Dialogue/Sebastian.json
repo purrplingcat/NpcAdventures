@@ -1,5 +1,5 @@
 {
-  "companionAccepted": "Oh ok. ..Um no one has ever invited me out before.",
+  "companionAccepted": "Oh, ok.  ..Um, no one has ever invited me out before.",
   "companionRejected": "Hmm... No thanks. I still don't know you very well.",
   "companionRejectedNight": "Hmm... No thanks. I still don't know you very well.",
   "companionDismiss": "I understand. We all have to say our goodbyes at some point.",
@@ -9,10 +9,10 @@
   "companionSuggest_Yes": "Good. Lead the way, @.$h",
   "companionSuggest_No": "Don't worry, @. I don't mind being alone.",
   "companion_Beach_summer": "I hope you're not thinking about us going swimming. Just exploring?#$b#Oh, ok.$s",
-  "companion_Farm": "Your farm is nice for a place so... open.",
-  "companion_Farm_Spouse": "My bike blends so well with the farm. At first I would never imagine that, but now… I'm sure this is where we belong.",
+  "companion_Farm": "Your farm is nice, for a place so... open.",
+  "companion_Farm_Spouse": "My bike blends so well with the farm. At first I would never imagine that, but nowâ€¦ I'm sure this is where we belong.",
   "companion_Forest": "I can hear the frogs from here. They like all this dampness. Maybe I'll try to catch one.",
   "companion_Mine": "This place looks like a dungeon. It would be a good scenario for a 'Solarion Chronicles' adventure.$7",
-  "companion_Mountain": "Since we are here, how about we go watch the railroad?$7",
+  "companion_Mountain": "Since we're here, how about we go watch the railroad?$7",
   "companion_Town8": "Do you want to stop at the Saloon and play some pool? But just a warning, I'll crush you.$h"
 }
