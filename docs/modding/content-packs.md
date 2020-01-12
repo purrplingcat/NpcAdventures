@@ -38,7 +38,7 @@ In your content pack folder create file `content.json` and we can define custom 
 **<your_cp_folder>/content.json**
 ```json
 {
-  "Format": "1.0",
+  "Format": "1.1",
   "Changes": [
     {
       "Action": "Edit",
@@ -58,7 +58,7 @@ In your content pack folder create file `content.json` and we can define custom 
 
 | Field         | Means                                                                                                 |
 | ------------- | ----------------------------------------------------------------------------------------------------- |
-| `Format`      | The format version. You should always use the latest version (currently 1.0) to use the latest features and avoid obsolete behavior. Old formats could not be supported in current mod version. |
+| `Format`      | The format version. You should always use the latest version (currently 1.1) to use the latest features and avoid obsolete behavior. Old formats could not be supported in current mod version. |
 | `Changes`     | The changes you want to make. Each entry is called a patch, and describes a specific action to perform: Edit json file or load new  |
 
 Under key `Changes` we must define content definitions. It's a list of dicts with these keys:
