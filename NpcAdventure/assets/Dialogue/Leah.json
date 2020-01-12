@@ -1,11 +1,11 @@
 {
   "companionAccepted": "Absolutely! I want to pick some flowers.",
-  "companionRejected": "I'm a bit busy to do any exploring today. Sorry.",
+  "companionRejected": "I'm a bit too busy to do any exploring today. Sorry.",
   "companionRejectedNight": "Don't you think it's too late to go exploring now?",
-  "companionDismiss": "Ok. It was fun to hanging out",
-  "companionDismissAuto": "Time for me to head home. Thanks a bunch @.$h",
+  "companionDismiss": "Ok. It was fun hanging out!",
+  "companionDismissAuto": "Time for me to head home. Thanks a bunch, @.$h",
   "companionRecruited": "I wonder what interesting things we'll find along the way!$h",
   "companionSuggest": "My pantry is almost empty. I should do some gathering today.#$q -1 -1#Wanna come, @? You can find something useful too.#$r -1 0 Yes#That would be nice. Let's go!#$r -1 0 No# Today I can't. But thanks for inviting me.",
   "companionSuggest_Yes": "Good! Any preferences where to start?$h",
-  "companionSuggest_No": "I'll try to save something you, so. No promises, though.."
+  "companionSuggest_No": "I'll try to save something for you. No promises, though..."
 }
