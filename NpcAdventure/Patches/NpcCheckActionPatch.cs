@@ -18,8 +18,8 @@ namespace NpcAdventure.Patches
             bool recruited = Manager.PossibleCompanions.TryGetValue(__instance.Name, out var csm) && csm.CurrentStateFlag == StateFlag.RECRUITED;
 
             // Save has been kissed flag to state for use in postfix (we want to know previous has kissed state before kiss)
-            // Mark as kissed when we are recruited companion and we can't kiss them (
-            __state = __instance.hasBeenKissedToday || (!canKiss && recruited);
+            // Mark as kissed when we can't kiss them (cover angry emote when try to kiss - vanilla and custom kissing mod)
+            __state = __instance.hasBeenKissedToday || !canKiss;
         }
 
         [HarmonyPriority(-1000)]
