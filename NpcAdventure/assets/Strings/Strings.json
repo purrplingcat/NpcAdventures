@@ -7,7 +7,7 @@
   "spouseBuffDescription": "Adventure with your {0} is very magnetising!#You got +1 extra luck, +1 extra magnetic radius and a lovely glow.",
   "bagItemsSentLetter": "Hi {0},^^You forgot some items in my bag. I've sent them back to you.^Yesterday's adventure was fun and I look forward to the next.^^    - {1}",
   "healed": "{0} healed you! (+{1} Health)",
-  "lifeSaved": "{0} saved your life... this time! Be patient.", //the phrasing was confusing, not sure if this keeps the meaning you want
+  "lifeSaved": "{0} saved your life... this time! Be patient.",
   "skill.warrior": "Warrior ({0}'s skill)",
   "skillDescription.warrior": "Can fight with a sword and use critical defense in danger.",
   "skill.doctor": "Doctor ({0}'s skill)",
