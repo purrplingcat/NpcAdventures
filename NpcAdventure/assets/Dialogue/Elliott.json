@@ -6,6 +6,6 @@
   "companionDismissAuto": "I'm afraid it is time for me to go. Thanks for taking me on this delightful journey, @!$h",
   "companionRecruited": "Fantastic! Maybe I'll get some inspiration for the new book I'm writing.",
   "companionSuggest": "Hello, @. I was thinking about taking a refreshing walk and building inspiration today.#$q -1 -1# Would you mind accompanying me?#$r -1 0 Yes#Yeah, why not? Let me gather my things.#$r -1 0 No#Sorry, I have some things to attend to today. Maybe next time?",
-  "companionSuggest_Yes": "Great! Don't mind me if I feel a burst of inspiration for writing!$h", //"feel the burst for" isn't really an English phrase--this is one suggestion for a change, but I'm not sure if this was your intended meaning
+  "companionSuggest_Yes": "Great! Don't mind me if I feel a burst of inspiration for writing!$h",
   "companionSuggest_No": "Oh, of course. Don't fret over it, I'm sure our paths will coincide another time, my friend."
 }
