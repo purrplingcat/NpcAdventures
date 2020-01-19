@@ -8,7 +8,7 @@
   "companionSuggest": "I'm thinking about getting some photos of the Valley.#$q -1 -1#?You should come too, I could use some help.#$r -1 0 Yes#Yeah, why not? Let me gather my things.#$r -1 0 No#Sorry, I have some things to attend to today. Maybe next time?",
   "companionSuggest_Yes": "Perfect! Why don't you choose where we start?$h",
   "companionSuggest_No": "It's a shame that you are busy. Bye, then.",
-  "companion_Beach_summer": "We're going sunbathing today? Good idea! I hope I get a nice tan.$h", //original phrasing was awkward but there wasn't a great way to make it less awkward, this is one suggestion
+  "companion_Beach_summer": "We're going sunbathing today? Good idea! I hope I get a nice tan.$h",
   "companion_Bugland": "You have got to be kidding!$5#$b#Remind me again why I agreed to come with you today, @?$3",
   "companion_Bugland~1": "I stepped on something...$2#$b#It crunched.$2",
   "companion_Desert": "A friend of my sister lives out here, she has gorgeous hair.#$b#Not better than mine, but really nice!$11",
