@@ -8,7 +8,7 @@
   "heal": "Let's get you patched up.$3",
   "nomedkits": "I'll have to stop by Harvey's Clinic, I haven't got any more bandages.$6",
   "companionSuggest": "I have so many ideas right now, but I can't organize them. I need to declutter my head a bit.#$q -1 -1#Mind going for a walk with me, @?#$r -1 0 Yes#Sure! It's good to take a break from work now and then.#$r -1 0 No#I'll have to pass. But be sure to ask me next time!",
-  "companionSuggest_Yes": "Do you want to lead the way? I don't mind as long as we start moving soon.$h", //suggestion, not sure if this follows the meaning you had intended but original phrasing was hard to understand
+  "companionSuggest_Yes": "Do you want to lead the way? I don't mind as long as we start moving soon.$h",
   "companionSuggest_No": "I suppose you have a lot of work to do. No problem, see you later!",
   "companion_Bugland": "This is truly fascinating, @!#$b#What strange looking creatures. I need to take some samples while we're here, and maybe come back with my dad!$1",
   "companion_Forest_Night": "It's pretty creepy here right now, @.$s#$b#But this atmosphere is giving me a new idea for an invention! I should have brought my notepad...#$b#Oh well, I probably won't forget it. Probably.$h",
