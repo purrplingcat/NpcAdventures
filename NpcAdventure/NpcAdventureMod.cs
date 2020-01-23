@@ -136,7 +136,7 @@ namespace NpcAdventure
             if (!this.Config.AdventureMode)
                 return; // Don't init gamem aster scenarios when adventure mode is disabled
 
-            this.GameMaster.RegisterScenario(new AdventureBegins(this.SpecialEvents, this.Helper.Events, this.ContentLoader, this.Monitor));
+            this.GameMaster.RegisterScenario(new AdventureBegins(this.SpecialEvents, this.Helper.Events, this.ContentLoader, this.Config, this.Monitor));
             this.GameMaster.RegisterScenario(new QuestScenario(this.SpecialEvents, this.ContentLoader, this.Monitor));
         }
 

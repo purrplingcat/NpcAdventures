@@ -1,11 +1,13 @@
 ﻿using NpcAdventure.Events;
 using NpcAdventure.Loader;
+using NpcAdventure.Model;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Quests;
 using System;
+using System.Linq;
 
 namespace NpcAdventure.Story.Scenario
 {
@@ -17,13 +19,15 @@ namespace NpcAdventure.Story.Scenario
         private readonly ISpecialModEvents modEvents;
         private readonly IModEvents gameEvents;
         private readonly IContentLoader contentLoader;
+        private readonly Config config;
         private readonly IMonitor monitor;
 
-        public AdventureBegins(ISpecialModEvents modEvents, IModEvents gameEvents, IContentLoader contentLoader, IMonitor monitor): base()
+        public AdventureBegins(ISpecialModEvents modEvents, IModEvents gameEvents, IContentLoader contentLoader, Config config, IMonitor monitor) : base()
         {
             this.modEvents = modEvents;
             this.gameEvents = gameEvents;
             this.contentLoader = contentLoader;
+            this.config = config;
             this.monitor = monitor;
         }
 
@@ -39,17 +43,22 @@ namespace NpcAdventure.Story.Scenario
         // TODO for MP: Include this logic into multiplayer code. Keep old onWarped logic until branch with changed contitions will be merged
         private void GameLoop_DayStarted(object sender, DayStartedEventArgs e)
         {
-            Farmer player = Game1.player;
+            if (this.GameMaster.Mode != GameMasterMode.MASTER)
+                return; // Master only logic. Master will process all known players.
 
-            if (player.mailReceived.Contains("guildMember") && player.deepestMineLevel >= 10 && !player.mailReceived.Contains(LETTER_KEY))
+            // We check all players if we can add Maron's invitation letter to their mailbox
+            foreach (Farmer player in Game1.getAllFarmers())
             {
-                if (player.mailForTomorrow.Contains(LETTER_KEY) || player.mailbox.Contains(LETTER_KEY))
-                    return; // Don't send letter again when it's in mailbox or it's ready to be placed in tomorrow
+                if (player.mailReceived.Contains("guildMember") && player.deepestMineLevel >= 20 && !player.mailReceived.Contains(LETTER_KEY) && this.PlayerHasRequiredFriendship(player))
+                {
+                    if (player.mailForTomorrow.Contains(LETTER_KEY) || player.mailbox.Contains(LETTER_KEY))
+                        return; // Don't send letter again when it's in mailbox or it's ready to be placed in tomorrow
 
-                // Marlon sends letter with invitation if player can't recruit and don't recieved Marlon's letter
-                Game1.mailbox.Add(LETTER_KEY);
-                this.monitor.Log("Adventure Begins: Marlon's mail added immediately!");
-            }
+                    // Marlon sends letter with invitation if player can't recruit and don't recieved Marlon's letter
+                    player.mailbox.Add(LETTER_KEY);
+                    this.monitor.Log($"Adventure Begins: Marlon's mail added immediately for {player.Name} ({player.UniqueMultiplayerID})");
+                }
+            }            
         }
 
         public override void Initialize()
@@ -58,6 +67,16 @@ namespace NpcAdventure.Story.Scenario
             this.modEvents.QuestCompleted += this.ModEvents_QuestCompleted;
             this.gameEvents.Player.Warped += this.Player_Warped;
             this.gameEvents.GameLoop.DayStarted += this.GameLoop_DayStarted;
+        }
+
+        private bool PlayerHasRequiredFriendship(Farmer farmer)
+        {
+            float askTwoThirds = this.config.HeartThreshold * .66f;
+            float suggestTwoThirds = this.config.HeartSuggestThreshold * .66f;
+
+            return farmer.friendshipData.Values.Any(
+                fs => (fs.Points / 250) >= askTwoThirds || (fs.Points / 250) >= suggestTwoThirds
+            );
         }
 
         private void ModEvents_QuestCompleted(object sender, IQuestCompletedArgs e)
@@ -99,17 +118,6 @@ namespace NpcAdventure.Story.Scenario
         /// <param name="e"></param>
         private void Player_Warped(object sender, WarpedEventArgs e)
         {
-            // TODO: Merge this duplicated logic into one (In the branch with changed conditions)
-            if (e.Player.mailReceived.Contains("guildMember") && e.Player.deepestMineLevel >= 10 && !e.Player.mailReceived.Contains(LETTER_KEY))
-            {
-                if (e.Player.mailForTomorrow.Contains(LETTER_KEY) || e.Player.mailbox.Contains(LETTER_KEY))
-                    return; // Don't send letter again when it's in mailbox or it's ready to be placed in tomorrow
-
-                // Marlon sends letter with invitation if player can't recruit and don't recieved Marlon's letter
-                Game1.addMailForTomorrow(LETTER_KEY);
-                this.monitor.Log("Adventure Begins: Marlon's mail added for tomorrow!");
-            }
-
             if (e.NewLocation.Name.Equals("AdventureGuild") && e.Player.mailReceived.Contains(LETTER_KEY) && !this.GameMaster.Data.GetPlayerState(e.Player).isEligible)
             {
                 if (this.contentLoader.LoadStrings("Data/Events").TryGetValue("adventureBegins", out string eventData))
