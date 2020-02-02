@@ -1,5 +1,15 @@
 # Full changelog
 
+## 0.10.2 beta
+
+- Fixed text deffects for Maru and Marlon's letter (#90)
+- Fixed typos and grammar in english texts (#77) Thx to @corrinr
+
+## 0.10.1 beta
+
+- Fixed angry kiss rejection covered ask2follow dialog. Now dialog shows immediately when player can't kiss.
+- Better failsafe when animation behavior got broken animation description (no game crash)
+
 ## 0.10.0 beta
 
 - New documentation (PR #75)
