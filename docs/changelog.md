@@ -4,6 +4,7 @@
 
 - Fixed text deffects for Maru and Marlon's letter (#90)
 - Fixed typos and grammar in english texts (#77) Thx to @corrinr
+- Marlon's invitation letter will be delivered immediatelly when your day started, if you met all Marlon's conditions and your letter has no been yet. (#92)
 
 ## 0.10.1 beta
 

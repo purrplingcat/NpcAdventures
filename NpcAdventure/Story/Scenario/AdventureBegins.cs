@@ -32,6 +32,24 @@ namespace NpcAdventure.Story.Scenario
             this.modEvents.MailboxOpen -= this.Events_MailboxOpen;
             this.modEvents.QuestCompleted -= this.ModEvents_QuestCompleted;
             this.gameEvents.Player.Warped -= this.Player_Warped;
+            this.gameEvents.GameLoop.DayStarted -= this.GameLoop_DayStarted;
+        }
+
+        // TODO: Merge this duplicated logic into one (In the branch with changed conditions)
+        // TODO for MP: Include this logic into multiplayer code. Keep old onWarped logic until branch with changed contitions will be merged
+        private void GameLoop_DayStarted(object sender, DayStartedEventArgs e)
+        {
+            Farmer player = Game1.player;
+
+            if (player.mailReceived.Contains("guildMember") && player.deepestMineLevel >= 10 && !player.mailReceived.Contains(LETTER_KEY))
+            {
+                if (player.mailForTomorrow.Contains(LETTER_KEY) || player.mailbox.Contains(LETTER_KEY))
+                    return; // Don't send letter again when it's in mailbox or it's ready to be placed in tomorrow
+
+                // Marlon sends letter with invitation if player can't recruit and don't recieved Marlon's letter
+                Game1.mailbox.Add(LETTER_KEY);
+                this.monitor.Log("Adventure Begins: Marlon's mail added immediately!");
+            }
         }
 
         public override void Initialize()
@@ -39,6 +57,7 @@ namespace NpcAdventure.Story.Scenario
             this.modEvents.MailboxOpen += this.Events_MailboxOpen;
             this.modEvents.QuestCompleted += this.ModEvents_QuestCompleted;
             this.gameEvents.Player.Warped += this.Player_Warped;
+            this.gameEvents.GameLoop.DayStarted += this.GameLoop_DayStarted;
         }
 
         private void ModEvents_QuestCompleted(object sender, IQuestCompletedArgs e)
@@ -80,6 +99,7 @@ namespace NpcAdventure.Story.Scenario
         /// <param name="e"></param>
         private void Player_Warped(object sender, WarpedEventArgs e)
         {
+            // TODO: Merge this duplicated logic into one (In the branch with changed conditions)
             if (e.Player.mailReceived.Contains("guildMember") && e.Player.deepestMineLevel >= 10 && !e.Player.mailReceived.Contains(LETTER_KEY))
             {
                 if (e.Player.mailForTomorrow.Contains(LETTER_KEY) || e.Player.mailbox.Contains(LETTER_KEY))
