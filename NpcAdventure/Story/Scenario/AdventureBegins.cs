@@ -39,8 +39,6 @@ namespace NpcAdventure.Story.Scenario
             this.gameEvents.GameLoop.DayStarted -= this.GameLoop_DayStarted;
         }
 
-        // TODO: Merge this duplicated logic into one (In the branch with changed conditions)
-        // TODO for MP: Include this logic into multiplayer code. Keep old onWarped logic until branch with changed contitions will be merged
         private void GameLoop_DayStarted(object sender, DayStartedEventArgs e)
         {
             if (this.GameMaster.Mode != GameMasterMode.MASTER)
