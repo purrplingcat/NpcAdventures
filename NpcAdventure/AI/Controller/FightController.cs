@@ -438,7 +438,7 @@ namespace NpcAdventure.AI.Controller
                     this.AnimateMe();
                 }
 
-                return Math.Max(this.joystick.speed - 0.1f, 0.1f);
+                return Math.Max(this.joystick.Speed - 0.1f, 0.1f);
             }
 
             return 5.28f;

@@ -15,14 +15,8 @@ namespace NpcAdventure.AI.Controller
 {
     internal class FollowController : IController
     {
-        public const int FOLLOWING_LOST_TIMEOUT = 15;
-        public const float SPEEDUP_DISTANCE_THRESHOLD = 7;
         public const float MOVE_THRESHOLD_DISTANCE = 2.65f;
         public const float DECELERATE_THRESHOLD = 1.35f;
-        public const float LOST_DISTANCE = 16;
-        public const float OUT_OF_RANGE_DISTANCE = 64;
-        public const int PATH_MAX_NODE_COUNT = 28;
-        public const float PATH_NODE_TOLERANCE = 3f;
         public const float DECELERATION = 0.025f;
 
         private Vector2 negativeOne = new Vector2(-1, -1);
@@ -35,9 +29,9 @@ namespace NpcAdventure.AI.Controller
         public Queue<Vector2> pathToFollow;
         protected readonly AI_StateMachine ai;
         public Vector2 leaderLastTileCheckPoint;
-        private int idleTImer;
+        private int idleTimer;
 
-        public virtual bool IsIdle => this.idleTImer == 0;
+        public virtual bool IsIdle => this.idleTimer == 0;
 
         internal FollowController(AI_StateMachine ai)
         {
@@ -54,7 +48,7 @@ namespace NpcAdventure.AI.Controller
 
         private void OnMove(object sender, FollowJoystick.MoveEventArgs e)
         {
-            this.idleTImer = e.IsLastFrame ? Game1.random.Next(480, 840) : -1;
+            this.idleTimer = e.IsLastFrame ? Game1.random.Next(480, 840) : -1;
         }
 
         private void Ai_LocationChanged(object sender, EventArgsLocationChanged e)
@@ -64,7 +58,7 @@ namespace NpcAdventure.AI.Controller
                 return;
 
             this.leaderLastTileCheckPoint = this.negativeOne;
-            this.joystick.ChangeLocation(e.CurrentLocation);
+            this.joystick.Reset();
             this.PathfindingRemakeCheck();
         }
 
@@ -86,8 +80,8 @@ namespace NpcAdventure.AI.Controller
 
         private void CheckIdleState()
         {
-            if (this.idleTImer > 0)
-                --this.idleTImer;
+            if (this.idleTimer > 0)
+                --this.idleTimer;
         }
 
         protected virtual void PathfindingRemakeCheck()
@@ -127,7 +121,7 @@ namespace NpcAdventure.AI.Controller
             }
             else if (distanceFromFarmer > DECELERATE_THRESHOLD * Game1.tileSize)
             {
-                return this.joystick.speed - DECELERATION;
+                return this.joystick.Speed - DECELERATION;
             }
 
             return 0;
@@ -139,7 +133,7 @@ namespace NpcAdventure.AI.Controller
             Point lp = this.leader.GetBoundingBox().Center;
 
             Vector2 diff = new Vector2(lp.X, lp.Y) - new Vector2(fp.X, fp.Y);
-            this.joystick.speed = this.GetMovementSpeedBasedOnDistance(diff.Length());
+            this.joystick.Speed = this.GetMovementSpeedBasedOnDistance(diff.Length());
         }
 
         public virtual void Activate()
@@ -149,11 +143,11 @@ namespace NpcAdventure.AI.Controller
                 this.PathfindingRemakeCheck();
             }
 
-            this.idleTImer = Game1.random.Next(500, 800);
+            this.idleTimer = Game1.random.Next(500, 800);
         }
 
         public virtual void Deactivate() {
-            this.idleTImer = 0;
+            this.idleTimer = 0;
         }
     }
 }

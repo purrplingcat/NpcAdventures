@@ -3,19 +3,18 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NpcAdventure.AI.Controller
 {
+    /// <summary>
+    /// A joystic for follow a path to a target tile. The core of NPC following.
+    /// </summary>
     public class FollowJoystick : Internal.IUpdateable
     {
         public const float PATH_NODE_TOLERANCE = 3f;
 
         #region public fields
-        public float speed;
         public NPC follower;
         public Queue<Vector2> pathToFollow;
         public Vector2 currentFollowedPoint;
@@ -25,7 +24,7 @@ namespace NpcAdventure.AI.Controller
         public event EventHandler<MoveEventArgs> Move;
         #endregion
 
-        #region pritected fields
+        #region protected fields
         protected PathFinder pathFinder;
         #endregion
 
@@ -46,11 +45,23 @@ namespace NpcAdventure.AI.Controller
         private Vector2 animationUpdateSum;
         #endregion
 
+        /// <summary>
+        /// Returns state of joystick is following a path or not.
+        /// </summary>
         public bool IsFollowing => this.currentFollowedPoint != this.negativeOne;
 
+        /// <summary>
+        /// A speed of movement. If this value set to zero, then follower stands up on stativ position.
+        /// </summary>
+        public float Speed { get; set; }
+
+        /// <summary>
+        /// Create a new instance of follow path to tile joystick
+        /// </summary>
+        /// <param name="follower">An NPC who follows a path</param>
+        /// <param name="pathFinder">Path finder for find a path to target tile</param>
         public FollowJoystick(ref NPC follower, PathFinder pathFinder)
         {
-            this.pathToFollow = new Queue<Vector2>();
             this.follower = follower;
             this.pathFinder = pathFinder;
 
@@ -59,16 +70,25 @@ namespace NpcAdventure.AI.Controller
             this.characterMoveLeft = typeof(Character).GetField("moveLeft", BindingFlags.NonPublic | BindingFlags.Instance);
             this.characterMoveRight = typeof(Character).GetField("moveRight", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            this.gatesInThisLocation = this.CheckForGatesInLocation(follower.currentLocation);
+            this.Reset();
         }
 
-        public void ChangeLocation(GameLocation location)
+        /// <summary>
+        /// Reset the joystick and prepare it to following new path in new location.
+        /// </summary>
+        public void Reset()
         {
-            this.pathFinder.GameLocation = location;
+            this.pathToFollow = new Queue<Vector2>();
+            this.pathFinder.GameLocation = this.follower.currentLocation;
             this.currentFollowedPoint = this.negativeOne;
-            this.gatesInThisLocation = this.CheckForGatesInLocation(location);
+            this.gatesInThisLocation = this.CheckForGatesInLocation(this.follower.currentLocation);
         }
 
+        /// <summary>
+        /// Acquire a target tile to find path and follow it.
+        /// </summary>
+        /// <param name="targetTile">Tile to acquire</param>
+        /// <returns></returns>
         public bool AcquireTarget(Vector2 targetTile)
         {
             this.pathToFollow = this.pathFinder.Pathfind(this.follower.getTileLocation(), targetTile);
@@ -84,22 +104,47 @@ namespace NpcAdventure.AI.Controller
             return false;
         }
 
+        /// <summary>
+        /// Update the controller. Use it in game/mod update lifecycle.
+        /// </summary>
+        /// <param name="e"></param>
         public void Update(UpdateTickedEventArgs e)
         {
             this.PathfindingNodeUpdateCheck();
 
             if (this.IsFollowing)
-                this.FollowTile(this.currentFollowedPoint);
+                this.MoveToTile(this.currentFollowedPoint);
         }
 
-        public void FollowTile(Vector2 endPointTile)
+        /// <summary>
+        /// Get a facing direction of movement direction.
+        /// </summary>
+        /// <param name="movement"></param>
+        /// <returns></returns>
+        internal int GetFacingDirectionFromMovement(Vector2 movement)
+        {
+            if (movement == Vector2.Zero)
+                return -1;
+            int dir = 2;
+            if (Math.Abs(movement.X) > Math.Abs(movement.Y))
+                dir = movement.X > 0 ? 1 : 3;
+            else if (Math.Abs(movement.X) < Math.Abs(movement.Y))
+                dir = movement.Y > 0 ? 2 : 0;
+            return dir;
+        }
+
+        /// <summary>
+        /// Move to a current tile as part of the path.
+        /// </summary>
+        /// <param name="endPointTile">Current tile to move a character onto</param>
+        protected void MoveToTile(Vector2 endPointTile)
         {
             Rectangle tileBox = new Rectangle((int)endPointTile.X * 64, (int)endPointTile.Y * 64, 64, 64);
             tileBox.Inflate(-2, 0);
             Point fp = this.follower.GetBoundingBox().Center;
             this.lastFrameMovement = new Vector2(fp.X, fp.Y) - this.lastFramePosition;
 
-            if (this.speed > 0)
+            if (this.Speed > 0)
             {
                 Point np = new Point(((int)endPointTile.X * 64) + 32, ((int)endPointTile.Y * 64) + 32);
                 Vector2 nodeDiff = new Vector2(np.X, np.Y) - new Vector2(fp.X, fp.Y);
@@ -110,8 +155,8 @@ namespace NpcAdventure.AI.Controller
 
                 nodeDiff /= nodeDiffLen;
 
-                this.follower.xVelocity = nodeDiff.X * this.speed;
-                this.follower.yVelocity = -nodeDiff.Y * this.speed;
+                this.follower.xVelocity = nodeDiff.X * this.Speed;
+                this.follower.yVelocity = -nodeDiff.Y * this.Speed;
                 this.HandleWallSliding();
                 this.HandleGates();
 
@@ -141,7 +186,7 @@ namespace NpcAdventure.AI.Controller
             }
         }
 
-        protected void PathfindingNodeUpdateCheck()
+        private void PathfindingNodeUpdateCheck()
         {
             if (this.currentFollowedPoint != this.negativeOne && this.pathToFollow != null)
             {
@@ -149,7 +194,7 @@ namespace NpcAdventure.AI.Controller
                 Point n = new Point(((int)this.currentFollowedPoint.X * 64) + 32, ((int)this.currentFollowedPoint.Y * 64) + 32);
                 Vector2 nodeDiff = new Vector2(n.X, n.Y) - new Vector2(w.X, w.Y);
                 float nodeDiffLen = nodeDiff.Length();
-                float tolerance = PATH_NODE_TOLERANCE + (this.speed > 5.3f ? this.speed - 5.28f : 0f);
+                float tolerance = PATH_NODE_TOLERANCE + (this.Speed > 5.3f ? this.Speed - 5.28f : 0f);
                 if (nodeDiffLen <= tolerance)
                 {
                     if (this.pathToFollow.Count == 0)
@@ -164,7 +209,7 @@ namespace NpcAdventure.AI.Controller
             }
         }
 
-        protected virtual void AnimationSubUpdate()
+        private void AnimationSubUpdate()
         {
             if (++this.switchDirectionSpeed == 5)
             {
@@ -180,7 +225,7 @@ namespace NpcAdventure.AI.Controller
             }
         }
 
-        protected void SetMovementDirectionAnimation(int dir)
+        private void SetMovementDirectionAnimation(int dir)
         {
             string footStepSound = Utility.isOnScreen(this.follower.getTileLocationPoint(), 1, this.follower.currentLocation) ? "Cowboy_Footstep" : "";
             if (dir < 0 || dir > 3)
@@ -201,7 +246,7 @@ namespace NpcAdventure.AI.Controller
             }
         }
 
-        protected void SetMovingOnlyOneDirection(int dir)
+        private void SetMovingOnlyOneDirection(int dir)
         {
             if (dir < 0 || dir > 3)
                 return;
@@ -235,19 +280,7 @@ namespace NpcAdventure.AI.Controller
             }
         }
 
-        public int GetFacingDirectionFromMovement(Vector2 movement)
-        {
-            if (movement == Vector2.Zero)
-                return -1;
-            int dir = 2;
-            if (Math.Abs(movement.X) > Math.Abs(movement.Y))
-                dir = movement.X > 0 ? 1 : 3;
-            else if (Math.Abs(movement.X) < Math.Abs(movement.Y))
-                dir = movement.Y > 0 ? 2 : 0;
-            return dir;
-        }
-
-        protected void HandleWallSliding()
+        private void HandleWallSliding()
         {
             if (this.lastFrameVelocity != Vector2.Zero && this.lastFrameMovement == Vector2.Zero &&
                 (this.follower.xVelocity != 0 || this.follower.yVelocity != 0))
@@ -303,7 +336,7 @@ namespace NpcAdventure.AI.Controller
             }
         }
 
-        protected void HandleGates()
+        private void HandleGates()
         {
             if (this.gatesInThisLocation && (this.follower.xVelocity != 0 || this.follower.yVelocity != 0))
             {
