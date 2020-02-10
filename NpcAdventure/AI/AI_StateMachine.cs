@@ -27,6 +27,7 @@ namespace NpcAdventure.AI
             FOLLOW,
             FIGHT,
             IDLE,
+            FORAGE,
         }
 
         private const float MONSTER_DISTANCE = 9f;
@@ -68,6 +69,7 @@ namespace NpcAdventure.AI
                 [State.FOLLOW] = new FollowController(this),
                 [State.FIGHT] = new FightController(this, this.loader, this.events, this.Csm.Metadata.Sword),
                 [State.IDLE] = new IdleController(this, this.loader),
+                [State.FORAGE] = new ForageController(this),
             };
 
             // By default AI following the player
@@ -128,6 +130,11 @@ namespace NpcAdventure.AI
             {
                 this.changeStateCooldown = 100;
                 this.ChangeState(State.FOLLOW);
+            }
+
+            if (this.Csm.HasSkill("forager") && this.CurrentState == State.FOLLOW && this.CurrentController.IsIdle)
+            {
+                this.ChangeState(State.FORAGE);
             }
 
             if (this.CurrentState == State.FOLLOW && this.CurrentController.IsIdle)
