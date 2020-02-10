@@ -22,6 +22,7 @@ namespace NpcAdventure.AI.Controller
 
         #region events
         public event EventHandler<MoveEventArgs> Move;
+        public event EventHandler<EndOfRouteReachedEventArgs> EndOfRouteReached;
         #endregion
 
         #region protected fields
@@ -43,6 +44,8 @@ namespace NpcAdventure.AI.Controller
         private Vector2 lastFramePosition;
         private Vector2 lastMovementDirection;
         private Vector2 animationUpdateSum;
+        private float lastNodeDiffLen;
+        private int timeout;
         #endregion
 
         /// <summary>
@@ -60,7 +63,7 @@ namespace NpcAdventure.AI.Controller
         /// </summary>
         /// <param name="follower">An NPC who follows a path</param>
         /// <param name="pathFinder">Path finder for find a path to target tile</param>
-        public FollowJoystick(ref NPC follower, PathFinder pathFinder)
+        public FollowJoystick(NPC follower, PathFinder pathFinder)
         {
             this.follower = follower;
             this.pathFinder = pathFinder;
@@ -78,6 +81,7 @@ namespace NpcAdventure.AI.Controller
         /// </summary>
         public void Reset()
         {
+            this.timeout = 150;
             this.pathToFollow = new Queue<Vector2>();
             this.pathFinder.GameLocation = this.follower.currentLocation;
             this.currentFollowedPoint = this.negativeOne;
@@ -92,6 +96,7 @@ namespace NpcAdventure.AI.Controller
         public bool AcquireTarget(Vector2 targetTile)
         {
             this.pathToFollow = this.pathFinder.Pathfind(this.follower.getTileLocation(), targetTile);
+            this.timeout = 150;
 
             if (this.pathToFollow != null && this.pathToFollow.Count > 0 && this.follower.getTileLocation() != this.pathToFollow.Peek())
             {
@@ -201,11 +206,25 @@ namespace NpcAdventure.AI.Controller
                     {
                         this.follower.Sprite.StopAnimation();
                         this.pathToFollow = null;
+                        this.EndOfRouteReached?.Invoke(this, new EndOfRouteReachedEventArgs(this.currentFollowedPoint));
                         this.currentFollowedPoint = this.negativeOne;
+                        this.lastNodeDiffLen = 0;
+                        this.timeout = 150;
                         return;
                     }
                     this.currentFollowedPoint = this.pathToFollow.Dequeue();
                 }
+
+                if (nodeDiffLen == this.lastNodeDiffLen && nodeDiffLen > tolerance && this.follower.isMoving())
+                {
+                    if (--this.timeout <= 0)
+                    {
+                        this.follower.doEmote(8);
+                        this.Reset();
+                    }
+                }
+
+                this.lastNodeDiffLen = nodeDiffLen;
             }
         }
 
@@ -412,6 +431,16 @@ namespace NpcAdventure.AI.Controller
             }
 
             public bool IsLastFrame { get; }
+        }
+
+        public class EndOfRouteReachedEventArgs
+        {
+            public EndOfRouteReachedEventArgs(Vector2 endTile)
+            {
+                this.EndTile = endTile;
+            }
+
+            public Vector2 EndTile { get; }
         }
     }
 }

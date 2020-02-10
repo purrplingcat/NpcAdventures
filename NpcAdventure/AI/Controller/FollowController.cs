@@ -40,7 +40,7 @@ namespace NpcAdventure.AI.Controller
             this.leader = ai.player;
             this.follower = ai.npc;
             this.pathFinder = new PathFinder(this.follower.currentLocation, this.follower, this.leader);
-            this.joystick = new FollowJoystick(ref this.follower, this.pathFinder);
+            this.joystick = new FollowJoystick(this.follower, this.pathFinder);
 
             this.ai.LocationChanged += this.Ai_LocationChanged;
             this.joystick.Move += this.OnMove;
@@ -148,6 +148,8 @@ namespace NpcAdventure.AI.Controller
 
         public virtual void Deactivate() {
             this.idleTimer = 0;
+            this.leaderLastTileCheckPoint = this.negativeOne;
+            this.joystick.Reset();
         }
     }
 }
