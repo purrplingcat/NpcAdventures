@@ -46,6 +46,8 @@ namespace NpcAdventure.AI.Controller
         private Vector2 animationUpdateSum;
         #endregion
 
+        public bool IsFollowing => this.currentFollowedPoint != this.negativeOne;
+
         public FollowJoystick(ref NPC follower, PathFinder pathFinder)
         {
             this.pathToFollow = new Queue<Vector2>();
@@ -67,19 +69,26 @@ namespace NpcAdventure.AI.Controller
             this.gatesInThisLocation = this.CheckForGatesInLocation(location);
         }
 
-        public void AcquireTarget(Vector2 targetTile)
+        public bool AcquireTarget(Vector2 targetTile)
         {
             this.pathToFollow = this.pathFinder.Pathfind(this.follower.getTileLocation(), targetTile);
 
             if (this.pathToFollow != null && this.pathToFollow.Count > 0 && this.follower.getTileLocation() != this.pathToFollow.Peek())
+            {
                 this.currentFollowedPoint = this.pathToFollow.Dequeue();
-            else
-                this.currentFollowedPoint = this.negativeOne;
+                return true;
+            }
+            
+            this.currentFollowedPoint = this.negativeOne;
+
+            return false;
         }
 
         public void Update(UpdateTickedEventArgs e)
         {
-            if (this.currentFollowedPoint != this.negativeOne)
+            this.PathfindingNodeUpdateCheck();
+
+            if (this.IsFollowing)
                 this.FollowTile(this.currentFollowedPoint);
         }
 
@@ -129,6 +138,29 @@ namespace NpcAdventure.AI.Controller
             {
                 this.follower.xVelocity = 0;
                 this.follower.yVelocity = 0;
+            }
+        }
+
+        protected void PathfindingNodeUpdateCheck()
+        {
+            if (this.currentFollowedPoint != this.negativeOne && this.pathToFollow != null)
+            {
+                Point w = this.follower.GetBoundingBox().Center;
+                Point n = new Point(((int)this.currentFollowedPoint.X * 64) + 32, ((int)this.currentFollowedPoint.Y * 64) + 32);
+                Vector2 nodeDiff = new Vector2(n.X, n.Y) - new Vector2(w.X, w.Y);
+                float nodeDiffLen = nodeDiff.Length();
+                float tolerance = PATH_NODE_TOLERANCE + (this.speed > 5.3f ? this.speed - 5.28f : 0f);
+                if (nodeDiffLen <= tolerance)
+                {
+                    if (this.pathToFollow.Count == 0)
+                    {
+                        this.follower.Sprite.StopAnimation();
+                        this.pathToFollow = null;
+                        this.currentFollowedPoint = this.negativeOne;
+                        return;
+                    }
+                    this.currentFollowedPoint = this.pathToFollow.Dequeue();
+                }
             }
         }
 
@@ -203,7 +235,7 @@ namespace NpcAdventure.AI.Controller
             }
         }
 
-        protected int GetFacingDirectionFromMovement(Vector2 movement)
+        public int GetFacingDirectionFromMovement(Vector2 movement)
         {
             if (movement == Vector2.Zero)
                 return -1;
