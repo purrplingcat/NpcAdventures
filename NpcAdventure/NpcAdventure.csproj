@@ -92,6 +92,7 @@
     <Compile Include="AI\AI_StateMachine.cs" />
     <Compile Include="AI\AI_StateMachine.doctor.cs" />
     <Compile Include="AI\Controller\FightController.cs" />
+    <Compile Include="AI\Controller\FollowJoystick.cs" />
     <Compile Include="AI\Controller\IdleController.AnimateBehavior.cs" />
     <Compile Include="AI\Controller\IdleController.cs" />
     <Compile Include="AI\Controller\IdleController.LookAroundBehavior.cs" />
