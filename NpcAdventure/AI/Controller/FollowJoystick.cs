@@ -96,7 +96,6 @@ namespace NpcAdventure.AI.Controller
         /// <returns></returns>
         public bool AcquireTarget(Vector2 targetTile)
         {
-            this.follower.Halt();
             this.follower.isCharging = false;
             this.pathToFollow = this.pathFinder.Pathfind(this.follower.getTileLocation(), targetTile);
             this.timeout = 150;
@@ -174,7 +173,8 @@ namespace NpcAdventure.AI.Controller
                 this.animationUpdateSum += new Vector2(this.follower.xVelocity, -this.follower.yVelocity);
                 this.AnimationSubUpdate();
 
-                this.follower.MovePosition(Game1.currentGameTime, Game1.viewport, this.follower.currentLocation); // Update follower movement
+                //this.follower.MovePosition(Game1.currentGameTime, Game1.viewport, this.follower.currentLocation); // Update follower movement
+                this.ApplyVelocity(this.follower.currentLocation);
                 this.lastMovementDirection = this.lastFrameVelocity / this.lastFrameVelocity.Length();
 
                 this.movedLastFrame = true;
@@ -192,6 +192,20 @@ namespace NpcAdventure.AI.Controller
                 this.follower.xVelocity = 0;
                 this.follower.yVelocity = 0;
             }
+        }
+
+        protected void ApplyVelocity(GameLocation currentLocation)
+        {
+            Rectangle boundingBox = this.follower.GetBoundingBox();
+            boundingBox.X += (int)this.follower.xVelocity;
+            boundingBox.Y -= (int)this.follower.yVelocity;
+            if (currentLocation == null || !currentLocation.isCollidingPosition(boundingBox, Game1.viewport, false, 0, false, this.follower) || this.follower.isCharging)
+            {
+                this.follower.position.X += this.follower.xVelocity;
+                this.follower.position.Y -= this.follower.yVelocity;
+            }
+            this.follower.xVelocity = (int)(this.follower.xVelocity - this.follower.xVelocity / 2.0);
+            this.follower.yVelocity = (int)(this.follower.yVelocity - this.follower.yVelocity / 2.0);
         }
 
         private void PathfindingNodeUpdateCheck()
