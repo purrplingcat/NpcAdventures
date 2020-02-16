@@ -105,6 +105,7 @@ namespace NpcAdventure.AI.Controller
             }
             
             this.currentFollowedPoint = this.negativeOne;
+            this.follower.isCharging = false;
 
             return false;
         }
@@ -210,6 +211,7 @@ namespace NpcAdventure.AI.Controller
                         this.currentFollowedPoint = this.negativeOne;
                         this.lastNodeDiffLen = 0;
                         this.timeout = 150;
+                        this.follower.isCharging = false;
                         return;
                     }
                     this.currentFollowedPoint = this.pathToFollow.Dequeue();
@@ -220,7 +222,7 @@ namespace NpcAdventure.AI.Controller
                     if (--this.timeout <= 0)
                     {
                         this.follower.doEmote(8);
-                        this.Reset();
+                        this.follower.isCharging = true;
                     }
                 }
 
