@@ -86,6 +86,7 @@ namespace NpcAdventure.AI.Controller
             this.pathFinder.GameLocation = this.follower.currentLocation;
             this.currentFollowedPoint = this.negativeOne;
             this.gatesInThisLocation = this.CheckForGatesInLocation(this.follower.currentLocation);
+            this.follower.Halt();
         }
 
         /// <summary>
@@ -95,6 +96,8 @@ namespace NpcAdventure.AI.Controller
         /// <returns></returns>
         public bool AcquireTarget(Vector2 targetTile)
         {
+            this.follower.Halt();
+            this.follower.isCharging = false;
             this.pathToFollow = this.pathFinder.Pathfind(this.follower.getTileLocation(), targetTile);
             this.timeout = 150;
 
@@ -105,7 +108,6 @@ namespace NpcAdventure.AI.Controller
             }
             
             this.currentFollowedPoint = this.negativeOne;
-            this.follower.isCharging = false;
 
             return false;
         }
@@ -206,6 +208,7 @@ namespace NpcAdventure.AI.Controller
                     if (this.pathToFollow.Count == 0)
                     {
                         this.follower.Sprite.StopAnimation();
+                        this.follower.Halt();
                         this.pathToFollow = null;
                         this.EndOfRouteReached?.Invoke(this, new EndOfRouteReachedEventArgs(this.currentFollowedPoint));
                         this.currentFollowedPoint = this.negativeOne;
@@ -217,7 +220,7 @@ namespace NpcAdventure.AI.Controller
                     this.currentFollowedPoint = this.pathToFollow.Dequeue();
                 }
 
-                if (nodeDiffLen == this.lastNodeDiffLen && nodeDiffLen > tolerance && this.follower.isMoving())
+                if (nodeDiffLen == this.lastNodeDiffLen && nodeDiffLen > tolerance && this.follower.isMoving() && this.Speed > 0)
                 {
                     if (--this.timeout <= 0)
                     {
