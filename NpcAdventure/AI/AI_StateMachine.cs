@@ -20,7 +20,7 @@ namespace NpcAdventure.AI
     /// <summary>
     /// State machine for companion AI
     /// </summary>
-    internal partial class AI_StateMachine : Internal.IUpdateable, Internal.IDrawable
+    internal partial class  AI_StateMachine : Internal.IUpdateable, Internal.IDrawable
     {
         public enum State
         {
@@ -88,6 +88,13 @@ namespace NpcAdventure.AI
             if (this.Csm.HasSkill("doctor") && (this.player.health < this.player.maxHealth / 3) && this.healCooldown == 0 && this.medkits != -1)
             {
                 this.TryHealFarmer();
+                return true;
+            }
+
+            if (this.Csm.HasSkill("forager") && this.controllers[State.FORAGE] is ForageController fc && fc.HasAnyForage())
+            {
+                fc.GiveForagesTo(this.player);
+                Game1.drawDialogue(this.npc, DialogueHelper.GetSpecificDialogueText(this.npc, this.player, "giveForages"));
                 return true;
             }
 
