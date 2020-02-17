@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.TerrainFeatures;
@@ -55,6 +56,10 @@ namespace NpcAdventure.AI.Controller
                 this.targetObject.performUseAction(this.Forager.getTileLocation(), this.Forager.currentLocation);
                 this.ignoreList.Add(this.targetObject);
                 this.targetObject = null;
+            } else
+            {
+                this.Forager.currentLocation.localSound("leafrustle");
+                this.Forager.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite("TileSheets\\animations", new Rectangle(0, 1085, 58, 58), 60f, 8, 0, this.Forager.GetGrabTile() * 64, false, this.Forager.FacingDirection == 3, 1f, 0.0f, Color.White, 1f, 0.0f, 0.0f, 0.0f, false));
             }
 
             if (this.r.Next(9) == 1)
@@ -189,7 +194,7 @@ namespace NpcAdventure.AI.Controller
 
         protected virtual Vector2 PickTile()
         {
-            return this.PickTile(this.Forager.getTileLocation(), Game1.random.Next(1, 4));
+            return this.PickTile(this.Forager.getTileLocation(), Game1.random.Next(2, 4));
         }
 
         private void AcquireTerrainFeature()
@@ -221,6 +226,13 @@ namespace NpcAdventure.AI.Controller
 
             var bush = bushes.First();
 
+            if (Vector2.Distance(bush.tilePosition.Value, this.Forager.getTileLocation()) > 8)
+            {
+                // Nearest bush is too far, fallback to pick a tile around
+                this.joystick.AcquireTarget(this.PickTile());
+                return;
+            }
+
             if (this.joystick.AcquireTarget(this.PickTile(bush.tilePosition.Value, 2)))
             {
                 this.targetObject = bush;
@@ -232,17 +244,19 @@ namespace NpcAdventure.AI.Controller
 
         public void Update(UpdateTickedEventArgs e)
         {
+            if (this.IsIdle || (!Context.IsPlayerFree && !Context.IsMultiplayer))
+            {
+                return;
+            }
+
             if (!this.joystick.IsFollowing && this.Forager.currentLocation.IsOutdoors)
             {
                 if (this.r.NextDouble() > .5f)
                 {
                     this.AcquireTerrainFeature();
-                } else if (this.r.Next(5) == 3)
+                } else 
                 {
                     this.joystick.AcquireTarget(this.PickTile());
-                } else
-                {
-                    this.IsIdle = true;
                 }
             }
 
