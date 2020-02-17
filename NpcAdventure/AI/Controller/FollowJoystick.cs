@@ -58,6 +58,8 @@ namespace NpcAdventure.AI.Controller
         /// </summary>
         public float Speed { get; set; }
 
+        public int BlockedTimer { get; set; } = 90;
+
         /// <summary>
         /// Create a new instance of follow path to tile joystick
         /// </summary>
@@ -81,7 +83,7 @@ namespace NpcAdventure.AI.Controller
         /// </summary>
         public void Reset()
         {
-            this.timeout = 150;
+            this.timeout = this.BlockedTimer;
             this.pathToFollow = new Queue<Vector2>();
             this.pathFinder.GameLocation = this.follower.currentLocation;
             this.currentFollowedPoint = this.negativeOne;
@@ -98,7 +100,7 @@ namespace NpcAdventure.AI.Controller
         {
             this.follower.isCharging = false;
             this.pathToFollow = this.pathFinder.Pathfind(this.follower.getTileLocation(), targetTile);
-            this.timeout = 150;
+            this.timeout = this.BlockedTimer;
 
             if (this.pathToFollow != null && this.pathToFollow.Count > 0 && this.follower.getTileLocation() != this.pathToFollow.Peek())
             {
@@ -199,7 +201,7 @@ namespace NpcAdventure.AI.Controller
             Rectangle boundingBox = this.follower.GetBoundingBox();
             boundingBox.X += (int)this.follower.xVelocity;
             boundingBox.Y -= (int)this.follower.yVelocity;
-            if (currentLocation == null || !currentLocation.isCollidingPosition(boundingBox, Game1.viewport, false, 0, false, this.follower) || this.follower.isCharging)
+            if (currentLocation == null || !currentLocation.isCollidingPosition(boundingBox, Game1.viewport, true, 0, false, this.follower) || this.follower.isCharging)
             {
                 this.follower.position.X += this.follower.xVelocity;
                 this.follower.position.Y -= this.follower.yVelocity;
@@ -227,7 +229,7 @@ namespace NpcAdventure.AI.Controller
                         this.EndOfRouteReached?.Invoke(this, new EndOfRouteReachedEventArgs(this.currentFollowedPoint));
                         this.currentFollowedPoint = this.negativeOne;
                         this.lastNodeDiffLen = 0;
-                        this.timeout = 150;
+                        this.timeout = this.BlockedTimer;
                         this.follower.isCharging = false;
                         return;
                     }
