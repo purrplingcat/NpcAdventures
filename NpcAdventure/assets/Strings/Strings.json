@@ -1,11 +1,11 @@
-﻿{
+{
   "askToFollow": "Ask {0} to follow you?",
-  "recruitedWant": "What do you want?",
+  "recruitedWant": "What do you need?",
   "recruitedWant.bag": "Can I use your bag?",
-  "recruitedWant.dismiss": "You can go now. Thank you for the support! Bye!",
+  "recruitedWant.dismiss": "I had fun with you today, but I have something I need to do now.",
   "recruitedWant.nothing": "(Nothing)",
   "spouseBuffDescription": "Adventure with your {0} is very magnetising!#You got +1 extra luck, +1 extra magnetic radius and a lovely glow.",
-  "bagItemsSentLetter": "Hi {0},^^You forgot some items in my bag. I've sent them back to you.^Yesterday's adventure was fun and I look forward to the next.^^    - {1}",
+  "bagItemsSentLetter": "Hi {0},^^You forgot some items in my bag, so I've sent them back to you.^I had fun yesterday, I hope to see you again soon!^^    - {1}",
   "healed": "{0} healed you! (+{1} Health)",
   "lifeSaved": "{0} saved your life... this time! Be patient.",
   "skill.warrior": "Warrior ({0}'s skill)",
@@ -24,6 +24,5 @@
   "newObjective": "New Journal Entry",
   "objectiveUpdate": "Journal Updated",
   "questObjective.recruitment": "{0}/{1} companions recruited",
-  "hudSkillUsed": "(Skill's effect used)",
   "prosteticsChangeButton": "Press '{0}' to change {1}'s prosthetic buff."
 }
