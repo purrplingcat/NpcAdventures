@@ -24,6 +24,7 @@ namespace NpcAdventure.HUD
         private string hoverText;
         private AI_StateMachine.State state;
         private readonly IContentLoader contentLoader;
+        float skillSize;
 
         public CompanionDisplay(Config config, IContentLoader contentLoader)
         {
@@ -75,7 +76,11 @@ namespace NpcAdventure.HUD
         {
             if (!this.Config.ShowHUD || Game1.eventUp)
                 return;
-
+            if (Constants.TargetPlatform == GamePlatform.Android)
+            {
+                if (Game1.activeClickableMenu is GameMenu || Game1.activeClickableMenu is ShopMenu || Game1.activeClickableMenu is QuestLog)
+                    return;
+            }
             if (this.Skills.Count > 0)
             {
                 this.DrawSkills(spriteBatch);
@@ -99,33 +104,82 @@ namespace NpcAdventure.HUD
 
         public void DrawSkills(SpriteBatch spriteBatch)
         {
-            Vector2 position = new Vector2(Game1.viewport.Width - 80 - IClickableMenu.borderWidth, 390);
+            float vX;
+            float vY;
+            
+
+            if (Constants.TargetPlatform == GamePlatform.Android)
+            {
+                vX = 630;
+                vY = 55;
+            }
+            else
+            {
+                vX = Game1.viewport.Width - 80 - IClickableMenu.borderWidth;
+                vY = 390;
+            }
+
+            Vector2 position = new Vector2(vX, vY);
             var skills = this.Skills.Values.ToList();
 
             for (int i = 0; i < skills.Count; i++)
-            {
-                var skill = skills[i];
-                float xOffset = 50;
-                float iconOffset = 16;
-                float iconGrid = 68;
-                Vector2 iconPosition = new Vector2(position.X - xOffset + iconOffset - (i * iconGrid), position.Y);
-                Vector2 framePosition = new Vector2(position.X - xOffset - (i * iconGrid), position.Y - iconOffset - 3);
-
-                if (Game1.isOutdoorMapSmallerThanViewport())
                 {
-                    iconPosition.X = Math.Min(position.X, -Game1.viewport.X + Game1.currentLocation.map.Layers[0].LayerWidth * 64 - 70 - IClickableMenu.borderWidth) - xOffset + iconOffset - (i * iconGrid);
-                    framePosition.X = Math.Min(position.X, -Game1.viewport.X + Game1.currentLocation.map.Layers[0].LayerWidth * 64 - 70 - IClickableMenu.borderWidth) - xOffset - (i * iconGrid);
-                }
+                    var skill = skills[i];
+                    float xOffset = 50;
+                    float iconOffset = 16;
+                    float iconGrid = 68;
+                    
+                    if (Constants.TargetPlatform == GamePlatform.Android)
+                    {
+                        Vector2 iconPosition = new Vector2(position.X - xOffset + iconOffset + (i * iconGrid), position.Y);
+                        Vector2 framePosition = new Vector2(position.X - xOffset + (i * iconGrid), position.Y - iconOffset - 3);
 
-                skill.UpdatePosition(framePosition, iconPosition);
-                skill.Draw(spriteBatch);
-            }
+                        if (Game1.isOutdoorMapSmallerThanViewport())
+                        {
+                            iconPosition.X = Math.Min(position.X, -Game1.viewport.X + Game1.currentLocation.map.Layers[0].LayerWidth * 64 - 70 - IClickableMenu.borderWidth) - xOffset + iconOffset - (i * iconGrid);
+                            framePosition.X = Math.Min(position.X, -Game1.viewport.X + Game1.currentLocation.map.Layers[0].LayerWidth * 64 - 70 - IClickableMenu.borderWidth) - xOffset - (i * iconGrid);
+                        }
+
+                        skill.UpdatePosition(framePosition, iconPosition);
+                        skill.Draw(spriteBatch);
+                        skillSize = position.X + (i * iconGrid);
+                    }
+                    else
+                    {
+                        Vector2 iconPosition = new Vector2(position.X - xOffset + iconOffset - (i * iconGrid), position.Y);
+                        Vector2 framePosition = new Vector2(position.X - xOffset - (i * iconGrid), position.Y - iconOffset - 3);
+
+                        if (Game1.isOutdoorMapSmallerThanViewport())
+                        {
+                            iconPosition.X = Math.Min(position.X, -Game1.viewport.X + Game1.currentLocation.map.Layers[0].LayerWidth * 64 - 70 - IClickableMenu.borderWidth) - xOffset + iconOffset - (i * iconGrid);
+                            framePosition.X = Math.Min(position.X, -Game1.viewport.X + Game1.currentLocation.map.Layers[0].LayerWidth * 64 - 70 - IClickableMenu.borderWidth) - xOffset - (i * iconGrid);
+                        }
+
+                        skill.UpdatePosition(framePosition, iconPosition);
+                        skill.Draw(spriteBatch);
+                    }                    
+                }       
+            
         }
 
         public void DrawAvatar(SpriteBatch spriteBatch)
         {
             Rectangle icon;
-            Vector2 position = new Vector2(Game1.viewport.Width - 70 - IClickableMenu.borderWidth, 334);
+            float vX;
+            float vY;
+
+            if (Constants.TargetPlatform == GamePlatform.Android)
+            {
+                vX = 490;
+                vY = 0;
+            }
+            else
+            {
+                vX = Game1.viewport.Width - 70 - IClickableMenu.borderWidth;
+                vY = 334;
+            }
+
+            Vector2 position = new Vector2(vX, vY);
             if (Game1.isOutdoorMapSmallerThanViewport())
                 position.X = Math.Min(position.X, -Game1.viewport.X + Game1.currentLocation.map.Layers[0].LayerWidth * 64 - 70 - IClickableMenu.borderWidth);
             Utility.makeSafe(ref position, 64, 64);
@@ -149,7 +203,21 @@ namespace NpcAdventure.HUD
 
         public void DrawKeysHelp(SpriteBatch spriteBatch)
         {
-            Vector2 position = new Vector2(0, Game1.viewport.Height * 0.333f - (this.Keys.Count * 34) / 2);
+            float vX;
+            float vY;
+
+            if (Constants.TargetPlatform == GamePlatform.Android)
+            {
+                vX = skillSize;
+                vY = 38;
+            }
+            else
+            {
+                vX = 0;
+                vY = Game1.viewport.Height * 0.333f - (this.Keys.Count * 34) / 2;
+            }
+
+            Vector2 position = new Vector2(vX, vY);
             if (Game1.isOutdoorMapSmallerThanViewport())
                 position.X = Math.Max(position.X, -Game1.viewport.X);
             Utility.makeSafe(ref position, 64, 64);
