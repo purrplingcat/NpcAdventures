@@ -2,7 +2,7 @@
 
 ## 0.11.0 beta
 
-- Android support (experimanal) (#103 #106)
+- Android support (experimanal) (#103 #106) Thx @MaxPresi
 - Added special errors and warning log messages for known incompatabilities (#101)
 - Changed Marlon's invitaion letter conditions (#95)
 - Fixed invalid cast for quests and events assets (#89)

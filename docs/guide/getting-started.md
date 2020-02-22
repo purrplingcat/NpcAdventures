@@ -8,7 +8,15 @@
 ## Compatibility
 
 - Works with Stardew Valley 1.4 on Linux/Mac/Windows.
+- Works on Android 6 and newer (experimental support)
 - Works in **single player** ONLY.
+
+### Note for Android users
+
+Beginning with version *0.11.0* there's an experimental support for Android SMAPI and Stardew Valley. There is list of known android issues:
+
+- **HUD may be drawn at an incorrect position on some devices.** - If you have this problem, you can disable the HUD in configuration file. (Set `ShowHUD` to `false`)
+- **The game may crash on Android 5.1 and older** - Can't fix it, because it's caused by SMAPI. Android SMAPI has an experimental harmony patching, you can report these crashes to @MartyrPher (developer of SMAPI for Android). Remember Android 5.1 and older is not officialy supported by this mod.
 
 ## Upgrading from alpha versions (from 0.9 and older)
 

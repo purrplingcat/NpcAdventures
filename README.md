@@ -37,14 +37,16 @@ Download this mod on **[Nexusmods](https://nexusmods.com/stardewvalley/mods/4582
 - Support for content packs and localizations. You can add custom NPC as companion (see [how to create content pack](https://github.com/purrplingcat/PurrplingMod/wiki/Content-packs) on wiki)
 - User configuration (via `config.json`, see [SMAPI docs](https://stardewvalleywiki.com/Modding:Player_Guide/Getting_Started#Configure_mods))
 - Every companion NPC grants a buffs
-- [NEW] Two gameplay modes: Adventure (default) and classic (like alpha versions)
-- [NEW] Location dialogues can be assigned by time update in game
-- [NEW] Prostetic (changeable) buffs for Maru (hold `G` to change buff)
-- [NEW] Recruitable villagers can suggest you an adventure (requires 7 hearts and more. Can be changed in config)
-- [NEW] Companion introduction quests (visit Marlon, recruit 1 companion, recruit 5 companions and recruit 10 companions) - ADVENTURE MODE ONLY!
-- [NEW] Debug mode for developers and content pack creators (by default disabled, you can enable it in config)
-- [NEW] Added debug command `npcadventure_eligible` for eligible player to recruit, DEBUG AND ADVENTURE MODE ONLY!-
-- [NEW] New documentation for players and modders/content creators
+- Two gameplay modes: Adventure (default) and classic (like alpha versions)
+- Location dialogues can be assigned by time update in game
+- Prostetic (changeable) buffs for Maru (hold `G` to change buff)
+- Recruitable villagers can suggest you an adventure (requires 7 hearts and more. Can be changed in config)
+- Companion introduction quests (visit Marlon, recruit 1 companion, recruit 5 companions and recruit 10 companions) - ADVENTURE MODE ONLY!
+- Debug mode for developers and content pack creators (by default disabled, you can enable it in config)
+- Added debug command `npcadventure_eligible` for eligible player to recruit, DEBUG AND ADVENTURE MODE ONLY!-
+- New documentation for players and modders/content creators
+- [NEW] Support for localizations in content packs
+- [NEW] Android support (experimental) Thx @MaxPresi
 
 Next features comming soon...
 
@@ -84,7 +86,15 @@ You can add your custom NPC as companion to this mod via content pack. See [docu
 ## Compatibility
 
 - Works with Stardew Valley 1.4 on Linux/Mac/Windows.
+- Works on Android 6 and newer (experimental support)
 - Works in **single player** ONLY.
+
+### Note for Android users
+
+Beginning with version *0.11.0* there's an experimental support for Android SMAPI and Stardew Valley. There is list of known android issues:
+
+- **HUD may be drawn at an incorrect position on some devices.** - If you have this problem, you can disable the HUD in configuration file. (Set `ShowHUD` to `false`)
+- **The game may crash on Android 5.1 and older** - Can't fix it, because it's caused by SMAPI. Android SMAPI has an experimental harmony patching, you can report these crashes to @MartyrPher (developer of SMAPI for Android). Remember Android 5.1 and older is not officialy supported by this mod.
 
 ### Compatibility with other mods
 
@@ -95,9 +105,9 @@ You can add your custom NPC as companion to this mod via content pack. See [docu
 ## Translations
 
 - English (Corashirou, [RememberEmber](https://www.nexusmods.com/users/11961608), [PurrplingCat](https://www.nexusmods.com/users/68185132))
-- Portuguese Brazilian ([andril11](https://www.nexusmods.com/users/68848663))
-- French ([Reikounet](https://www.nexusmods.com/users/70092158))
-- Chinese ([wu574932346](https://www.nexusmods.com/users/67777356))
+- Portuguese Brazilian ([andril11](https://www.nexusmods.com/users/68848663)) (55% covered)
+- French ([Reikounet](https://www.nexusmods.com/users/70092158)) (49% covered)
+- Chinese ([wu574932346](https://www.nexusmods.com/users/67777356)) (53% covered)
 
 ## Feature preview
 
