@@ -1,6 +1,6 @@
-MIT License
+MIT license with additional conditions
 
-Copyright (c) 2019 Ellen Jana Fawkesová
+Copyright (c) 2019-2020 Ellen Jana Fawkesová aka PurrplingCat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -11,6 +11,18 @@ furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
+
+Derived projects from this project or projects which uses this project or their 
+part(s) must be open source. If your project is closed source and uses 
+any part of this, must disclose their source.
+
+If you create a derived project that you wish to publish, 
+you are required to ask for a permission.
+
+Publishing this or any derived project by anybody else but PurrplingCat 
+is allowed only after half a year of inactivity or with written permission.
+
+Keep this licence in derived projects.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
