@@ -1,5 +1,9 @@
 # Full changelog
 
+## Upcoming release
+
+- Changed a license
+
 ## 0.11.0 beta
 
 - Android support (experimanal) (#103 #106) Thx @MaxPresi
