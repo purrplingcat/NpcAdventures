@@ -1,5 +1,9 @@
 # Full changelog
 
+## Upcoming release
+
+- Changed a license
+
 ## 0.11.1 beta
 
 - Fixed nullpointer in HintDriver (#122)
