@@ -143,7 +143,7 @@ namespace NpcAdventure.HUD
 
                     skill.UpdatePosition(framePosition, iconPosition);
                     skill.Draw(spriteBatch);
-                    skillSize = position.X + (i * iconGrid) + 5;                   
+                    this.skillSize = position.X + (i * iconGrid) + 5;                   
                 }       
             
         }
@@ -184,7 +184,7 @@ namespace NpcAdventure.HUD
 
         public void DrawKeysHelp(SpriteBatch spriteBatch)
         {
-            float vX = skillSize;
+            float vX = this.skillSize;
             float vY = 37;
 
             if (Constants.TargetPlatform != GamePlatform.Android)
