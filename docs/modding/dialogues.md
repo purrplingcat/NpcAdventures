@@ -154,7 +154,7 @@ Time based dialogues has following format checked in this order:
 
 Dialogues can be conditioned by game state. Conditions are:
 
-- Is player married with this NPC?
+- Is player married or dating with this NPC?
 - Is day or night?
 - Whats is a weather? Rainy? Sunny or something else?
 - and combinations of this conditions
@@ -165,6 +165,9 @@ This keys has a following format and checked in this order:
 *_Night_<weather>_Spouse
 *_<weather>_Spouse
 *_Spouse
+*_Night_<weather>_Dating
+*_<weather>_Dating
+*_Dating
 *_Night_<weather>
 *_Night
 *_<weather>

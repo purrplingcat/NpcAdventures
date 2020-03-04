@@ -1,4 +1,5 @@
 ﻿using StardewModdingAPI.Utilities;
+using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +40,7 @@ namespace NpcAdventure.Utils
             public int[] FriendshipHeartScale { get; private set; }
             public SDate Date { get; set; } = SDate.Now();
             public bool IsNight { get; set; } = false;
-            public bool IsMarried { get; set; } = false;
+            public FriendshipStatus FriendshipStatus { get; set; } = FriendshipStatus.Friendly;
             public string Weather { get; set; }
 
             private void Enhance(string key)
@@ -54,9 +55,12 @@ namespace NpcAdventure.Utils
                 List<string> variants = new List<string>();
                 Tuple<bool, string>[] conditions = 
                 {
-                    new Tuple<bool, string>(this.IsNight && this.IsMarried && this.Weather != null, "_Night_" + this.Weather + "_Spouse"),
-                    new Tuple<bool, string>(this.Weather != null && this.IsMarried, "_" + this.Weather + "_Spouse"),
-                    new Tuple<bool, string>(this.IsMarried, "_Spouse"),
+                    new Tuple<bool, string>(this.IsNight && this.FriendshipStatus == FriendshipStatus.Married && this.Weather != null, "_Night_" + this.Weather + "_Spouse"),
+                    new Tuple<bool, string>(this.Weather != null && this.FriendshipStatus == FriendshipStatus.Married, "_" + this.Weather + "_Spouse"),
+                    new Tuple<bool, string>(this.FriendshipStatus == FriendshipStatus.Married, "_Spouse"),
+                    new Tuple<bool, string>(this.IsNight && this.FriendshipStatus == FriendshipStatus.Dating && this.Weather != null, "_Night_" + this.Weather + "_Dating"),
+                    new Tuple<bool, string>(this.Weather != null && this.FriendshipStatus == FriendshipStatus.Dating, "_" + this.Weather + "_Dating"),
+                    new Tuple<bool, string>(this.FriendshipStatus == FriendshipStatus.Dating, "_Dating"),
                     new Tuple<bool, string>(this.IsNight && this.Weather != null, "_Night_" + this.Weather),
                     new Tuple<bool, string>(this.IsNight, "_Night"),
                     new Tuple<bool, string>(this.Weather != null, "_" + this.Weather),

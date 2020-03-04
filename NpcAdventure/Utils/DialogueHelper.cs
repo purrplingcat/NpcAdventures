@@ -93,7 +93,7 @@ namespace NpcAdventure.Utils
             {
                 Date = SDate.Now(),
                 IsNight = Game1.isDarkOut(),
-                IsMarried = Helper.IsSpouseMarriedToFarmer(n, f),
+                FriendshipStatus = f.friendshipData.TryGetValue(n.Name, out Friendship friendship) ? friendship.Status : FriendshipStatus.Friendly,
                 FriendshipHeartLevel = f.getFriendshipHeartLevelForNPC(n.Name),
                 Weather = Helper.GetCurrentWeatherName(),
             };
