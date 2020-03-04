@@ -5,11 +5,20 @@
   "companionDismiss": "Eu entendo. Todos nós temos que dizer adeus em algum ponto da vida.",
   "companionDismissAuto": "Eu tenho que ir. Obrigado eu acho..",
   "companionRecruited": "Eu nem sei o porquê você me quer por perto.",
+  "companionSuggest": "Hoje o dia não esta ruim, acho que posso sair um pouco. .#$q -1 -1#Quer vir comigo?  #$r -1 0 Yes#Sim, vamos lá!#$r -1 0 No# Hoje não.",
+  "companionSuggest_Yes": "Bom, lidere o caminho @.$h",
+  "companionSuggest_No": "Não se preocupe, @. Não me importo de ficar sozinho.",
   "companion_Beach_summer": "Eu espero que você não pense que vamos nadar. Só explorar?#$b#Oh, ok.$s",
   "companion_Farm": "Sua fazenda até que é legal, pra um lugar tão... aberto.",
   "companion_Farm_Spouse": "A minha moto combina muito bem com a fazenda. Antes eu nunca imaginaria isso mas… Eu tenho certeza que ela veio pra ficar.",
+  "companion_Farm_Spouse~1": "É bom ter esse espaço só nosso, as vezes preciso ficar sozinho um pouco.#$b#Ok tá bom, muito mais do que 'as vezes'. Você me conhece.$1",
   "companion_Forest": "Eu posso ouvir os sapos fazendo barulho. Eles adoram esse 'pântano'. Talvez eu tente pegar um.",
+  "companion_Forest_Spouse": "Eu mudei bastante desde que casamos.#$b#Estar aqui fora... de inicio é dificil, mas quando vejo o tempo que passei no meu quarto, me sinto até meio mal.#$b#Eu te amo, @.$4",
   "companion_Mine": "Esse lugar parece uma dungeon. Daria um ótimo cenário pro 'Cronicas de Solarium'.$7",
+  "companion_Mine_Spouse": "Eu gosto daqui, sujo, escuro, assustador. É bom pra mim.",
+  "companion_Mine_Spouse~1": "Eu sei que você pode se cuidar, @, mas eu nem sei o que aconteceria se te perdesse.#$b#Sem querer colocar pressão, mas gostaria que viesse aqui só quando estou com você.",
   "companion_Mountain": "Já que estamos aqui, que tal olharmos os trilhos pra ver se o trem passa?$7",
-  "companion_Town8": "Quer fazer uma parada no Saloon e jogar? Só um aviso, eu vou ganhar de você!$h"
+  "companion_Mountain_Spouse": "Eu sei que a mãe sente a minha falta, mas assim é melhor, pra todos.#$b#Eu penso se Maru liga se eu fui embora.$2",
+  "companion_Town": "Quer fazer uma parada no Saloon e jogar? Só um aviso, eu vou ganhar de você!$h",
+  "companion_Town_Spouse": "Você sabe que preciso do meu espaço, mas estou feliz de passar um tempo assim com você. Espero que saiba disso.$4"
 }
