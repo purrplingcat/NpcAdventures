@@ -72,15 +72,25 @@ namespace NpcAdventure.Utils
         /// Returns a dialogue text for NPC as string.
         /// Can returns spouse dialogue, if famer are married with NPC and this dialogue is defined
         /// 
-        /// Lookup dialogue key patterns: {key}_Spouse, {key}
+        /// Lookup dialogue key patterns: {key}_Spouse, {key}_Dating {key}
         /// </summary>
-        /// <param name="n"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public static string GetSpecificDialogueText(NPC n, Farmer f, string key)
+        /// <param name="n">NPC</param>
+        /// <param name="f">Farmer</param>
+        /// <param name="key">Dialogue key</param>
+        /// <returns>A dialogue text</returns>
+        public static string GetFriendSpecificDialogueText(NPC n, Farmer f, string key)
         {
             if (Helper.IsSpouseMarriedToFarmer(n, f) && GetRawDialogue(n, $"{key}_Spouse", out KeyValuePair<string, string> rawSpousedDialogue))
+            {
                 return rawSpousedDialogue.Value;
+            }
+
+            if (f.friendshipData.TryGetValue(n.Name, out Friendship friendship)
+                && friendship.Status == FriendshipStatus.Dating
+                && GetRawDialogue(n, $"{key}_Dating", out KeyValuePair<string, string> rawDatingDialogue))
+            {
+                return rawDatingDialogue.Value;
+            }
 
             GetRawDialogue(n, key, out KeyValuePair<string, string> rawDialogue);
             return rawDialogue.Value;
@@ -145,11 +155,17 @@ namespace NpcAdventure.Utils
         /// <param name="l"></param>
         /// <param name="text"></param>
         /// <returns></returns>
-        internal static bool GetBubbleString(Dictionary<string, string> bubbles, NPC n, GameLocation l, out string text)
+        internal static bool GetAmbientBubbleString(Dictionary<string, string> bubbles, NPC n, GameLocation l, out string text)
         {
             return GetBubbleString(bubbles, n, $"ambient_{l.Name}", out text);
         }
 
+        /// <summary>
+        /// Generate a variable dialogue
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public static Dialogue GenerateDialogue(NPC n, string key)
         {
             if (GetVariableRawDialogue(n, key, out KeyValuePair<string, string> rawDilogue))
@@ -158,6 +174,13 @@ namespace NpcAdventure.Utils
             return null;
         }
 
+        /// <summary>
+        /// Generate a variable dialogue for location
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="l"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public static Dialogue GenerateDialogue(NPC n, GameLocation l, string key)
         {
             if (GetVariableRawDialogue(n, key, l, out KeyValuePair<string, string> rawDialogue))
@@ -168,6 +191,12 @@ namespace NpcAdventure.Utils
             return null;
         }
 
+        /// <summary>
+        /// Generate pure static dialogue
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public static Dialogue GenerateStaticDialogue(NPC n, string key)
         {
             if (GetRawDialogue(n, key, out KeyValuePair<string, string> rawDialogue))
@@ -178,6 +207,13 @@ namespace NpcAdventure.Utils
             return null;
         }
 
+        /// <summary>
+        /// Generate pure static dialogue for a location
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="l"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public static Dialogue GenerateStaticDialogue(NPC n, GameLocation l, string key)
         {
             return GenerateStaticDialogue(n, $"{key}_{l.Name}");

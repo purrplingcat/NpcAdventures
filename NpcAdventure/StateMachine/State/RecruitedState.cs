@@ -141,7 +141,9 @@ namespace NpcAdventure.StateMachine.State
             if (e.NewTime >= 2200)
             {
                 NPC companion = this.StateMachine.Companion;
-                Dialogue dismissalDialogue = new Dialogue(DialogueHelper.GetSpecificDialogueText(companion, this.StateMachine.CompanionManager.Farmer, "companionDismissAuto"), companion);
+                Dialogue dismissalDialogue = new Dialogue(
+                    DialogueHelper.GetFriendSpecificDialogueText(
+                        companion, this.StateMachine.CompanionManager.Farmer, "companionDismissAuto"), companion);
                 this.dismissalDialogue = dismissalDialogue;
                 this.StateMachine.Companion.doEmote(24);
                 this.StateMachine.Companion.updateEmote(Game1.currentGameTime);
@@ -214,7 +216,7 @@ namespace NpcAdventure.StateMachine.State
                 this.ai.ChangeLocation(e.NewLocation);
 
             // Show above head bubble text for location
-            if (Game1.random.NextDouble() > .66f && DialogueHelper.GetBubbleString(bubbles, companion, e.NewLocation, out string bubble))
+            if (Game1.random.NextDouble() > .66f && DialogueHelper.GetAmbientBubbleString(bubbles, companion, e.NewLocation, out string bubble))
                 companion.showTextAboveHead(bubble, preTimer: 250);
 
             // Push new location dialogue
@@ -293,7 +295,7 @@ namespace NpcAdventure.StateMachine.State
             switch (action)
             {
                 case "dismiss":
-                    Dialogue dismissalDialogue = new Dialogue(DialogueHelper.GetSpecificDialogueText(companion, leader, "companionDismiss"), companion);
+                    Dialogue dismissalDialogue = new Dialogue(DialogueHelper.GetFriendSpecificDialogueText(companion, leader, "companionDismiss"), companion);
                     this.dismissalDialogue = dismissalDialogue;
                     DialogueHelper.DrawDialogue(dismissalDialogue);
                     break;
