@@ -72,14 +72,14 @@ namespace NpcAdventure.StateMachine.State
                     if (opts[whichResponse].responseKey == "Yes")
                     {
                         // Farmer accepted suggestion of adventure. Let's go to find a some trouble!
-                        this.acceptalDialogue = new Dialogue(DialogueHelper.GetSpecificDialogueText(n, f, "companionSuggest_Yes"), n);
+                        this.acceptalDialogue = new Dialogue(DialogueHelper.GetFriendSpecificDialogueText(n, f, "companionSuggest_Yes"), n);
                         DialogueHelper.DrawDialogue(this.acceptalDialogue);
                     } else
                     {
                         // Farmer not accepted for this time. Farmer can't ask to follow next 2 hours
                         this.recruitRequestsEnabled = false;
                         this.doNotAskUntil = Game1.timeOfDay + 200;
-                        DialogueHelper.DrawDialogue(new Dialogue(DialogueHelper.GetSpecificDialogueText(n, f, "companionSuggest_No"), n));
+                        DialogueHelper.DrawDialogue(new Dialogue(DialogueHelper.GetFriendSpecificDialogueText(n, f, "companionSuggest_No"), n));
                     }
 
                     this.suggestionDialogue = null;
@@ -137,7 +137,7 @@ namespace NpcAdventure.StateMachine.State
             if (leader.getFriendshipHeartLevelForNPC(n.Name) < this.StateMachine.CompanionManager.Config.HeartThreshold || Game1.timeOfDay >= 2200)
             {
                 Dialogue rejectionDialogue = new Dialogue(
-                    DialogueHelper.GetSpecificDialogueText(
+                    DialogueHelper.GetFriendSpecificDialogueText(
                         n, leader, Game1.timeOfDay >= 2200 ? "companionRejectedNight" : "companionRejected"), n);
 
                 this.rejectionDialogue = rejectionDialogue;
@@ -145,7 +145,7 @@ namespace NpcAdventure.StateMachine.State
             }
             else
             {
-                Dialogue acceptalDialogue = new Dialogue(DialogueHelper.GetSpecificDialogueText(n, leader, "companionAccepted"), n);
+                Dialogue acceptalDialogue = new Dialogue(DialogueHelper.GetFriendSpecificDialogueText(n, leader, "companionAccepted"), n);
 
                 this.acceptalDialogue = acceptalDialogue;
                 DialogueHelper.DrawDialogue(acceptalDialogue);

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using NpcAdventure.Utils;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -62,15 +63,15 @@ namespace NpcAdventure.AI.Controller
                 this.Forager.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite("TileSheets\\animations", new Rectangle(0, 1085, 58, 58), 60f, 8, 0, this.Forager.GetGrabTile() * 64, false, this.Forager.FacingDirection == 3, 1f, 0.0f, Color.White, 1f, 0.0f, 0.0f, 0.0f, false));
             }
 
-            if (this.r.Next(9) == 1)
-            {
-                this.DoForage();
-            }
+            //if (this.r.Next(9) == 1)
+            //{
+                this.PickForageObject();
+            //}
 
             this.IsIdle = true;
         }
 
-        public void DoForage()
+        public void PickForageObject()
         {
             StardewValley.Object foragedObject = null;
             int quality;
@@ -132,6 +133,11 @@ namespace NpcAdventure.AI.Controller
             }
         }
 
+        internal bool CanForage()
+        {
+            return this.Forager.currentLocation.IsOutdoors;
+        }
+
         internal void GiveForagesTo(Farmer player)
         {
             foreach (var o in this.foragedObjects)
@@ -167,6 +173,17 @@ namespace NpcAdventure.AI.Controller
             this.joystick.Reset();
         }
 
+        protected virtual bool IsLeaderTooFar()
+        {
+            return Helper.Distance(this.Leader.getTileLocationPoint(), this.Forager.getTileLocationPoint()) > 12f;
+        }
+
+        /// <summary>
+        /// Pick tile for walk to and forage
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="tilesAround"></param>
+        /// <returns></returns>
         protected virtual Vector2 PickTile(Vector2 source, int tilesAround)
         {
             Vector2 thisTile = source;
@@ -197,6 +214,9 @@ namespace NpcAdventure.AI.Controller
             return this.PickTile(this.Forager.getTileLocation(), Game1.random.Next(2, 4));
         }
 
+        /// <summary>
+        /// Acquire a place with a terrain feature (like bush) for foraging
+        /// </summary>
         private void AcquireTerrainFeature()
         {
             var bushes = this.Forager.currentLocation.largeTerrainFeatures.Where(
@@ -249,7 +269,21 @@ namespace NpcAdventure.AI.Controller
                 return;
             }
 
-            if (!this.joystick.IsFollowing && this.Forager.currentLocation.IsOutdoors)
+            if (!this.CanForage())
+            {
+                this.IsIdle = true;
+                return;
+            }
+
+            if (e.IsMultipleOf(30) && this.IsLeaderTooFar())
+            {
+                this.IsIdle = true;
+                this.Leader.changeFriendship(-5, this.Forager);
+                Game1.drawDialogue(this.Forager, DialogueHelper.GetFriendSpecificDialogueText(this.Forager, this.Leader, "farmerRunAway"));
+                return;
+            }
+
+            if (!this.joystick.IsFollowing)
             {
                 if (this.r.NextDouble() > .5f)
                 {
