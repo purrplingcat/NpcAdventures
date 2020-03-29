@@ -86,7 +86,7 @@ namespace NpcAdventure.Utils
             }
 
             if (f.friendshipData.TryGetValue(n.Name, out Friendship friendship)
-                && friendship.Status == FriendshipStatus.Dating
+                && friendship.IsDating()
                 && GetRawDialogue(n, $"{key}_Dating", out KeyValuePair<string, string> rawDatingDialogue))
             {
                 return rawDatingDialogue.Value;

@@ -4,11 +4,11 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.TerrainFeatures;
+using SObject = StardewValley.Object;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using StardewValley.Locations;
 
 namespace NpcAdventure.AI.Controller
 {
@@ -20,7 +20,7 @@ namespace NpcAdventure.AI.Controller
         private readonly List<LargeTerrainFeature> ignoreList;
         private readonly Random r;
         private LargeTerrainFeature targetObject;
-        protected List<StardewValley.Object> foragedObjects;
+        protected Stack<Item> foragedObjects;
         protected int[] springForage = new int[] { 16, 18, 20, 22, 296, 399 };
         protected int[] summerForage = new int[] { 396, 398, 402 };
         protected int[] fallForage = new int[] { 404, 406, 408, 410 };
@@ -35,7 +35,7 @@ namespace NpcAdventure.AI.Controller
         public NPC Forager => this.ai.npc;
         public Farmer Leader => this.ai.player;
 
-        public ForageController(AI_StateMachine ai)
+        public ForageController(AI_StateMachine ai, IModEvents events)
         {
             this.ai = ai;
             this.ignoreList = new List<LargeTerrainFeature>();
@@ -44,7 +44,25 @@ namespace NpcAdventure.AI.Controller
             this.joystick.EndOfRouteReached += this.Joystick_EndOfRouteReached;
             this.ai.LocationChanged += this.Ai_LocationChanged;
             this.r = new Random((int)Game1.uniqueIDForThisGame + (int)Game1.stats.DaysPlayed);
-            this.foragedObjects = new List<StardewValley.Object>();
+            this.foragedObjects = new Stack<Item>();
+
+            events.GameLoop.TimeChanged += this.GameLoop_TimeChanged;
+        }
+
+        private void GameLoop_TimeChanged(object sender, TimeChangedEventArgs e)
+        {
+            int keepMindChanceNum = this.Leader.getFriendshipHeartLevelForNPC(this.Forager.Name);
+
+            if (Helper.IsSpouseMarriedToFarmer(this.Forager, this.Leader)) {
+                keepMindChanceNum = (int)(keepMindChanceNum * 1.5);
+            }
+
+            if (this.r.Next(1, keepMindChanceNum) == 1)
+            {
+                // Chance 1:<count of frindship hearts> to forager changes their mind 
+                // to share some foraged item with you and don't share it
+                this.foragedObjects.Pop();
+            }
         }
 
         private void Joystick_EndOfRouteReached(object sender, FollowJoystick.EndOfRouteReachedEventArgs e)
@@ -63,89 +81,93 @@ namespace NpcAdventure.AI.Controller
                 this.Forager.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite("TileSheets\\animations", new Rectangle(0, 1085, 58, 58), 60f, 8, 0, this.Forager.GetGrabTile() * 64, false, this.Forager.FacingDirection == 3, 1f, 0.0f, Color.White, 1f, 0.0f, 0.0f, 0.0f, false));
             }
 
-            //if (this.r.Next(9) == 1)
-            //{
+            if (this.r.Next(9) == 1)
+            {
                 this.PickForageObject();
-            //}
+            }
 
             this.IsIdle = true;
         }
 
         public void PickForageObject()
         {
-            StardewValley.Object foragedObject = null;
-            int quality;
+            SObject foragedObject = null;
+            int skill = this.Leader.ForagingLevel - 2;
+            int quality = 0;
 
-            if (this.Leader.ForagingLevel - 2 <= 2)
+            if (skill >= 2)
                 quality = 1;
-            else if (this.Leader.ForagingLevel - 2 <= 6)
+            else if (skill >= 6)
                 quality = 2;
-            else if (this.Leader.ForagingLevel - 2 <= 9)
+            else if (skill >= 8)
                 quality = 3;
-            else
-                quality = 4;
 
-            string locationName = this.Forager.currentLocation.Name;
+            GameLocation location = this.Forager.currentLocation;
+            string locationName = location.Name;
+            string season = Game1.currentSeason;
 
             if (locationName.Equals("Woods"))
             {
-                string season = Game1.currentSeason;
                 switch (season)
                 {
                     case "spring":
-                        foragedObject = new StardewValley.Object(this.woodsSpringForage[this.r.Next(2)], 1, false, -1, quality); break;
+                        foragedObject = new SObject(this.woodsSpringForage[this.r.Next(2)], 1, false, -1, quality); break;
                     case "summer":
-                        foragedObject = new StardewValley.Object(this.woodsSummerForage[this.r.Next(2)], 1, false, -1, quality); break;
+                        foragedObject = new SObject(this.woodsSummerForage[this.r.Next(2)], 1, false, -1, quality); break;
                     case "fall":
-                        foragedObject = new StardewValley.Object(this.woodsFallForage[this.r.Next(2)], 1, false, -1, quality); break;
+                        foragedObject = new SObject(this.woodsFallForage[this.r.Next(2)], 1, false, -1, quality); break;
                     default:
-                        foragedObject = new StardewValley.Object(this.winterForage[this.r.Next(5)], 1, false, -1, quality); break;
+                        foragedObject = new SObject(this.winterForage[this.r.Next(5)], 1, false, -1, quality); break;
                 }
             }
             else if (locationName.Equals("Beach"))
             {
-                foragedObject = new StardewValley.Object(this.beachForage[this.r.Next(8)], 1, false, -1, quality);
+                foragedObject = new SObject(this.beachForage[this.r.Next(8)], 1, false, -1, quality);
             }
             else if (locationName.Equals("Desert"))
             {
-                foragedObject = new StardewValley.Object(this.desertForage[this.r.Next(2)], 1, false, -1, quality);
+                foragedObject = new SObject(this.desertForage[this.r.Next(2)], 1, false, -1, quality);
+            }
+            else if (location is MineShaft)
+            {
+                foragedObject = new SObject(this.caveForage[this.r.Next(2)], 1, false, -1, quality);
             }
             else
             {
-                string season = Game1.currentSeason;
                 switch (season)
                 {
                     case "spring":
-                        foragedObject = new StardewValley.Object(this.springForage[this.r.Next(6)], 1, false, -1, quality); break;
+                        foragedObject = new SObject(this.springForage[this.r.Next(6)], 1, false, -1, quality); break;
                     case "summer":
-                        foragedObject = new StardewValley.Object(this.summerForage[this.r.Next(3)], 1, false, -1, quality); break;
+                        foragedObject = new SObject(this.summerForage[this.r.Next(3)], 1, false, -1, quality); break;
                     case "fall":
-                        foragedObject = new StardewValley.Object(this.fallForage[this.r.Next(4)], 1, false, -1, quality); break;
+                        foragedObject = new SObject(this.fallForage[this.r.Next(4)], 1, false, -1, quality); break;
                     case "winter":
-                        foragedObject = new StardewValley.Object(this.winterForage[this.r.Next(5)], 1, false, -1, quality); break;
+                        foragedObject = new SObject(this.winterForage[this.r.Next(5)], 1, false, -1, quality); break;
                 }
             }
 
             if (foragedObject != null)
             {
                 this.Forager.doEmote(Game1.random.NextDouble() < .1f ? 20 : 16);
-                this.foragedObjects.Add(foragedObject);
+                this.foragedObjects.Push(foragedObject);
             }
         }
 
         internal bool CanForage()
         {
-            return this.Forager.currentLocation.IsOutdoors;
+            return this.Forager.currentLocation.IsOutdoors && !this.IsLeaderTooFar();
         }
 
-        internal void GiveForagesTo(Farmer player)
+        internal bool GiveForageTo(Farmer player)
         {
-            foreach (var o in this.foragedObjects)
+            if (player.addItemToInventoryBool(this.foragedObjects.Peek()))
             {
-                player.addItemToInventory(o);
+                this.foragedObjects.Pop();
+                return true;
             }
 
-            this.foragedObjects.Clear();
+            return false;
         }
 
         internal bool HasAnyForage()
@@ -280,6 +302,14 @@ namespace NpcAdventure.AI.Controller
                 this.IsIdle = true;
                 this.Leader.changeFriendship(-5, this.Forager);
                 Game1.drawDialogue(this.Forager, DialogueHelper.GetFriendSpecificDialogueText(this.Forager, this.Leader, "farmerRunAway"));
+
+                if (this.HasAnyForage() && this.r.Next(3) == 1)
+                {
+                    // Chance 1:3 forager changes their mind 
+                    // to share some foraged item with you and don't share it
+                    this.foragedObjects.Pop();
+                }
+
                 return;
             }
 
