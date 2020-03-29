@@ -70,7 +70,7 @@ namespace NpcAdventure.AI
                 [State.FOLLOW] = new FollowController(this),
                 [State.FIGHT] = new FightController(this, this.loader, this.events, this.Csm.Metadata.Sword),
                 [State.IDLE] = new IdleController(this, this.loader),
-                [State.FORAGE] = new ForageController(this),
+                [State.FORAGE] = new ForageController(this, this.events),
             };
 
             // By default AI following the player
@@ -95,9 +95,11 @@ namespace NpcAdventure.AI
                 return true;
             }
 
-            if (this.Csm.HasSkill("forager") && this.controllers[State.FORAGE] is ForageController fc && fc.HasAnyForage())
+            if (this.Csm.HasSkill("forager")
+                && this.controllers[State.FORAGE] is ForageController fc
+                && fc.HasAnyForage()
+                && fc.GiveForageTo(this.player))
             {
-                fc.GiveForagesTo(this.player);
                 Game1.drawDialogue(this.npc, DialogueHelper.GetFriendSpecificDialogueText(this.npc, this.player, "giveForages"));
                 return true;
             }
