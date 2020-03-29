@@ -11,11 +11,28 @@ namespace NpcAdventure.HUD
         private Vector2 iconPosition;
         private int ticks;
         private Color glowColor;
+        private Rectangle icon;
 
         public CompanionSkill(string type, string description)
         {
             this.Type = type;
             this.HoverText = description;
+
+            switch (type)
+            {
+                case "doctor":
+                    this.icon = new Rectangle(0, 428, 10, 10);
+                    break;
+                case "warrior":
+                    this.icon = new Rectangle(120, 428, 10, 10);
+                    break;
+                case "fighter":
+                    this.icon = new Rectangle(40, 428, 10, 10);
+                    break;
+                case "forager":
+                    this.icon = new Rectangle(60, 428, 10, 10);
+                    break;
+            }
         }
 
         public string Type { get; }
@@ -27,25 +44,12 @@ namespace NpcAdventure.HUD
         public void Draw(SpriteBatch spriteBatch)
         {
             Color glowing = this.ticks > 0 ? this.glowColor : Color.White;
-            Rectangle icon;
 
-            switch (this.Type)
-            {
-                case "doctor":
-                    icon = new Rectangle(0, 428, 10, 10);
-                    break;
-                case "warrior":
-                    icon = new Rectangle(120, 428, 10, 10);
-                    break;
-                case "fighter":
-                    icon = new Rectangle(40, 428, 10, 10);
-                    break;
-                default:
-                    return;
-            }
-
+            // Draw empty icon box
             spriteBatch.Draw(Game1.mouseCursors, this.framePosition, new Rectangle(384, 373, 18, 18), glowing * 1f, 0f, Vector2.Zero, 3.4f, SpriteEffects.None, 1f);
-            spriteBatch.Draw(Game1.mouseCursors, this.iconPosition, icon, Color.White * 1f, 0f, Vector2.Zero, 2.8f, SpriteEffects.None, 1f);
+            
+            if (this.icon != null) // Draw icon if it's set
+                spriteBatch.Draw(Game1.mouseCursors, this.iconPosition, this.icon, Color.White * 1f, 0f, Vector2.Zero, 2.8f, SpriteEffects.None, 1f);
         }
 
         public void PerformHoverAction(int x, int y)

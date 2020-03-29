@@ -175,6 +175,9 @@ namespace NpcAdventure.HUD
                 case AI_StateMachine.State.FIGHT:
                     icon = new Rectangle(120, 428, 9, 9);
                     break;
+                case AI_StateMachine.State.FORAGE:
+                    icon = new Rectangle(60, 428, 10, 10);
+                    break;
                 default:
                     return;
             }

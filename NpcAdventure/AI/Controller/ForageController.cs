@@ -51,17 +51,18 @@ namespace NpcAdventure.AI.Controller
 
         private void GameLoop_TimeChanged(object sender, TimeChangedEventArgs e)
         {
-            int keepMindChanceNum = this.Leader.getFriendshipHeartLevelForNPC(this.Forager.Name);
+            int keepMindChanceNum = this.Leader.getFriendshipHeartLevelForNPC(this.Forager.Name) - this.foragedObjects.Count + 1;
 
             if (Helper.IsSpouseMarriedToFarmer(this.Forager, this.Leader)) {
                 keepMindChanceNum = (int)(keepMindChanceNum * 1.5);
             }
 
-            if (this.r.Next(1, keepMindChanceNum) == 1)
+            if (this.HasAnyForage() && this.r.Next(Math.Max(keepMindChanceNum, 2)) == 1)
             {
                 // Chance 1:<count of frindship hearts> to forager changes their mind 
                 // to share some foraged item with you and don't share it
                 this.foragedObjects.Pop();
+                this.ai.Monitor.Log($"{this.Forager.Name} changed her/his mind and don't share last forage with farmer.");
             }
         }
 
@@ -81,7 +82,11 @@ namespace NpcAdventure.AI.Controller
                 this.Forager.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite("TileSheets\\animations", new Rectangle(0, 1085, 58, 58), 60f, 8, 0, this.Forager.GetGrabTile() * 64, false, this.Forager.FacingDirection == 3, 1f, 0.0f, Color.White, 1f, 0.0f, 0.0f, 0.0f, false));
             }
 
-            if (this.r.Next(9) == 1)
+            double potentialChance = 0.02 + 1.0 / (this.foragedObjects.Count + 1) + this.Leader.LuckLevel / 100.0 + this.Leader.DailyLuck;
+            double boost = this.Leader.professions.Contains(Farmer.gatherer) ? 2.0 : 1.0;
+            double realChance = potentialChance * 0.33 + this.Leader.ForagingLevel * 0.005 * boost;
+
+            if (this.r.NextDouble() < realChance)
             {
                 this.PickForageObject();
             }
@@ -149,8 +154,15 @@ namespace NpcAdventure.AI.Controller
 
             if (foragedObject != null)
             {
+                double shareChance = 0.42 + this.Leader.getFriendshipHeartLevelForNPC(this.Forager.Name) * 0.016;
+
                 this.Forager.doEmote(Game1.random.NextDouble() < .1f ? 20 : 16);
-                this.foragedObjects.Push(foragedObject);
+
+                if (this.r.NextDouble() < shareChance)
+                {
+                    this.foragedObjects.Push(foragedObject);
+                    this.ai.Monitor.Log($"{this.Forager.Name} wants to share a foraged item with farmer");
+                }
             }
         }
 
@@ -308,6 +320,7 @@ namespace NpcAdventure.AI.Controller
                     // Chance 1:3 forager changes their mind 
                     // to share some foraged item with you and don't share it
                     this.foragedObjects.Pop();
+                    this.ai.Monitor.Log($"{this.Forager.Name} changed her/his mind and don't share last forage with farmer.");
                 }
 
                 return;
