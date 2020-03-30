@@ -140,7 +140,20 @@ namespace NpcAdventure.AI.Controller
 
                 return;
             }
-            
+
+            if (source != null && source is Bush bush && BushIsInBloom(bush))
+            {
+                objectIndex = 296;
+
+                if (season == "fall")
+                    objectIndex = 410;
+                if (bush.size == 3)
+                    objectIndex = 815;
+
+                this.SaveForage(new SObject(objectIndex, 1, false, -1, quality));
+                return;
+            }
+
             if (locationName.Equals("Woods"))
             {
                 switch (season)
@@ -192,6 +205,13 @@ namespace NpcAdventure.AI.Controller
 
             if (objectIndex != -1)
                 this.SaveForage(new SObject(objectIndex, 1, false, -1, quality));
+        }
+
+        private static bool BushIsInBloom(Bush bush)
+        {
+            SDate date = SDate.Now();
+
+            return !bush.townBush.Value && bush.inBloom(date.Season, date.Day);
         }
 
         private void SaveForage(SObject foragedObject)
@@ -263,9 +283,9 @@ namespace NpcAdventure.AI.Controller
         /// Pick tile for walk to and forage
         /// </summary>
         /// <param name="source"></param>
-        /// <param name="tilesAround"></param>
+        /// <param name="xTilesAround"></param>
         /// <returns></returns>
-        protected virtual Vector2 PickTile(Vector2 source, int tilesAround)
+        protected virtual Vector2 PickTile(Vector2 source, int xTilesAround, int yTilesAround)
         {
             Vector2 thisTile = source;
 
@@ -274,13 +294,13 @@ namespace NpcAdventure.AI.Controller
             switch (dir)
             {
                 case 0:
-                    nextTile = new Vector2(thisTile.X, thisTile.Y - tilesAround); break;
+                    nextTile = new Vector2(thisTile.X, thisTile.Y - yTilesAround); break;
                 case 1:
-                    nextTile = new Vector2(thisTile.X + tilesAround, thisTile.Y); break;
+                    nextTile = new Vector2(thisTile.X + xTilesAround, thisTile.Y); break;
                 case 2:
-                    nextTile = new Vector2(thisTile.X, thisTile.Y + tilesAround); break;
+                    nextTile = new Vector2(thisTile.X, thisTile.Y + yTilesAround); break;
                 case 3:
-                    nextTile = new Vector2(thisTile.X - tilesAround, thisTile.Y); break;
+                    nextTile = new Vector2(thisTile.X - xTilesAround, thisTile.Y); break;
                 default:
                     nextTile = thisTile; break;
             }
@@ -292,7 +312,9 @@ namespace NpcAdventure.AI.Controller
 
         protected virtual Vector2 PickTile()
         {
-            return this.PickTile(this.Forager.getTileLocation(), Game1.random.Next(2, 4));
+            int tilesAround = Game1.random.Next(2, 4);
+
+            return this.PickTile(this.Forager.getTileLocation(), tilesAround, tilesAround);
         }
 
         private Vector2 GetTerrainFeatureTilePosition(TerrainFeature feature)
@@ -306,7 +328,7 @@ namespace NpcAdventure.AI.Controller
         }
 
         /// <summary>
-        /// Acquire a place with a terrain feature (like bush) for foraging
+        /// Acquire a place with a terrain feature (like bush or tree) for foraging
         /// </summary>
         private void AcquireTerrainFeature()
         {
@@ -345,12 +367,12 @@ namespace NpcAdventure.AI.Controller
 
             if (Vector2.Distance(vTree, this.Forager.getTileLocation()) > 8)
             {
-                // Nearest bush is too far, fallback to pick a tile around
+                // Nearest bush/tree is too far, fallback to pick a tile around
                 this.joystick.AcquireTarget(this.PickTile());
                 return;
             }
 
-            if (this.joystick.AcquireTarget(this.PickTile(vTree, tree is Tree ? 1 : 2)))
+            if (this.joystick.AcquireTarget(this.PickTile(vTree, (tree is Bush bush ? bush.size + 1 : 1), 1)))
             {
                 this.targetObject = tree;
             } else
