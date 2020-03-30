@@ -34,9 +34,6 @@ namespace NpcAdventure.AI.Controller
         private List<FarmerSprite.AnimationFrame>[] attackAnimation;
         private int attackSpeedPitch = 0;
 
-        public event EventHandler<EventArgs> VisibleChanged;
-        public event EventHandler<EventArgs> DrawOrderChanged;
-
         public int SwingThreshold {
             get {
                 int thres = COOLDOWN_EFFECTIVE_THRESHOLD - this.attackSpeedPitch;
@@ -142,10 +139,6 @@ namespace NpcAdventure.AI.Controller
         }
 
         public override bool IsIdle => this.CheckIdleState();
-
-        public bool Visible => throw new NotImplementedException();
-
-        public int DrawOrder => throw new NotImplementedException();
 
         /// <summary>
         /// Checks if spoted monster is a valid monster
@@ -429,6 +422,7 @@ namespace NpcAdventure.AI.Controller
                     this.AnimateMe();
                 }
 
+                this.joystick.NoCharging = true;
                 return -0.65f;
             }
             else if (distanceFromTarget <= this.attackRadius)
@@ -438,9 +432,11 @@ namespace NpcAdventure.AI.Controller
                     this.AnimateMe();
                 }
 
+                this.joystick.NoCharging = true;
                 return Math.Max(this.joystick.Speed - 0.1f, 0.1f);
             }
 
+            this.joystick.NoCharging = false;
             return 5.28f;
         }
 

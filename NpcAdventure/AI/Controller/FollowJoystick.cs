@@ -60,6 +60,8 @@ namespace NpcAdventure.AI.Controller
 
         public int BlockedTimer { get; set; } = 90;
 
+        public bool NoCharging { get; set; } = false;
+
         /// <summary>
         /// Create a new instance of follow path to tile joystick
         /// </summary>
@@ -238,7 +240,7 @@ namespace NpcAdventure.AI.Controller
 
                 if (nodeDiffLen == this.lastNodeDiffLen && nodeDiffLen > tolerance && this.follower.isMoving() && this.Speed > 0)
                 {
-                    if (--this.timeout <= 0)
+                    if (!this.NoCharging && --this.timeout <= 0)
                     {
                         this.follower.doEmote(8);
                         this.follower.isCharging = true;

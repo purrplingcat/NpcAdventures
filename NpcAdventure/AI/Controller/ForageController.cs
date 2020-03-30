@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using StardewValley.Locations;
+using StardewModdingAPI.Utilities;
 
 namespace NpcAdventure.AI.Controller
 {
@@ -34,6 +35,8 @@ namespace NpcAdventure.AI.Controller
 
         public NPC Forager => this.ai.npc;
         public Farmer Leader => this.ai.player;
+        public int ForagingLevel => Math.Max(this.Leader.ForagingLevel
+            - (this.Leader.professions.Contains(Farmer.gatherer) ? 0 : 2), 0);
 
         public ForageController(AI_StateMachine ai, IModEvents events)
         {
@@ -75,7 +78,6 @@ namespace NpcAdventure.AI.Controller
             {
                 this.targetObject.performUseAction(this.Forager.getTileLocation(), this.Forager.currentLocation);
                 this.ignoreList.Add(this.targetObject);
-                this.targetObject = null;
             } else
             {
                 this.Forager.currentLocation.localSound("leafrustle");
@@ -88,16 +90,16 @@ namespace NpcAdventure.AI.Controller
 
             if (this.r.NextDouble() < realChance)
             {
-                this.PickForageObject();
+                this.PickForageObject(this.targetObject);
             }
 
+            this.targetObject = null;
             this.IsIdle = true;
         }
 
-        public void PickForageObject()
+        public void PickForageObject(TerrainFeature source)
         {
-            SObject foragedObject = null;
-            int skill = this.Leader.ForagingLevel - 2;
+            int skill = this.ForagingLevel;
             int quality = 0;
 
             if (skill >= 2)
@@ -110,59 +112,101 @@ namespace NpcAdventure.AI.Controller
             GameLocation location = this.Forager.currentLocation;
             string locationName = location.Name;
             string season = Game1.currentSeason;
+            int objectIndex = -1;
 
+            if (source != null && source is Tree tree && tree.growthStage.Value >= Tree.treeStage)
+            {
+                if (season == "winter" || this.ForagingLevel < 1)
+                    return;
+
+                switch (tree.treeType)
+                {
+                    case Tree.bushyTree:
+                        objectIndex = 309;
+                        break;
+                    case Tree.leafyTree:
+                        objectIndex = 310;
+                        break;
+                    case Tree.pineTree:
+                        objectIndex = 311;
+                        break;
+                }
+
+                if (season == "fall" && tree.treeType == Tree.leafyTree && SDate.Now().Day >= 14)
+                    objectIndex = 408;
+
+                if (objectIndex != -1)
+                    this.SaveForage(new SObject(objectIndex, 1, false, -1, quality));
+
+                return;
+            }
+            
             if (locationName.Equals("Woods"))
             {
                 switch (season)
                 {
                     case "spring":
-                        foragedObject = new SObject(this.woodsSpringForage[this.r.Next(2)], 1, false, -1, quality); break;
+                        objectIndex = this.woodsSpringForage[this.r.Next(2)];
+                        break;
                     case "summer":
-                        foragedObject = new SObject(this.woodsSummerForage[this.r.Next(2)], 1, false, -1, quality); break;
+                        objectIndex = this.woodsSummerForage[this.r.Next(2)];
+                        break;
                     case "fall":
-                        foragedObject = new SObject(this.woodsFallForage[this.r.Next(2)], 1, false, -1, quality); break;
+                        objectIndex = this.woodsFallForage[this.r.Next(2)];
+                        break;
                     default:
-                        foragedObject = new SObject(this.winterForage[this.r.Next(5)], 1, false, -1, quality); break;
+                        objectIndex = this.winterForage[this.r.Next(5)];
+                        break;
                 }
             }
             else if (locationName.Equals("Beach"))
             {
-                foragedObject = new SObject(this.beachForage[this.r.Next(8)], 1, false, -1, quality);
+                objectIndex = this.beachForage[this.r.Next(8)];
             }
             else if (locationName.Equals("Desert"))
             {
-                foragedObject = new SObject(this.desertForage[this.r.Next(2)], 1, false, -1, quality);
+                objectIndex = this.desertForage[this.r.Next(2)];
             }
             else if (location is MineShaft)
             {
-                foragedObject = new SObject(this.caveForage[this.r.Next(2)], 1, false, -1, quality);
+                objectIndex = this.caveForage[this.r.Next(2)];
             }
             else
             {
                 switch (season)
                 {
                     case "spring":
-                        foragedObject = new SObject(this.springForage[this.r.Next(6)], 1, false, -1, quality); break;
+                        objectIndex = this.springForage[this.r.Next(6)];
+                        break;
                     case "summer":
-                        foragedObject = new SObject(this.summerForage[this.r.Next(3)], 1, false, -1, quality); break;
+                        objectIndex = this.summerForage[this.r.Next(3)];
+                        break;
                     case "fall":
-                        foragedObject = new SObject(this.fallForage[this.r.Next(4)], 1, false, -1, quality); break;
+                        objectIndex = this.fallForage[this.r.Next(4)];
+                        break;
                     case "winter":
-                        foragedObject = new SObject(this.winterForage[this.r.Next(5)], 1, false, -1, quality); break;
+                        objectIndex = this.winterForage[this.r.Next(5)];
+                        break;
                 }
             }
 
-            if (foragedObject != null)
+            if (objectIndex != -1)
+                this.SaveForage(new SObject(objectIndex, 1, false, -1, quality));
+        }
+
+        private void SaveForage(SObject foragedObject)
+        {
+            if (foragedObject == null)
+                return;
+
+            double shareChance = 0.42 + this.Leader.getFriendshipHeartLevelForNPC(this.Forager.Name) * 0.016;
+
+            this.Forager.doEmote(Game1.random.NextDouble() < .1f ? 20 : 16);
+
+            if (this.r.NextDouble() < shareChance)
             {
-                double shareChance = 0.42 + this.Leader.getFriendshipHeartLevelForNPC(this.Forager.Name) * 0.016;
-
-                this.Forager.doEmote(Game1.random.NextDouble() < .1f ? 20 : 16);
-
-                if (this.r.NextDouble() < shareChance)
-                {
-                    this.foragedObjects.Push(foragedObject);
-                    this.ai.Monitor.Log($"{this.Forager.Name} wants to share a foraged item with farmer");
-                }
+                this.foragedObjects.Push(foragedObject);
+                this.ai.Monitor.Log($"{this.Forager.Name} wants to share a foraged item with farmer");
             }
         }
 
@@ -181,6 +225,7 @@ namespace NpcAdventure.AI.Controller
                 return true;
             }
 
+            this.ai.Monitor.Log("Can't add shared forages to inventory, it's probably full!");
             return false;
         }
 
@@ -269,7 +314,7 @@ namespace NpcAdventure.AI.Controller
                 .Where((feature) => feature is Bush && !this.ignoreList.Contains(feature));
 
             var trees = this.Forager.currentLocation.terrainFeatures.Values
-                .Where((feature) => feature is Tree && !this.ignoreList.Contains(feature))
+                .Where((feature) => feature is Tree t && t.growthStage.Value > Tree.sproutStage && !this.ignoreList.Contains(feature))
                 .Union(bushes.Cast<TerrainFeature>())
                 .ToList();
 
@@ -335,14 +380,13 @@ namespace NpcAdventure.AI.Controller
 
             if (!this.joystick.IsFollowing)
             {
-                this.AcquireTerrainFeature();
-                /*if (this.r.NextDouble() > .5f)
+                if (this.r.NextDouble() > .5f)
                 {
                     this.AcquireTerrainFeature();
                 } else 
                 {
                     this.joystick.AcquireTarget(this.PickTile());
-                }*/
+                }
             }
 
             this.joystick.Speed = 4f;
