@@ -17,9 +17,9 @@ namespace NpcAdventure.AI.Controller
         private readonly AI_StateMachine ai;
         private readonly PathFinder pathFinder;
         private readonly FollowJoystick joystick;
-        private readonly List<LargeTerrainFeature> ignoreList;
+        private readonly List<TerrainFeature> ignoreList;
         private readonly Random r;
-        private LargeTerrainFeature targetObject;
+        private TerrainFeature targetObject;
         protected Stack<Item> foragedObjects;
         protected int[] springForage = new int[] { 16, 18, 20, 22, 296, 399 };
         protected int[] summerForage = new int[] { 396, 398, 402 };
@@ -38,7 +38,7 @@ namespace NpcAdventure.AI.Controller
         public ForageController(AI_StateMachine ai, IModEvents events)
         {
             this.ai = ai;
-            this.ignoreList = new List<LargeTerrainFeature>();
+            this.ignoreList = new List<TerrainFeature>();
             this.pathFinder = new PathFinder(this.Forager.currentLocation, this.Forager, this.ai.player);
             this.joystick = new FollowJoystick(this.Forager, this.pathFinder);
             this.joystick.EndOfRouteReached += this.Joystick_EndOfRouteReached;
@@ -168,7 +168,9 @@ namespace NpcAdventure.AI.Controller
 
         internal bool CanForage()
         {
-            return this.Forager.currentLocation.IsOutdoors && !this.IsLeaderTooFar();
+            GameLocation location = this.Forager.currentLocation;
+
+            return (location.IsOutdoors || location is MineShaft mines && mines.mineLevel % 10 != 0) && !this.IsLeaderTooFar();
         }
 
         internal bool GiveForageTo(Farmer player)
@@ -248,27 +250,42 @@ namespace NpcAdventure.AI.Controller
             return this.PickTile(this.Forager.getTileLocation(), Game1.random.Next(2, 4));
         }
 
+        private Vector2 GetTerrainFeatureTilePosition(TerrainFeature feature)
+        {
+            if (feature is Bush bush)
+            {
+                return bush.tilePosition.Value;
+            }
+
+            return feature.currentTileLocation;
+        }
+
         /// <summary>
         /// Acquire a place with a terrain feature (like bush) for foraging
         /// </summary>
         private void AcquireTerrainFeature()
         {
-            var bushes = this.Forager.currentLocation.largeTerrainFeatures.Where(
-                (feature) => feature is Bush && !this.ignoreList.Contains(feature)
-            ).ToList();
+            var bushes = this.Forager.currentLocation.largeTerrainFeatures
+                .Where((feature) => feature is Bush && !this.ignoreList.Contains(feature));
 
-            if (bushes.Count <= 0)
+            var trees = this.Forager.currentLocation.terrainFeatures.Values
+                .Where((feature) => feature is Tree && !this.ignoreList.Contains(feature))
+                .Union(bushes.Cast<TerrainFeature>())
+                .ToList();
+
+            if (trees.Count <= 0)
             {
                 this.joystick.AcquireTarget(this.PickTile());
                 return;
             }
 
-            bushes.Sort((f1, f2) =>
+            trees.Sort((f1, f2) =>
             {
-                Vector2 v1 = this.Forager.getTileLocation();
-                Vector2 v2 = this.Forager.getTileLocation();
-                float d1 = Utility.distance(v1.X, f1.tilePosition.Value.X, f1.tilePosition.Value.Y, v2.Y);
-                float d2 = Utility.distance(v2.X, f2.tilePosition.Value.X, f2.tilePosition.Value.Y, v2.Y);
+                Vector2 vfo = this.Forager.getTileLocation(); // vfo as Vector of Forager
+                Vector2 vtf1 = this.GetTerrainFeatureTilePosition(f1); // vtf as Vector of Terrain Feature (like a Bush or Tree)
+                Vector2 vtf2 = this.GetTerrainFeatureTilePosition(f2);
+                float d1 = Utility.distance(vfo.X, vtf1.X, vtf1.Y, vfo.Y);
+                float d2 = Utility.distance(vfo.X, vtf2.X, vtf2.Y, vfo.Y);
 
                 if (d1 == d2)
                 {
@@ -278,18 +295,19 @@ namespace NpcAdventure.AI.Controller
                 return d1.CompareTo(d2);
             });
 
-            var bush = bushes.First();
+            var tree = trees.First();
+            Vector2 vTree = this.GetTerrainFeatureTilePosition(tree);
 
-            if (Vector2.Distance(bush.tilePosition.Value, this.Forager.getTileLocation()) > 8)
+            if (Vector2.Distance(vTree, this.Forager.getTileLocation()) > 8)
             {
                 // Nearest bush is too far, fallback to pick a tile around
                 this.joystick.AcquireTarget(this.PickTile());
                 return;
             }
 
-            if (this.joystick.AcquireTarget(this.PickTile(bush.tilePosition.Value, 2)))
+            if (this.joystick.AcquireTarget(this.PickTile(vTree, tree is Tree ? 1 : 2)))
             {
-                this.targetObject = bush;
+                this.targetObject = tree;
             } else
             {
                 this.joystick.AcquireTarget(this.PickTile());
@@ -311,34 +329,39 @@ namespace NpcAdventure.AI.Controller
 
             if (e.IsMultipleOf(30) && this.IsLeaderTooFar())
             {
-                this.IsIdle = true;
-                this.Leader.changeFriendship(-5, this.Forager);
-                Game1.drawDialogue(this.Forager, DialogueHelper.GetFriendSpecificDialogueText(this.Forager, this.Leader, "farmerRunAway"));
-
-                if (this.HasAnyForage() && this.r.Next(3) == 1)
-                {
-                    // Chance 1:3 forager changes their mind 
-                    // to share some foraged item with you and don't share it
-                    this.foragedObjects.Pop();
-                    this.ai.Monitor.Log($"{this.Forager.Name} changed her/his mind and don't share last forage with farmer.");
-                }
-
+                this.YellAndAbort();
                 return;
             }
 
             if (!this.joystick.IsFollowing)
             {
-                if (this.r.NextDouble() > .5f)
+                this.AcquireTerrainFeature();
+                /*if (this.r.NextDouble() > .5f)
                 {
                     this.AcquireTerrainFeature();
                 } else 
                 {
                     this.joystick.AcquireTarget(this.PickTile());
-                }
+                }*/
             }
 
             this.joystick.Speed = 4f;
             this.joystick.Update(e);
+        }
+
+        private void YellAndAbort()
+        {
+            this.IsIdle = true;
+            this.Leader.changeFriendship(-5, this.Forager);
+            Game1.drawDialogue(this.Forager, DialogueHelper.GetFriendSpecificDialogueText(this.Forager, this.Leader, "farmerRunAway"));
+
+            if (this.HasAnyForage() && this.r.Next(3) == 1)
+            {
+                // Chance 1:3 forager changes their mind 
+                // to share some foraged item with you and don't share it
+                this.foragedObjects.Pop();
+                this.ai.Monitor.Log($"{this.Forager.Name} changed her/his mind and don't share last forage with farmer.");
+            }
         }
     }
 }
