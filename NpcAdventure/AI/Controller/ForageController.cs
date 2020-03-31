@@ -22,7 +22,7 @@ namespace NpcAdventure.AI.Controller
         private readonly Random r;
         private TerrainFeature targetObject;
         protected Stack<Item> foragedObjects;
-        protected int[] springForage = new int[] { 16, 18, 20, 22, 296, 399 };
+        protected int[] springForage = new int[] { 16, 18, 20, 22, 399 };
         protected int[] summerForage = new int[] { 396, 398, 402 };
         protected int[] fallForage = new int[] { 404, 406, 408, 410 };
         protected int[] winterForage = new int[] { 283, 412, 414, 416, 418 };
@@ -32,6 +32,7 @@ namespace NpcAdventure.AI.Controller
         protected int[] woodsSpringForage = new int[] { 257, 404 };
         protected int[] woodsSummerForage = new int[] { 259, 420 };
         protected int[] woodsFallForage = new int[] { 281, 420 };
+        protected int[] rareForage = new int[] { 347, 114 };
 
         public NPC Forager => this.ai.npc;
         public Farmer Leader => this.ai.player;
@@ -102,12 +103,12 @@ namespace NpcAdventure.AI.Controller
             int skill = this.ForagingLevel;
             int quality = 0;
 
-            if (skill >= 2)
-                quality = 1;
+            if (skill >= 8)
+                quality = 3;
             else if (skill >= 6)
                 quality = 2;
-            else if (skill >= 8)
-                quality = 3;
+            else if (skill >= 2)
+                quality = 1;
 
             GameLocation location = this.Forager.currentLocation;
             string locationName = location.Name;
@@ -141,17 +142,27 @@ namespace NpcAdventure.AI.Controller
                 return;
             }
 
-            if (source != null && source is Bush bush && BushIsInBloom(bush))
+            if (source != null && source is Bush bush)
             {
-                objectIndex = 296;
+                if (this.ForagingLevel > 5 && this.r.NextDouble() < 0.005)
+                {
+                    // There is a chance <1% to get a rare forage item
+                    this.SaveForage(new SObject(this.rareForage[this.r.Next(this.rareForage.Length)], 1, false, -1, 0));
+                    return;
+                }
 
-                if (season == "fall")
-                    objectIndex = 410;
-                if (bush.size == 3)
-                    objectIndex = 815;
+                if (BushIsInBloom(bush))
+                {
+                    objectIndex = 296;
 
-                this.SaveForage(new SObject(objectIndex, 1, false, -1, quality));
-                return;
+                    if (season == "fall")
+                        objectIndex = 410;
+                    if (bush.size == 3)
+                        objectIndex = 815;
+
+                    this.SaveForage(new SObject(objectIndex, 1, false, -1, quality));
+                    return;
+                }
             }
 
             if (locationName.Equals("Woods"))
@@ -189,7 +200,13 @@ namespace NpcAdventure.AI.Controller
                 switch (season)
                 {
                     case "spring":
-                        objectIndex = this.springForage[this.r.Next(6)];
+                        objectIndex = this.springForage[this.r.Next(5)];
+
+                        if (objectIndex == 399 && !locationName.Equals("Forest"))
+                        {
+                            // Spring onion can be found only in Cindersap Forest
+                            objectIndex = this.springForage[this.r.Next(4)];
+                        }
                         break;
                     case "summer":
                         objectIndex = this.summerForage[this.r.Next(3)];
