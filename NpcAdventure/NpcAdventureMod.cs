@@ -19,7 +19,6 @@ namespace NpcAdventure
         private HintDriver HintDriver { get; set; }
         private StuffDriver StuffDriver { get; set; }
         private MailDriver MailDriver { get; set; }
-        private GamePatcher Patcher { get; set; }
         internal ISpecialModEvents SpecialEvents { get; private set; }
         internal CompanionManager CompanionManager { get; private set; }
         internal CompanionDisplay CompanionHud { get; private set; }
@@ -37,7 +36,6 @@ namespace NpcAdventure
             }
 
             this.Config = helper.ReadConfig<Config>();
-            this.Patcher = new GamePatcher(this.Monitor, this.Config.EnableDebug);
             this.ContentLoader = new ContentLoader(this.Helper.Content, this.Helper.ContentPacks, this.ModManifest.UniqueID, "assets", this.Monitor);
             this.RegisterEvents(helper.Events);
             Commander.Register(this);
@@ -97,7 +95,9 @@ namespace NpcAdventure
 
         private void ApplyPatches()
         {
-            this.Patcher.Apply(
+            var patcher = new GamePatcher(this.Monitor, this.Config.EnableDebug);
+
+            patcher.Apply(
                 new Patches.MailBoxPatch((SpecialModEvents)this.SpecialEvents),
                 new Patches.QuestPatch((SpecialModEvents)this.SpecialEvents),
                 new Patches.SpouseReturnHomePatch(this.CompanionManager),
@@ -106,7 +106,9 @@ namespace NpcAdventure
                 new Patches.CompanionSayHiPatch(this.CompanionManager),
                 new Patches.GameLocationDrawPatch((SpecialModEvents)this.SpecialEvents)
             );
-            this.Patcher.CheckPatches();
+
+            // Check if methods patched by NA are patched by other mods
+            patcher.CheckPatches();
         }
 
         private void Specialized_LoadStageChanged(object sender, LoadStageChangedEventArgs e)
