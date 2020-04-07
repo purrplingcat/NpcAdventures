@@ -33,7 +33,7 @@ namespace NpcAdventure.Internal.Patching
                     {
                         IEnumerable<string> foreignOwners = info.Owners.Where(owner => owner != this.harmony.Id);
 
-                        this.monitor.Log($"Game method '{method.FullDescription()}' was patched by others too: {string.Join(", ", foreignOwners)}",
+                        this.monitor.Log($"Detected another patches for game method '{method.FullDescription()}'. This method was patched too by: {string.Join(", ", foreignOwners)}",
                             this.paranoid ? LogLevel.Warn : LogLevel.Debug);
                     }
                 }
