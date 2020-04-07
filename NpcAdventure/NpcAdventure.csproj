@@ -124,8 +124,11 @@
     <Compile Include="Loader\IContentLoader.cs" />
     <Compile Include="Model\BagDumpInfo.cs" />
     <Compile Include="Model\CompanionMetaData.cs" />
+    <Compile Include="Internal\Patching\GamePatcher.cs" />
     <Compile Include="Patches\GetCharacterPatch.cs" />
+    <Compile Include="Internal\Patching\IPatch.cs" />
     <Compile Include="Patches\NpcCheckActionPatch.cs" />
+    <Compile Include="Patches\Patch.cs" />
     <Compile Include="Patches\QuestPatch.cs" />
     <Compile Include="Internal\SetOnce.cs" />
     <Compile Include="Story\Messaging\GameMasterMessage.cs" />

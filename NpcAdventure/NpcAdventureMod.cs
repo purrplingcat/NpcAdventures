@@ -9,6 +9,7 @@ using NpcAdventure.HUD;
 using NpcAdventure.Compatibility;
 using NpcAdventure.Story;
 using NpcAdventure.Story.Scenario;
+using NpcAdventure.Internal.Patching;
 
 namespace NpcAdventure
 {
@@ -19,6 +20,7 @@ namespace NpcAdventure
         private HintDriver HintDriver { get; set; }
         private StuffDriver StuffDriver { get; set; }
         private MailDriver MailDriver { get; set; }
+        private GamePatcher Patcher { get; set; }
         internal ISpecialModEvents SpecialEvents { get; private set; }
         internal CompanionManager CompanionManager { get; private set; }
         internal CompanionDisplay CompanionHud { get; private set; }
@@ -35,9 +37,10 @@ namespace NpcAdventure
                 this.Monitor.Log("Android support is an experimental feature, may cause some problems. Before you report a bug please content me on my discord https://discord.gg/wnEDqKF Thank you.", LogLevel.Alert);
             }
 
-            this.RegisterEvents(helper.Events);
             this.Config = helper.ReadConfig<Config>();
+            this.Patcher = new GamePatcher(this.Monitor, this.Config.EnableDebug);
             this.ContentLoader = new ContentLoader(this.Helper.Content, this.Helper.ContentPacks, this.ModManifest.UniqueID, "assets", this.Monitor);
+            this.RegisterEvents(helper.Events);
             Commander.Register(this);
         }
 
@@ -95,15 +98,16 @@ namespace NpcAdventure
 
         private void ApplyPatches()
         {
-            HarmonyInstance harmony = HarmonyInstance.Create("Purrplingcat.NpcAdventure");
-
-            Patches.MailBoxPatch.Setup(harmony, (SpecialModEvents)this.SpecialEvents);
-            Patches.QuestPatch.Setup(harmony, (SpecialModEvents)this.SpecialEvents);
-            Patches.SpouseReturnHomePatch.Setup(harmony, this.CompanionManager);
-            Patches.CompanionSayHiPatch.Setup(harmony, this.CompanionManager);
-            Patches.GameLocationDrawPatch.Setup(harmony, this.SpecialEvents);
-            Patches.GetCharacterPatch.Setup(harmony, this.CompanionManager);
-            Patches.NpcCheckActionPatch.Setup(harmony, this.CompanionManager);
+            this.Patcher.Apply(
+                new Patches.MailBoxPatch((SpecialModEvents)this.SpecialEvents),
+                new Patches.QuestPatch((SpecialModEvents)this.SpecialEvents),
+                new Patches.SpouseReturnHomePatch(this.CompanionManager),
+                new Patches.GetCharacterPatch(this.CompanionManager),
+                new Patches.NpcCheckActionPatch(this.CompanionManager),
+                new Patches.CompanionSayHiPatch(this.CompanionManager),
+                new Patches.GameLocationDrawPatch((SpecialModEvents)this.SpecialEvents)
+            );
+            this.Patcher.CheckPatches();
         }
 
         private void Specialized_LoadStageChanged(object sender, LoadStageChangedEventArgs e)

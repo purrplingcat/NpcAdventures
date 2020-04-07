@@ -2,13 +2,20 @@
 using NpcAdventure.Events;
 using NpcAdventure.Internal;
 using StardewValley.Quests;
+using System;
 
 namespace NpcAdventure.Patches
 {
-    internal class QuestPatch
+    internal class QuestPatch : Patch<QuestPatch>
     {
-        private static readonly SetOnce<SpecialModEvents> events = new SetOnce<SpecialModEvents>();
-        private static SpecialModEvents Events { get => events.Value; set => events.Value = value; }
+        private SpecialModEvents Events { get; set; }
+        public override string Name => nameof(QuestPatch);
+
+        public QuestPatch(SpecialModEvents events)
+        {
+            this.Events = events ?? throw new System.ArgumentNullException(nameof(events));
+            Instance = this;
+        }
 
         /// <summary>
         /// This patches mailbox read method on gamelocation and allow call custom logic 
@@ -16,20 +23,30 @@ namespace NpcAdventure.Patches
         /// </summary>
         /// <param name="__instance">Game location</param>
         /// <returns></returns>
-        internal static void After_questComplete(ref Quest __instance)
+        private static void After_questComplete(ref Quest __instance)
         {
-            Events.FireQuestCompleted(__instance, new QuestCompletedArgs(__instance));
+            try
+            {
+                Instance.Events.FireQuestCompleted(__instance, new QuestCompletedArgs(__instance));
+            } catch(Exception ex)
+            {
+                Instance.LogFailure(ex, nameof(After_questComplete));
+            }
         }
 
-        internal static void After_reloadObjective(ref Quest __instance)
+        private static void After_reloadObjective(ref Quest __instance)
         {
-            Events.FireQuestRealoadObjective(__instance, new QuestReloadObjectiveArgs(__instance));
+            try
+            {
+                Instance.Events.FireQuestRealoadObjective(__instance, new QuestReloadObjectiveArgs(__instance));
+            } catch(Exception ex)
+            {
+                Instance.LogFailure(ex, nameof(After_reloadObjective));
+            }
         }
 
-        internal static void Setup(HarmonyInstance harmony, SpecialModEvents events)
+        protected override void Apply(HarmonyInstance harmony)
         {
-            Events = events;
-
             harmony.Patch(
                 original: AccessTools.Method(typeof(Quest), nameof(Quest.questComplete)),
                 postfix: new HarmonyMethod(typeof(QuestPatch), nameof(QuestPatch.After_questComplete))
