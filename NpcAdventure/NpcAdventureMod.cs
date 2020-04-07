@@ -2,7 +2,6 @@
 using StardewModdingAPI.Events;
 using NpcAdventure.Loader;
 using NpcAdventure.Driver;
-using Harmony;
 using NpcAdventure.Events;
 using NpcAdventure.Model;
 using NpcAdventure.HUD;
