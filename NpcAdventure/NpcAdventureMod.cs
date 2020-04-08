@@ -15,6 +15,8 @@ namespace NpcAdventure
     /// <summary>The mod entry point.</summary>
     public class NpcAdventureMod : Mod
     {
+        private bool firstTick = true;
+
         private DialogueDriver DialogueDriver { get; set; }
         private HintDriver HintDriver { get; set; }
         private StuffDriver StuffDriver { get; set; }
@@ -23,6 +25,7 @@ namespace NpcAdventure
         internal CompanionManager CompanionManager { get; private set; }
         internal CompanionDisplay CompanionHud { get; private set; }
         internal ContentLoader ContentLoader { get; private set; }
+        internal GamePatcher Patcher { get; private set; }
         internal GameMaster GameMaster { get; private set; }
         internal Config Config { get; private set; } = new Config();
 
@@ -37,6 +40,7 @@ namespace NpcAdventure
 
             this.Config = helper.ReadConfig<Config>();
             this.ContentLoader = new ContentLoader(this.Helper.Content, this.Helper.ContentPacks, this.ModManifest.UniqueID, "assets", this.Monitor);
+            this.Patcher = new GamePatcher(this.Monitor, this.Config.EnableDebug);
             this.RegisterEvents(helper.Events);
             Commander.Register(this);
         }
@@ -67,6 +71,13 @@ namespace NpcAdventure
 
         private void GameLoop_UpdateTicked(object sender, UpdateTickedEventArgs e)
         {
+            if (this.firstTick)
+            {
+                // Check if methods patched by NA are patched by other mods
+                this.Patcher.CheckPatches();
+                this.firstTick = false;
+            }
+
             if (Context.IsWorldReady && this.CompanionHud != null)
                 this.CompanionHud.Update(e);
         }
@@ -95,9 +106,7 @@ namespace NpcAdventure
 
         private void ApplyPatches()
         {
-            var patcher = new GamePatcher(this.Monitor, this.Config.EnableDebug);
-
-            patcher.Apply(
+            this.Patcher.Apply(
                 new Patches.MailBoxPatch((SpecialModEvents)this.SpecialEvents),
                 new Patches.QuestPatch((SpecialModEvents)this.SpecialEvents),
                 new Patches.SpouseReturnHomePatch(this.CompanionManager),
@@ -106,9 +115,6 @@ namespace NpcAdventure
                 new Patches.CompanionSayHiPatch(this.CompanionManager),
                 new Patches.GameLocationDrawPatch((SpecialModEvents)this.SpecialEvents)
             );
-
-            // Check if methods patched by NA are patched by other mods
-            patcher.CheckPatches();
         }
 
         private void Specialized_LoadStageChanged(object sender, LoadStageChangedEventArgs e)
