@@ -1,0 +1,22 @@
+{
+  "companionAccepted": "El aire fresco de este valle es bueno para el cuerpo y la mente. ¡Un paseo al aire libre suena maravilloso!$1",
+  "companionRejected": "Me temo que no puedo ir, @. Intento terminar el libro que estoy leyendo.",
+  "companionRejectedNight": "¡Ya es demasiado tarde para ir de excursión, @!",
+  "companionDismiss": "Por supuesto, entonces voy a seguir mi camino. Espero que vuelvas a invitarme pronto.",
+  "companionDismissAuto": "Me temo que es hora de que me vaya, @. ¡Gracias por llevarme a este encantador viaje!$h",
+  "companionRecruited": "¡Fantástico! Siempre estoy buscando mas inspiración para escribir mis libros.",
+  "companionSuggest": "Hola, @. Estaba pensando en dar un paseo refrescante e inspirarme en algo hoy.#$q -1 -1#¿Quisieras acompañarme?#$r -1 0 Yes#Sí, ¿Por qué no? Déjame buscar mis cosas.#$r -1 0 No#Perdón, hoy tengo cosas que hacer. ¿Quizás para la próxima?",
+  "companionSuggest_Yes": "¡Genial! ¡No te preocupes si siento la necesidad de escribir!$h",
+  "companionSuggest_No": "Oh, por supuesto. No te preocupes, estoy seguro de que nuestros caminos se cruzarán nuevamente.",
+  "companion_Farm": "Tu granja se ve bien, @. Supongo que no estás regando tus cultivos con agua de mar.$1",
+  "companion_Farm_Spouse": "Adoro nuestra vida aquí en la granja, @.#$b#¡Es como un sueño de la infancia hecho realidad cada vez que salgo por nuestra puerta!",
+  "companion_Town": "Uno no pensaría que un pueblo pequeño como este sería tan hospitalario. Espero que siempre te sientas bienvenido aquí, @.",
+  "companion_Beach": "Te invitaría a mi pequeña cabaña, si no fuera un desastre.#$b#Bueno, podríamos ir de todos modos, si eso no te molesta.",
+  "companion_Mountain": "¡Nada como un buen paseo por la montaña, después de una larga noche sentado en mi escritorio escribiendo!$h",
+  "companion_Mountain_Spouse": "Este es un lugar del valle tan romántico, cariño.#$b#Una hermosa vista, y el amor de mi vida a mi lado. ¿Qué más se le puede pedir a un hombre?$4",
+  "companion_Forest": "El bosque tiene una forma única de calmar un alma cansada.#$b#Me pregunto, ¿cómo puede un lugar tan próspero ser tan pacífico?",
+  "companion_Forest_Spouse": "'Has comenzado un fuego en mí que no se apagará, y me pregunto si sabías que eras el rayo de mi arbusto seco; Un golpe quemaría mi bosque.'#$b#Solo un poco de poesía, no te preocupes cariño.$1",
+  "companion_Mine": "Incluso un lugar brillante como Stardew Valley tiene su lado oscuro. Asi como el alma humana.$2#$b#Eso fue un poco dramático. Creo que me dejé llevar, lo siento, @.$1",
+  "companion_Mine_Spouse": "Seguramente este no es mi lugar favorito del mundo, pero eres una luz en la oscuridad, cariño. Incluso acá.",
+  "companion_Town_Spouse": "Es cierto, nuestro pueblo es pintoresco, pero tenemos todo lo que uno podría necesitar.#$b#¡Sobre todo, una comunidad real, lo que desesperadamente carece gran parte de nuestro mundo moderno!#$b#Estoy agradecido de estar aquí, y aún más de que estés aquí conmigo.$1"
+}

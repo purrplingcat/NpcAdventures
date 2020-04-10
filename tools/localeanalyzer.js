@@ -5,6 +5,7 @@ const supportedLocales = [
   {code: "pt-BR", name: "Portuguese", dir: assetsDir, official: true},
   {code: "fr-FR", name: "French", dir: assetsDir, official: true},
   {code: "zh-CN", name: "Chinese", dir: assetsDir, official: true},
+  {code: "es-ES", name: "Spanish", dir: assetsDir, official: true},
   {code: "ja-JP", name: "Japanese", dir: unofficialLocaleDir + "/ja-JP", official: false},
   {code: "ru-RU", name: "Russian", dir: unofficialLocaleDir + "/ru-RU", official: false},
 ];
@@ -142,15 +143,15 @@ function analyze() {
 
 function mark(stat) {
   if (stat.failed) {
-    return "F";
+    return "\x1b[1m\x1b[31mF\x1b[0m";
   }
 
   if (stat.coverage.percentage <= 0.5) {
-    return "!"
+    return "\x1b[1m\x1b[41m!\x1b[0m"
   }
 
   if (stat.coverage.percentage < 0.8) {
-    return "*"
+    return "\x1b[1m\x1b[33m!\x1b[0m"
   }
 
   return " ";
@@ -159,9 +160,10 @@ function mark(stat) {
 const analysis = analyze();
 
 for (let stat of analysis.stats) {
-  console.log(` ${mark(stat)} Locale: ${stat.label} (${stat.locale}) - Covered ${stat.coverage.covered} entries of ${stat.coverage.total} (${Number(stat.coverage.percentage * 100).toFixed(2)}%)`);
+  console.log(` ${mark(stat)} Locale: ${stat.official ? "*" : ""}${stat.label} (${stat.locale}) - Covered ${stat.coverage.covered} entries of ${stat.coverage.total} (${Number(stat.coverage.percentage * 100).toFixed(2)}%)`);
 }
 
 const reportFile = process.argv[2] || "report.json";
 require("fs").writeFileSync(reportFile, JSON.stringify(analysis));
+console.log("\n * = official localization");
 console.log(`Report written to ${reportFile}`);
