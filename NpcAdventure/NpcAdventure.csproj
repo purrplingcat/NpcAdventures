@@ -15,6 +15,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <EnableHarmony>true</EnableHarmony>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -72,10 +73,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony, Version=1.2.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Lib.Harmony.1.2.0.1\lib\net45\0Harmony.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="SMAPI.Toolkit.CoreInterfaces, Version=3.0.1.0, Culture=neutral, PublicKeyToken=null">
       <Private>False</Private>
     </Reference>
@@ -124,8 +121,11 @@
     <Compile Include="Loader\IContentLoader.cs" />
     <Compile Include="Model\BagDumpInfo.cs" />
     <Compile Include="Model\CompanionMetaData.cs" />
+    <Compile Include="Internal\Patching\GamePatcher.cs" />
     <Compile Include="Patches\GetCharacterPatch.cs" />
+    <Compile Include="Internal\Patching\IPatch.cs" />
     <Compile Include="Patches\NpcCheckActionPatch.cs" />
+    <Compile Include="Patches\Patch.cs" />
     <Compile Include="Patches\QuestPatch.cs" />
     <Compile Include="Internal\SetOnce.cs" />
     <Compile Include="Story\Messaging\GameMasterMessage.cs" />
