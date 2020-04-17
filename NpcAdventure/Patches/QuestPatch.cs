@@ -34,14 +34,17 @@ namespace NpcAdventure.Patches
             }
         }
 
-        private static void After_reloadObjective(ref Quest __instance)
+        private static void After_get_currentObjective(ref Quest __instance, ref string __result)
         {
             try
             {
-                Instance.Events.FireQuestRealoadObjective(__instance, new QuestReloadObjectiveArgs(__instance));
+                Instance.Events.FireQuestReloadObjective(__instance, new QuestReloadObjectiveArgs(__instance));
+                if (__instance._currentObjective == null)
+                    __instance._currentObjective = "";
+                __result = __instance._currentObjective;
             } catch(Exception ex)
             {
-                Instance.LogFailure(ex, nameof(After_reloadObjective));
+                Instance.LogFailure(ex, nameof(After_get_currentObjective));
             }
         }
 
@@ -52,8 +55,8 @@ namespace NpcAdventure.Patches
                 postfix: new HarmonyMethod(typeof(QuestPatch), nameof(QuestPatch.After_questComplete))
             );
             harmony.Patch(
-                original: AccessTools.Method(typeof(Quest), nameof(Quest.reloadObjective)),
-                postfix: new HarmonyMethod(typeof(QuestPatch), nameof(QuestPatch.After_reloadObjective))
+                original: AccessTools.Property(typeof(Quest), nameof(Quest.currentObjective)).GetGetMethod(),
+                postfix: new HarmonyMethod(typeof(QuestPatch), nameof(QuestPatch.After_get_currentObjective))
             );
         }
     }
