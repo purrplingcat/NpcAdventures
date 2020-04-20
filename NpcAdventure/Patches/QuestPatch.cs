@@ -18,7 +18,7 @@ namespace NpcAdventure.Patches
         }
 
         /// <summary>
-        /// This patches mailbox read method on gamelocation and allow call custom logic 
+        /// This patches mailbox read method on gamelocation and allow call custom logic
         /// for NPC Adventures mail letters only. For other mails call vanilla logic.
         /// </summary>
         /// <param name="__instance">Game location</param>

@@ -7,6 +7,10 @@
 - Harmony patching is now more safer (Hope this can help to solve problems with harmony patches on Linux/Mac)
 - Changed a license
 
+## 0.11.2 beta
+
+- Fixed crash on Linux/Mac when mod's quest was opened. (thx @kdau)
+
 ## 0.11.1 beta
 
 - Fixed nullpointer in HintDriver (#122)
