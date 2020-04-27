@@ -59,7 +59,7 @@ Next features comming soon...
 | Haley     |                 | +2 Luck                      |
 | Maru      | Doctor          | +1 Mining, +1 Luck, +1 Speed |
 | Shane     |                 | +3 Farming                   |
-| Leah      |                 | +2 Foraging                  |
+| Leah      | Forager         | +2 Foraging                  |
 | Emily     |                 | +2 Mining                    |
 | Penny     |                 | +3 Farming                   |
 | Sam       |                 | +2 Speed                     |

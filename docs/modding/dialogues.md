@@ -27,7 +27,7 @@ companionDismissAuto  # NPC companion was automatic released (due to night after
 companionRecruited  # NPC companion was recruited
 ```
 
-NOTE: All listed ask&recruit dialogue keys has a variant with suffix `_Spouse` for marriage/spouse dialogues.
+NOTE: All listed ask&recruit dialogue keys has a variant with suffix `_Spouse` or `_Dating` for marriage/spouse or dating dialogues.
 
 **Example:**
 
@@ -62,6 +62,42 @@ NOTE: All listed ask&recruit dialogue keys has a variant with suffix `_Spouse` f
   "companionSuggest": "I'm getting the itch for an adventure.#$q -1 -1#Hey @, wanna tag team for a little bit?#$r -1 0 Yes#Sure, lets find some trouble!#$r -1 0 No#Hmmmm, probably not today. Don't count me out next time though.",
   "companionSuggest_Yes": "I knew you'd be down! Where should we go first?$h",
   "companionSuggest_No": "Boo. Guess I'll need to find some fun with someone else today.",
+}
+```
+
+## Skill specific dialogues
+
+NOTE: All listed skill specific dialogue keys has a variant with suffix `_Spouse` or `_Dating` for marriage/spouse or dating dialogues.
+
+### Doctor dialogues
+
+```yaml
+heal # NPC say this dialogue line after they heals a farmer
+nomedkits # NPC say this dialogue when farmer try to ask for heal, but NPC has no medkits (speak only once)
+```
+
+**Example**
+
+```js
+{
+  "heal": "Let's get you patched up.$3",
+  "nomedkits": "I'll have to stop by Harvey's Clinic, I haven't got any more bandages.$6",
+}
+```
+
+### Forager dialogues
+
+```yaml
+giveForages # This dialogue is shown when forager gives collected forages to farmer
+farmerRunAway # If farmer run away, forager yell this dialogue
+```
+
+**Example**
+
+```js
+{
+  "farmerRunAway": "Hey, @! Wait for me!",
+  "giveForages": "@, I found some good stuff! Here, take this.",
 }
 ```
 

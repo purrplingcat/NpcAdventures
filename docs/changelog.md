@@ -2,6 +2,8 @@
 
 ## Upcoming release
 
+- Leah got forager skill
+- Added forager skill (Companions can forage)
 - Mod attempts to detect potential conflicting patches and inform player in the log (in debug mode as warning, otherwise as info level log)
 - Mod uses internal harmony lib in SMAPI (remove 0harmony.dll from the mod folder when upgrading)
 - Harmony patching is now more safer (Hope this can help to solve problems with harmony patches on Linux/Mac)
