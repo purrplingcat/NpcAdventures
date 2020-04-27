@@ -41,6 +41,7 @@ namespace NpcAdventure.AI
         private Dictionary<State, IController> controllers;
         private int changeStateCooldown = 0;
         private int foragingCooldown = 0;
+        private int scaredCooldown = 0;
 
         internal AI_StateMachine(CompanionStateMachine csm, CompanionDisplay hud, IModEvents events, IMonitor monitor)
         {
@@ -121,9 +122,9 @@ namespace NpcAdventure.AI
             this.hud.SetCompanionState(state);
         }
 
-        private bool IsThereAnyMonster()
+        private bool IsThereAnyMonster(float distance = MONSTER_DISTANCE)
         {
-            return Helper.GetNearestMonsterToCharacter(this.npc, MONSTER_DISTANCE) != null;
+            return Helper.GetNearestMonsterToCharacter(this.npc, distance) != null;
         }
 
         private bool PlayerIsNear()
@@ -177,6 +178,7 @@ namespace NpcAdventure.AI
         {
             if (e.IsMultipleOf(15))
             {
+                this.DoSideEffects();
                 this.CheckPotentialStateChange();
             }
 
@@ -186,11 +188,47 @@ namespace NpcAdventure.AI
             if (this.foragingCooldown > 0)
                 --this.foragingCooldown;
 
+            if (this.scaredCooldown > 0)
+                --this.scaredCooldown;
+
             if (this.Csm.HasSkill("doctor"))
                 this.UpdateDoctor(e);
 
             if (this.CurrentController != null)
                 this.CurrentController.Update(e);
+        }
+
+        /// <summary>
+        /// Do side effects (like be scared and etc)
+        /// </summary>
+        private void DoSideEffects()
+        {
+            // Be scared
+            if (this.Csm.HasSkill("scared") && this.IsThereAnyMonster() && this.scaredCooldown == 0)
+            {
+                this.npc.shake(1000);
+                this.scaredCooldown = 1200;
+
+                // Scared companion can occassionally cry
+                if (!this.npc.IsEmoting && Game1.random.Next(1, 8) == 1)
+                {
+                    this.npc.doEmote(28);
+                }
+
+                // Jump and screech only if companion not fighting and by random chance
+                if (this.CurrentState != State.FIGHT && Game1.random.Next(1, 5) == 1)
+                {
+                    this.npc.Halt();
+                    this.npc.jump();
+                    this.npc.currentLocation.playSound("batScreech");
+                    this.changeStateCooldown = 200;
+
+                    if (!this.npc.IsEmoting)
+                    {
+                        this.npc.doEmote(16);
+                    }
+                }
+            }
         }
 
         public void ChangeLocation(GameLocation l)
