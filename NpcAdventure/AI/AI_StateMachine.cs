@@ -20,13 +20,14 @@ namespace NpcAdventure.AI
     /// <summary>
     /// State machine for companion AI
     /// </summary>
-    internal partial class AI_StateMachine : Internal.IUpdateable, Internal.IDrawable
+    internal partial class  AI_StateMachine : Internal.IUpdateable, Internal.IDrawable
     {
         public enum State
         {
             FOLLOW,
             FIGHT,
             IDLE,
+            FORAGE,
         }
 
         private const float MONSTER_DISTANCE = 9f;
@@ -39,6 +40,7 @@ namespace NpcAdventure.AI
         private readonly IContentLoader loader;
         private Dictionary<State, IController> controllers;
         private int changeStateCooldown = 0;
+        private int foragingCooldown = 0;
 
         internal AI_StateMachine(CompanionStateMachine csm, CompanionDisplay hud, IModEvents events, IMonitor monitor)
         {
@@ -68,10 +70,14 @@ namespace NpcAdventure.AI
                 [State.FOLLOW] = new FollowController(this),
                 [State.FIGHT] = new FightController(this, this.loader, this.events, this.Csm.Metadata.Sword),
                 [State.IDLE] = new IdleController(this, this.loader),
+                [State.FORAGE] = new ForageController(this, this.events),
             };
 
             // By default AI following the player
             this.ChangeState(State.FOLLOW);
+
+            // Do not forage immediatelly after recruit
+            this.foragingCooldown = 500;
 
             this.events.GameLoop.TimeChanged += this.GameLoop_TimeChanged;
         }
@@ -86,6 +92,15 @@ namespace NpcAdventure.AI
             if (this.Csm.HasSkill("doctor") && (this.player.health < this.player.maxHealth / 3) && this.healCooldown == 0 && this.medkits != -1)
             {
                 this.TryHealFarmer();
+                return true;
+            }
+
+            if (this.Csm.HasSkill("forager")
+                && this.controllers[State.FORAGE] is ForageController fc
+                && fc.HasAnyForage()
+                && fc.GiveForageTo(this.player))
+            {
+                Game1.drawDialogue(this.npc, DialogueHelper.GetFriendSpecificDialogueText(this.npc, this.player, "giveForages"));
                 return true;
             }
 
@@ -116,6 +131,16 @@ namespace NpcAdventure.AI
             return Helper.Distance(this.player.getTileLocationPoint(), this.npc.getTileLocationPoint()) < 11f;
         }
 
+        private bool CanForage()
+        {
+            return this.PlayerIsNear() 
+                && this.changeStateCooldown <= 0
+                && this.foragingCooldown <= 0
+                && this.controllers[State.FORAGE] is ForageController fc 
+                && fc.CanForage() 
+                && Game1.random.Next(1, 6) == 1;
+        }
+
         private void CheckPotentialStateChange()
         {
             if (this.Csm.HasSkillsAny("fighter", "warrior") && this.changeStateCooldown == 0 && this.CurrentState != State.FIGHT && this.PlayerIsNear() && this.IsThereAnyMonster())
@@ -130,10 +155,22 @@ namespace NpcAdventure.AI
                 this.ChangeState(State.FOLLOW);
             }
 
+            if (this.Csm.HasSkill("forager") && this.FollowOrIdle() && this.CanForage())
+            {
+                this.foragingCooldown = Game1.random.Next(500, 2000);
+                this.ChangeState(State.FORAGE);
+            }
+
             if (this.CurrentState == State.FOLLOW && this.CurrentController.IsIdle)
             {
+                this.foragingCooldown += Game1.random.Next(300, 700);
                 this.ChangeState(State.IDLE);
             }
+        }
+
+        private bool FollowOrIdle()
+        {
+            return this.CurrentState == State.FOLLOW || this.CurrentState == State.IDLE;
         }
 
         public void Update(UpdateTickedEventArgs e)
@@ -144,7 +181,10 @@ namespace NpcAdventure.AI
             }
 
             if (this.changeStateCooldown > 0)
-                this.changeStateCooldown--;
+                --this.changeStateCooldown;
+
+            if (this.foragingCooldown > 0)
+                --this.foragingCooldown;
 
             if (this.Csm.HasSkill("doctor"))
                 this.UpdateDoctor(e);
