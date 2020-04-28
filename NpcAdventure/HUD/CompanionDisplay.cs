@@ -123,13 +123,13 @@ namespace NpcAdventure.HUD
                     float xOffset = 50;
                     float iconOffset = 16;
                     float iconGrid = 68;
-                    float xIP = position.X - xOffset + iconOffset + (i * iconGrid);
-                    float xFP = position.X - xOffset + (i * iconGrid);
+                    float xIP = position.X - xOffset + iconOffset + (10 - skill.Rectangle.Width) + (i * iconGrid);
+                    float xFP = position.X - xOffset + (10 - skill.Rectangle.Height) + (i * iconGrid);
 
                     if (Constants.TargetPlatform != GamePlatform.Android)
                     {
-                        xIP = position.X - xOffset + iconOffset - (i * iconGrid);
-                        xFP = position.X - xOffset - (i * iconGrid);
+                        xIP = position.X - xOffset + iconOffset + (10 - skill.Rectangle.Width) - (i * iconGrid);
+                        xFP = position.X - xOffset + (10 - skill.Rectangle.Height) - (i * iconGrid);
                     }
 
                     Vector2 iconPosition = new Vector2(xIP, position.Y);
