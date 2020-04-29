@@ -142,33 +142,6 @@ namespace NpcAdventure.AI.Controller
         public override bool IsIdle => this.CheckIdleState();
 
         /// <summary>
-        /// Checks if spoted monster is a valid monster
-        /// </summary>
-        /// <param name="monster"></param>
-        /// <returns></returns>
-        private bool IsValidMonster(Monster monster)
-        {
-            // Invisible monsters are invalid
-            if (monster.IsInvisible)
-                return false;
-
-            // Only moving rock crab is valid
-            if (monster is RockCrab crab)
-                return crab.isMoving();
-
-            // Only unarmored bug is valid
-            if (monster is Bug bug)
-                return !bug.isArmoredBug.Value;
-
-            // Only live mummy is valid
-            if (monster is Mummy mummy)
-                return mummy.reviveTimer.Value <= 0;
-
-            // All other monsters all valid
-            return true;
-        }
-
-        /// <summary>
         /// Check if is here any monster to fight
         /// </summary>
         private void CheckMonsterToFight()
@@ -176,7 +149,7 @@ namespace NpcAdventure.AI.Controller
             float defendRadius = this.ai.Csm.HasSkill("warrior") ? DEFEND_TILE_RADIUS_WARRIOR : DEFEND_TILE_RADIUS;
             Monster monster = Helper.GetNearestMonsterToCharacter(this.follower, defendRadius);
 
-            if (monster == null || !this.IsValidMonster(monster))
+            if (monster == null || !Helper.IsValidMonster(monster))
             {
                 this.potentialIdle = true;
                 this.leader = null;
@@ -233,7 +206,7 @@ namespace NpcAdventure.AI.Controller
                 return true;
 
             // Go iddle instantly when potential monster is not valid
-            if (this.leader is Monster && !this.IsValidMonster(this.leader as Monster))
+            if (this.leader is Monster && !Helper.IsValidMonster(this.leader as Monster))
                 return true;
 
             return this.potentialIdle; // By default propagate potential iddle state as iddle state

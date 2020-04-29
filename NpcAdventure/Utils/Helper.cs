@@ -177,9 +177,7 @@ namespace NpcAdventure.Utils
 
             foreach (Character c in me.currentLocation.characters)
             {
-                Monster monster = c as Monster;
-
-                if (monster == null)
+                if (!(c is Monster monster))
                     continue;
 
                 float monsterDistance = Helper.Distance(me.getTileLocationPoint(), monster.getTileLocationPoint());
@@ -194,6 +192,33 @@ namespace NpcAdventure.Utils
                 return nearestMonsters.Values.First();
 
             return null;
+        }
+
+        /// <summary>
+        /// Checks if spoted monster is a valid monster
+        /// </summary>
+        /// <param name="monster"></param>
+        /// <returns></returns>
+        public static bool IsValidMonster(Monster monster)
+        {
+            // Invisible monsters are invalid
+            if (monster.IsInvisible)
+                return false;
+
+            // Only moving rock crab is valid
+            if (monster is RockCrab crab)
+                return crab.isMoving();
+
+            // Only unarmored bug is valid
+            if (monster is Bug bug)
+                return !bug.isArmoredBug.Value;
+
+            // Only live mummy is valid
+            if (monster is Mummy mummy)
+                return mummy.reviveTimer.Value <= 0;
+
+            // All other monsters all valid
+            return true;
         }
 
         public static string[] GetSegments(string path, int? limit = null)

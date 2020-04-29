@@ -126,7 +126,9 @@ namespace NpcAdventure.AI
 
         private bool IsThereAnyMonster(float distance = MONSTER_DISTANCE)
         {
-            return Helper.GetNearestMonsterToCharacter(this.npc, distance) != null;
+            Monster monster = Helper.GetNearestMonsterToCharacter(this.npc, distance);
+
+            return monster != null && Helper.IsValidMonster(monster);
         }
 
         private bool PlayerIsNear()

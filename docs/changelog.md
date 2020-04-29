@@ -2,6 +2,7 @@
 
 ## Upcoming release
 
+- Fighter and Warrior checks only valid monsters around to switch a fight mode
 - Added debug command `npcadventure_recruit` for instant recruit a companion (only for singleplayer or server and for DEBUG PURPOSES ONLY!)
 - Fighters and Warriors withdraw when target lost
 - Refactored cooldown managing
