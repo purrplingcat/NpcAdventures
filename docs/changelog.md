@@ -9,6 +9,7 @@
 - Added `scared` skill (this companion occasionally screeches when they see a monster and jump away)
 - Leah got `forager` skill
 - Added `forager` skill (Companions can forage)
+- Refactored and enhanced follow movement system
 - Mod attempts to detect potential conflicting patches and inform player in the log (in debug mode as warning, otherwise as info level log)
 - Mod uses internal harmony lib in SMAPI (remove 0harmony.dll from the mod folder when upgrading)
 - Harmony patching is now more safer (Hope this can help to solve problems with harmony patches on Linux/Mac)
@@ -31,6 +32,7 @@
 - Changed Marlon's invitaion letter conditions (#95)
 - Fixed invalid cast for quests and events assets (#89)
 - Added support for localizations in content packs (#83 #89)
+- Separated follow movement system (#102)
 - *INTERNAL* Added tool for localization coverage reporting
 
 ## 0.10.2 beta
