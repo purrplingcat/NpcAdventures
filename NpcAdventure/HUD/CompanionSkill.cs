@@ -32,6 +32,9 @@ namespace NpcAdventure.HUD
                 case "forager":
                     this.icon = new Rectangle(60, 428, 10, 10);
                     break;
+                case "scared":
+                    this.icon = new Rectangle(372, 362, 8, 9);
+                    break;
             }
         }
 
@@ -40,6 +43,8 @@ namespace NpcAdventure.HUD
         public bool ShowTooltip { get; private set; }
         public string HoverText { get; set; }
         public bool Glowing { get => this.ticks > 0; }
+
+        public Rectangle Rectangle { get => this.icon; }
 
         public void Draw(SpriteBatch spriteBatch)
         {

@@ -16,6 +16,8 @@
   "skillDescription.fighter": "Can fight with a sword.",
   "skill.forager": "Forager ({0}'s skill)",
   "skillDescription.forager": "Will forage while recruited, and can share found forage items with you when you talk to them.",
+  "skill.scared": "Scared ({0}'s skill)",
+  "skillDescription.scared": "Occasionally screeches and jumps away when they see a monster.",
   "recruitedCompanionHint": "Companion: {0}",
   "companionState_follow": "Status: Follow",
   "companionState_idle": "Status: Idle",

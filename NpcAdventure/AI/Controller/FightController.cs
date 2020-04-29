@@ -10,7 +10,6 @@ using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace NpcAdventure.AI.Controller
 {
@@ -19,8 +18,9 @@ namespace NpcAdventure.AI.Controller
         private const int COOLDOWN_EFFECTIVE_THRESHOLD = 36;
         private const int COOLDOWN_INITAL = 50;
         private const int COOLDOWN_MINIMUM = COOLDOWN_INITAL - COOLDOWN_EFFECTIVE_THRESHOLD;
-        private const float DEFEND_TILE_RADIUS = 7f;
-        private bool potentialIddle = false;
+        private const float DEFEND_TILE_RADIUS = 5f;
+        private const float DEFEND_TILE_RADIUS_WARRIOR = 7f;
+        private bool potentialIdle = false;
         private readonly IModEvents events;
         private readonly MeleeWeapon weapon;
         private readonly Dictionary<string, string> bubbles;
@@ -33,6 +33,7 @@ namespace NpcAdventure.AI.Controller
         private bool defendFistUsed;
         private List<FarmerSprite.AnimationFrame>[] attackAnimation;
         private int attackSpeedPitch = 0;
+        private int targetLostRetry;
 
         public int SwingThreshold {
             get {
@@ -141,51 +142,27 @@ namespace NpcAdventure.AI.Controller
         public override bool IsIdle => this.CheckIdleState();
 
         /// <summary>
-        /// Checks if spoted monster is a valid monster
-        /// </summary>
-        /// <param name="monster"></param>
-        /// <returns></returns>
-        private bool IsValidMonster(Monster monster)
-        {
-            // Invisible monsters are invalid
-            if (monster.IsInvisible)
-                return false;
-
-            // Only moving rock crab is valid
-            if (monster is RockCrab crab)
-                return crab.isMoving();
-
-            // Only unarmored bug is valid
-            if (monster is Bug bug)
-                return !bug.isArmoredBug.Value;
-
-            // Only live mummy is valid
-            if (monster is Mummy mummy)
-                return mummy.reviveTimer.Value <= 0;
-
-            // All other monsters all valid
-            return true;
-        }
-
-        /// <summary>
         /// Check if is here any monster to fight
         /// </summary>
         private void CheckMonsterToFight()
         {
-            Monster monster = Helper.GetNearestMonsterToCharacter(this.follower, DEFEND_TILE_RADIUS);
+            float defendRadius = this.ai.Csm.HasSkill("warrior") ? DEFEND_TILE_RADIUS_WARRIOR : DEFEND_TILE_RADIUS;
+            Monster monster = Helper.GetNearestMonsterToCharacter(this.follower, defendRadius);
 
-            if (monster == null || !this.IsValidMonster(monster))
+            if (monster == null || !Helper.IsValidMonster(monster))
             {
-                this.potentialIddle = true;
+                this.potentialIdle = true;
                 this.leader = null;
                 this.pathFinder.GoalCharacter = null;
                 return;
             }
 
-            this.potentialIddle = false;
+            this.targetLostRetry = 5;
+            this.potentialIdle = false;
             this.leader = monster;
             this.pathFinder.GoalCharacter = this.leader;
             this.DoFightSpeak();
+            this.ai.Monitor.Log("Found valid monster to defeat");
         }
 
         private void DoFightSpeak()
@@ -229,10 +206,10 @@ namespace NpcAdventure.AI.Controller
                 return true;
 
             // Go iddle instantly when potential monster is not valid
-            if (this.leader is Monster && !this.IsValidMonster(this.leader as Monster))
+            if (this.leader is Monster && !Helper.IsValidMonster(this.leader as Monster))
                 return true;
 
-            return this.potentialIddle; // By default propagate potential iddle state as iddle state
+            return this.potentialIdle; // By default propagate potential iddle state as iddle state
         }
 
         public void DoWeaponSwing()
@@ -258,6 +235,12 @@ namespace NpcAdventure.AI.Controller
 
             if (this.fightBubbleCooldown > 0)
                 --this.fightBubbleCooldown;
+
+            if (e.IsOneSecond && !this.joystick.IsFollowing && --this.targetLostRetry == 0)
+            {
+                this.potentialIdle = true;
+                this.ai.Monitor.Log("Target lost, withdraw");
+            }
 
             this.DoWeaponSwing();
             base.Update(e);
@@ -432,6 +415,11 @@ namespace NpcAdventure.AI.Controller
                     this.AnimateMe();
                 }
 
+                if (this.ai.Csm.HasSkill("scared"))
+                {
+                    this.follower.shake(100);
+                }
+
                 this.joystick.NoCharging = true;
                 return Math.Max(this.joystick.Speed - 0.1f, 0.1f);
             }
@@ -446,7 +434,7 @@ namespace NpcAdventure.AI.Controller
 
             if (this.pathToFollow == null)
             {
-                this.potentialIddle = true;
+                this.potentialIdle = true;
                 this.ai.Monitor.Log($"Fight controller iddle, because can't find a path to monster '{this.leader?.Name}'");
             }
         }
@@ -456,7 +444,8 @@ namespace NpcAdventure.AI.Controller
             this.events.World.NpcListChanged += this.World_NpcListChanged;
             this.weaponSwingCooldown = 0;
             this.fightBubbleCooldown = 0;
-            this.potentialIddle = false;
+            this.targetLostRetry = 5;
+            this.potentialIdle = false;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -483,7 +472,7 @@ namespace NpcAdventure.AI.Controller
             this.events.World.NpcListChanged -= this.World_NpcListChanged;
             this.leader = null;
             this.pathFinder.GoalCharacter = null;
-            this.potentialIddle = true;
+            this.potentialIdle = true;
         }
 
         private class WeaponAttributes

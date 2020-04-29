@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using NpcAdventure.AI.Controller;
 using NpcAdventure.HUD;
+using NpcAdventure.Internal;
 using NpcAdventure.Loader;
 using NpcAdventure.Model;
 using NpcAdventure.StateMachine;
@@ -31,6 +32,9 @@ namespace NpcAdventure.AI
         }
 
         private const float MONSTER_DISTANCE = 9f;
+        private const string FORAGING_COOLDOWN = "foragingCooldown";
+        private const string CHANGE_STATE_COOLDOWN = "changeStateCooldown";
+        private const string SCARED_COOLDOWN = "scaredCooldown";
         public readonly NPC npc;
         public readonly Farmer player;
         private readonly CompanionDisplay hud;
@@ -39,8 +43,7 @@ namespace NpcAdventure.AI
 
         private readonly IContentLoader loader;
         private Dictionary<State, IController> controllers;
-        private int changeStateCooldown = 0;
-        private int foragingCooldown = 0;
+        private Countdown cooldown = new Countdown();
 
         internal AI_StateMachine(CompanionStateMachine csm, CompanionDisplay hud, IModEvents events, IMonitor monitor)
         {
@@ -77,7 +80,7 @@ namespace NpcAdventure.AI
             this.ChangeState(State.FOLLOW);
 
             // Do not forage immediatelly after recruit
-            this.foragingCooldown = 500;
+            this.cooldown.Set(FORAGING_COOLDOWN, 500);
 
             this.events.GameLoop.TimeChanged += this.GameLoop_TimeChanged;
         }
@@ -121,9 +124,11 @@ namespace NpcAdventure.AI
             this.hud.SetCompanionState(state);
         }
 
-        private bool IsThereAnyMonster()
+        private bool IsThereAnyMonster(float distance = MONSTER_DISTANCE)
         {
-            return Helper.GetNearestMonsterToCharacter(this.npc, MONSTER_DISTANCE) != null;
+            Monster monster = Helper.GetNearestMonsterToCharacter(this.npc, distance);
+
+            return monster != null && Helper.IsValidMonster(monster);
         }
 
         private bool PlayerIsNear()
@@ -134,8 +139,8 @@ namespace NpcAdventure.AI
         private bool CanForage()
         {
             return this.PlayerIsNear() 
-                && this.changeStateCooldown <= 0
-                && this.foragingCooldown <= 0
+                && !this.cooldown.IsRunning(CHANGE_STATE_COOLDOWN)
+                && !this.cooldown.IsRunning(FORAGING_COOLDOWN)
                 && this.controllers[State.FORAGE] is ForageController fc 
                 && fc.CanForage() 
                 && Game1.random.Next(1, 6) == 1;
@@ -143,7 +148,11 @@ namespace NpcAdventure.AI
 
         private void CheckPotentialStateChange()
         {
-            if (this.Csm.HasSkillsAny("fighter", "warrior") && this.changeStateCooldown == 0 && this.CurrentState != State.FIGHT && this.PlayerIsNear() && this.IsThereAnyMonster())
+            if (this.Csm.HasSkillsAny("fighter", "warrior")
+                && !this.cooldown.IsRunning(CHANGE_STATE_COOLDOWN)
+                && this.CurrentState != State.FIGHT
+                && this.PlayerIsNear()
+                && this.IsThereAnyMonster())
             {
                 this.ChangeState(State.FIGHT);
                 this.Monitor.Log("A 50ft monster is here!");
@@ -151,19 +160,19 @@ namespace NpcAdventure.AI
 
             if (this.CurrentState != State.FOLLOW && this.CurrentController.IsIdle)
             {
-                this.changeStateCooldown = 100;
+                this.cooldown.Set(CHANGE_STATE_COOLDOWN, 100);
                 this.ChangeState(State.FOLLOW);
             }
 
             if (this.Csm.HasSkill("forager") && this.FollowOrIdle() && this.CanForage())
             {
-                this.foragingCooldown = Game1.random.Next(500, 2000);
+                this.cooldown.Set(FORAGING_COOLDOWN, Game1.random.Next(500, 2000));
                 this.ChangeState(State.FORAGE);
             }
 
             if (this.CurrentState == State.FOLLOW && this.CurrentController.IsIdle)
             {
-                this.foragingCooldown += Game1.random.Next(300, 700);
+                this.cooldown.Increase(FORAGING_COOLDOWN, Game1.random.Next(300, 700));
                 this.ChangeState(State.IDLE);
             }
         }
@@ -177,20 +186,62 @@ namespace NpcAdventure.AI
         {
             if (e.IsMultipleOf(15))
             {
+                this.DoSideEffects();
                 this.CheckPotentialStateChange();
             }
 
-            if (this.changeStateCooldown > 0)
-                --this.changeStateCooldown;
-
-            if (this.foragingCooldown > 0)
-                --this.foragingCooldown;
+            this.cooldown.Update(e);
 
             if (this.Csm.HasSkill("doctor"))
                 this.UpdateDoctor(e);
 
             if (this.CurrentController != null)
                 this.CurrentController.Update(e);
+        }
+
+        /// <summary>
+        /// Do side effects (like be scared and etc)
+        /// </summary>
+        private void DoSideEffects()
+        {
+            // Be scared
+            if (this.Csm.HasSkill("scared")
+                && this.IsThereAnyMonster(4f)
+                && !this.cooldown.IsRunning(SCARED_COOLDOWN)
+                && Game1.random.Next(0, this.GetNotBeScaredChanceIndex()) == 1)
+            {
+                this.npc.Halt();
+                this.npc.shake(1000);
+                this.npc.jump();
+                this.npc.currentLocation.playSound("batScreech");
+
+                // Scared companion can occassionally cry
+                if (!this.npc.IsEmoting && Game1.random.Next(0, 8) == 1)
+                {
+                    this.npc.doEmote(28);
+                    this.player.changeFriendship(-1, this.npc);
+                }
+
+                this.cooldown.Set(SCARED_COOLDOWN, Game1.random.Next(800, 2400));
+                this.cooldown.Set(CHANGE_STATE_COOLDOWN, 100);
+
+                if (this.CurrentState != State.FOLLOW)
+                {
+                    this.ChangeState(State.FOLLOW);
+                }
+            }
+        }
+
+        private int GetNotBeScaredChanceIndex()
+        {
+            int notBeScaredChance = 4 + this.player.CombatLevel / 2;
+
+            if (this.Csm.HasSkill("warrior"))
+            {
+                return notBeScaredChance * 2;
+            }
+
+            return notBeScaredChance;
         }
 
         public void ChangeLocation(GameLocation l)
@@ -200,7 +251,7 @@ namespace NpcAdventure.AI
             // Warp NPC to player's location at theirs position
             Helper.WarpTo(this.npc, l, this.player.getTileLocationPoint());
 
-            this.changeStateCooldown = 30;
+            this.cooldown.Set(CHANGE_STATE_COOLDOWN, 30);
 
             // Fire location changed event
             this.OnLocationChanged(previousLocation, this.npc.currentLocation);

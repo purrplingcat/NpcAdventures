@@ -2,8 +2,13 @@
 
 ## Upcoming release
 
-- Leah got forager skill
-- Added forager skill (Companions can forage)
+- Fighter and Warrior checks only valid monsters around to switch a fight mode
+- Added debug command `npcadventure_recruit` for instant recruit a companion (only for singleplayer or server and for DEBUG PURPOSES ONLY!)
+- Fighters and Warriors withdraw when target lost
+- Refactored cooldown managing
+- Added `scared` skill (this companion occasionally screeches when they see a monster and jump away)
+- Leah got `forager` skill
+- Added `forager` skill (Companions can forage)
 - Refactored and enhanced follow movement system
 - Mod attempts to detect potential conflicting patches and inform player in the log (in debug mode as warning, otherwise as info level log)
 - Mod uses internal harmony lib in SMAPI (remove 0harmony.dll from the mod folder when upgrading)

@@ -111,6 +111,7 @@
     <Compile Include="HUD\CompanionDisplay.cs" />
     <Compile Include="HUD\CompanionSkill.cs" />
     <Compile Include="Internal\CompanionDialogue.cs" />
+    <Compile Include="Internal\Countdown.cs" />
     <Compile Include="Internal\IDrawable.cs" />
     <Compile Include="Loader\ContentPacks\AssetPatch.cs" />
     <Compile Include="Loader\AssetsManager.cs" />
