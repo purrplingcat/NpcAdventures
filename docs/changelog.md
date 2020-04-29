@@ -26,6 +26,7 @@
 - Changed Marlon's invitaion letter conditions (#95)
 - Fixed invalid cast for quests and events assets (#89)
 - Added support for localizations in content packs (#83 #89)
+- Separated follow movement system (#102)
 - *INTERNAL* Added tool for localization coverage reporting
 
 ## 0.10.2 beta
