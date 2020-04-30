@@ -110,7 +110,7 @@
     <Compile Include="Events\SpecialModEvents.cs" />
     <Compile Include="HUD\CompanionDisplay.cs" />
     <Compile Include="HUD\CompanionSkill.cs" />
-    <Compile Include="Internal\CompanionDialogue.cs" />
+    <Compile Include="Dialogues\CompanionDialogue.cs" />
     <Compile Include="Internal\Countdown.cs" />
     <Compile Include="Internal\IDrawable.cs" />
     <Compile Include="Loader\ContentPacks\AssetPatch.cs" />
@@ -151,12 +151,12 @@
     <Compile Include="Story\Scenario\BaseScenario.cs" />
     <Compile Include="Story\Scenario\QuestScenario.cs" />
     <Compile Include="Story\StoryHelper.cs" />
-    <Compile Include="Utils\DialogueHelper.VariousKeyGenerator.cs" />
+    <Compile Include="Dialogues\VariousKeyGenerator.cs" />
     <Compile Include="Utils\Extensions.cs" />
     <Compile Include="Utils\Helper.cs" />
     <Compile Include="Internal\IUpdateable.cs" />
     <Compile Include="Loader\ContentLoader.cs" />
-    <Compile Include="Utils\DialogueHelper.cs" />
+    <Compile Include="Dialogues\DialogueProvider.cs" />
     <Compile Include="NpcAdventureMod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StateMachine\CompanionStateMachine.cs" />

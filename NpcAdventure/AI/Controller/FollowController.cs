@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using StardewValley;
-using StardewValley.Locations;
 using StardewModdingAPI.Events;
 using Microsoft.Xna.Framework;
-using NpcAdventure.Utils;
 using StardewModdingAPI;
-using System.Reflection;
 
 namespace NpcAdventure.AI.Controller
 {

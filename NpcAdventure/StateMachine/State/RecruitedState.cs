@@ -1,5 +1,4 @@
 ﻿using NpcAdventure.StateMachine.StateFeatures;
-using NpcAdventure.Utils;
 using StardewModdingAPI.Events;
 using StardewValley;
 using System.Collections.Generic;
@@ -13,7 +12,7 @@ using NpcAdventure.Buffs;
 using StardewModdingAPI;
 using NpcAdventure.AI;
 using NpcAdventure.Events;
-using NpcAdventure.Internal;
+using NpcAdventure.Dialogues;
 
 namespace NpcAdventure.StateMachine.State
 {
@@ -59,7 +58,7 @@ namespace NpcAdventure.StateMachine.State
             this.Events.Input.ButtonPressed += this.Input_ButtonPressed;
             this.SpecialEvents.RenderedLocation += this.SpecialEvents_RenderedLocation;
 
-            this.recruitedDialogue = DialogueHelper.GenerateDialogue(this.StateMachine.Companion, "companionRecruited");
+            this.recruitedDialogue = this.StateMachine.Dialogues.GenerateDialogue("companionRecruited");
             this.CanPerformAction = true;
 
             if (this.recruitedDialogue != null)
@@ -142,12 +141,12 @@ namespace NpcAdventure.StateMachine.State
             {
                 NPC companion = this.StateMachine.Companion;
                 Dialogue dismissalDialogue = new Dialogue(
-                    DialogueHelper.GetFriendSpecificDialogueText(
-                        companion, this.StateMachine.CompanionManager.Farmer, "companionDismissAuto"), companion);
+                    this.StateMachine.Dialogues.GetFriendSpecificDialogueText(
+                        this.StateMachine.CompanionManager.Farmer, "companionDismissAuto"), companion);
                 this.dismissalDialogue = dismissalDialogue;
                 this.StateMachine.Companion.doEmote(24);
                 this.StateMachine.Companion.updateEmote(Game1.currentGameTime);
-                DialogueHelper.DrawDialogue(dismissalDialogue);
+                DialogueProvider.DrawDialogue(dismissalDialogue);
             }
 
             // Fix spawn ladder if area is infested and all monsters is killed but NPC following us
@@ -216,7 +215,7 @@ namespace NpcAdventure.StateMachine.State
                 this.ai.ChangeLocation(e.NewLocation);
 
             // Show above head bubble text for location
-            if (Game1.random.NextDouble() > .66f && DialogueHelper.GetAmbientBubbleString(bubbles, companion, e.NewLocation, out string bubble))
+            if (Game1.random.NextDouble() > .66f && DialogueProvider.GetAmbientBubbleString(bubbles, companion, e.NewLocation, out string bubble))
                 companion.showTextAboveHead(bubble, preTimer: 250);
 
             // Push new location dialogue
@@ -295,14 +294,20 @@ namespace NpcAdventure.StateMachine.State
             switch (action)
             {
                 case "dismiss":
-                    Dialogue dismissalDialogue = new Dialogue(DialogueHelper.GetFriendSpecificDialogueText(companion, leader, "companionDismiss"), companion);
+                    Dialogue dismissalDialogue = new Dialogue(
+                        this.StateMachine.Dialogues.GetFriendSpecificDialogueText(leader, "companionDismiss"), companion);
                     this.dismissalDialogue = dismissalDialogue;
-                    DialogueHelper.DrawDialogue(dismissalDialogue);
+                    DialogueProvider.DrawDialogue(dismissalDialogue);
                     break;
                 case "bag":
                     Chest bag = this.StateMachine.Bag;
                     this.StateMachine.Companion.currentLocation.playSound("openBox");
-                    Game1.activeClickableMenu = new ItemGrabMenu(bag.items, false, true, new InventoryMenu.highlightThisItem(InventoryMenu.highlightAllItems), new ItemGrabMenu.behaviorOnItemSelect(bag.grabItemFromInventory), this.StateMachine.Companion.displayName, new ItemGrabMenu.behaviorOnItemSelect(bag.grabItemFromChest), false, true, true, true, true, 1, null, -1, this.StateMachine.Companion);
+                    Game1.activeClickableMenu = new ItemGrabMenu(
+                        bag.items, false, true, new InventoryMenu.highlightThisItem(InventoryMenu.highlightAllItems),
+                        new ItemGrabMenu.behaviorOnItemSelect(bag.grabItemFromInventory),
+                        this.StateMachine.Companion.displayName,
+                        new ItemGrabMenu.behaviorOnItemSelect(bag.grabItemFromChest), false, true, true, true, true, 1,
+                        null, -1, this.StateMachine.Companion);
                     break;
             }
         }

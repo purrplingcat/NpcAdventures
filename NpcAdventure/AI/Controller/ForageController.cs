@@ -436,7 +436,7 @@ namespace NpcAdventure.AI.Controller
         {
             this.IsIdle = true;
             this.Leader.changeFriendship(-5, this.Forager);
-            Game1.drawDialogue(this.Forager, DialogueHelper.GetFriendSpecificDialogueText(this.Forager, this.Leader, "farmerRunAway"));
+            Game1.drawDialogue(this.Forager, this.ai.Csm.Dialogues.GetFriendSpecificDialogueText(this.Leader, "farmerRunAway"));
 
             if (this.HasAnyForage() && this.r.Next(3) == 1)
             {

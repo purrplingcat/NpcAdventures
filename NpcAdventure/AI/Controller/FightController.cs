@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NpcAdventure.Dialogues;
 using NpcAdventure.Loader;
 using NpcAdventure.Utils;
 using StardewModdingAPI;
@@ -171,7 +172,7 @@ namespace NpcAdventure.AI.Controller
             if (this.fightBubbleCooldown != 0)
                 return;
 
-            if (Game1.random.NextDouble() < this.fightSpeechTriggerThres && DialogueHelper.GetBubbleString(this.bubbles, this.follower, "fight", out string text))
+            if (Game1.random.NextDouble() < this.fightSpeechTriggerThres && DialogueProvider.GetBubbleString(this.bubbles, this.follower, "fight", out string text))
             {
                 bool isRed = this.ai.Csm.HasSkill("warrior") && Game1.random.NextDouble() < 0.1;
                 this.follower.showTextAboveHead(text, isRed ? 2 : -1);
