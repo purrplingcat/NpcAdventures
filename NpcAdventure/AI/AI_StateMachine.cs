@@ -3,7 +3,6 @@ using NpcAdventure.AI.Controller;
 using NpcAdventure.HUD;
 using NpcAdventure.Internal;
 using NpcAdventure.Loader;
-using NpcAdventure.Model;
 using NpcAdventure.StateMachine;
 using NpcAdventure.Utils;
 using StardewModdingAPI;
@@ -12,9 +11,6 @@ using StardewValley;
 using StardewValley.Monsters;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NpcAdventure.AI
 {
@@ -103,7 +99,7 @@ namespace NpcAdventure.AI
                 && fc.HasAnyForage()
                 && fc.GiveForageTo(this.player))
             {
-                Game1.drawDialogue(this.npc, DialogueHelper.GetFriendSpecificDialogueText(this.npc, this.player, "giveForages"));
+                Game1.drawDialogue(this.npc, this.Csm.Dialogues.GetFriendSpecificDialogueText(this.player, "giveForages"));
                 return true;
             }
 

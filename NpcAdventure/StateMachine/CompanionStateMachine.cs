@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using NpcAdventure.Internal;
+using NpcAdventure.Dialogues;
 using NpcAdventure.Loader;
 using NpcAdventure.Model;
 using NpcAdventure.Objects;
 using NpcAdventure.StateMachine.StateFeatures;
-using NpcAdventure.Utils;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using StardewValley;
@@ -49,6 +48,7 @@ namespace NpcAdventure.StateMachine
             this.Bag = new Chest(true);
             this.Reflection = reflection;
             this.SpokenDialogues = new HashSet<string>();
+            this.Dialogues = new DialogueProvider(companion, loader);
         }
 
         /// <summary>
@@ -68,6 +68,7 @@ namespace NpcAdventure.StateMachine
         public bool SuggestedToday { get; internal set; }
         public bool CanSuggestToday { get; private set; }
         public HashSet<string> SpokenDialogues { get; private set; }
+        public DialogueProvider Dialogues { get; }
 
         /// <summary>
         /// Change companion state machine state
@@ -144,12 +145,12 @@ namespace NpcAdventure.StateMachine
             }
 
             // Setup dialogues for companion for this day
-            DialogueHelper.SetupCompanionDialogues(this.Companion, this.ContentLoader.LoadStrings($"Dialogue/{this.Name}"));
+            this.Dialogues.ReloadDialogues();
 
             this.RecruitedToday = false;
             this.SuggestedToday = false;
             this.CanSuggestToday = Game1.random.NextDouble() > .5f
-                                   && !(this.Companion.isMarried() && SDate.Now().DayOfWeek == DayOfWeek.Monday);
+                && !(this.Companion.isMarried() && SDate.Now().DayOfWeek == DayOfWeek.Monday);
             this.SpokenDialogues.Clear();
             this.MakeAvailable();
             if (this.CanSuggestToday)
@@ -180,7 +181,7 @@ namespace NpcAdventure.StateMachine
             NPC companion = this.Companion;
 
             // Try generate only once spoken dialogue in game save
-            if (DialogueHelper.GenerateStaticDialogue(companion, location, $"companionOnce{suffix}") is CompanionDialogue dialogueOnce
+            if (this.Dialogues.GenerateStaticDialogue(location, $"companionOnce{suffix}") is CompanionDialogue dialogueOnce
                 && !this.CompanionManager.Farmer.hasOrWillReceiveMail(dialogueOnce.Tag))
             {
                 // Remember only once spoken dialogue (as received mail. Keep it forever in loaded game after game saved)
@@ -189,14 +190,14 @@ namespace NpcAdventure.StateMachine
             }
 
             // Try generate standard companion various dialogue. This dialogue can be shown only once per day (per recruited companion session)
-            if (DialogueHelper.GenerateDialogue(companion, location, $"companion{suffix}") is CompanionDialogue dialogue && !this.SpokenDialogues.Contains(dialogue.Tag))
+            if (this.Dialogues.GenerateDialogue(location, $"companion{suffix}") is CompanionDialogue dialogue && !this.SpokenDialogues.Contains(dialogue.Tag))
             {
                 dialogue.SpecialAttributes.Add("session"); // Remember this dialogue in this companion session when will be spoken
                 return dialogue;
             }
 
             // Try generate dialogue which can be shown repeately in day (current companion session). If none defined, returns null
-            return DialogueHelper.GenerateDialogue(companion, location, "companionRepeat");
+            return this.Dialogues.GenerateDialogue(location, "companionRepeat");
         }
 
         /// <summary>

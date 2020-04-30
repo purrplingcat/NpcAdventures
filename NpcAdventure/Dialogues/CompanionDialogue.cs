@@ -1,12 +1,8 @@
-﻿using NpcAdventure.Utils;
-using StardewValley;
-using System;
+﻿using StardewValley;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace NpcAdventure.Internal
+namespace NpcAdventure.Dialogues
 {
     internal class CompanionDialogue : Dialogue
     {
@@ -34,7 +30,7 @@ namespace NpcAdventure.Internal
 
         public static string DialogueKindOf(string dialogueTag)
         {
-            return dialogueTag?.Split(DialogueHelper.FLAG_RANDOM, DialogueHelper.FLAG_CHANCE).First();
+            return dialogueTag?.Split(DialogueProvider.FLAG_RANDOM, DialogueProvider.FLAG_CHANCE).First();
         }
     }
 }

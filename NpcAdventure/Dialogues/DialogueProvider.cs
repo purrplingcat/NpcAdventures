@@ -1,15 +1,45 @@
-﻿using NpcAdventure.Internal;
+﻿using NpcAdventure.Loader;
+using NpcAdventure.Utils;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NpcAdventure.Utils
+namespace NpcAdventure.Dialogues
 {
-    public static partial class DialogueHelper
+    /// <summary>
+    /// Provides a companion dialogues for assigned NPC.
+    /// Also provides static helper tools for work with static dialogues (like speech bubbles)
+    /// </summary>
+    public partial class DialogueProvider
     {
         public const char FLAG_RANDOM = '~';
         public const char FLAG_CHANCE = '^';
+        private readonly NPC npc;
+        private readonly IContentLoader contentLoader;
+        private readonly string sourcePrefix;
+
+        /// <summary>
+        /// Create an instance of dialogue provider with assigned NPC and content loader
+        /// </summary>
+        /// <param name="npc">NPC for assign</param>
+        /// <param name="contentLoader">Source of dialogues</param>
+        public DialogueProvider(NPC npc, IContentLoader contentLoader, string sourcePrefix = "Dialogue/")
+        {
+            this.npc = npc;
+            this.contentLoader = contentLoader;
+            this.sourcePrefix = sourcePrefix;
+
+            this.ReloadDialogues();
+        }
+
+        /// <summary>
+        /// Reload dialogues from source to NPC's dialogue registry
+        /// </summary>
+        public void ReloadDialogues()
+        {
+            SetupCompanionDialogues(this.npc, this.contentLoader.LoadStrings($"{this.sourcePrefix}{this.npc.Name}"));
+        }
 
         public static bool GetRawDialogue(Dictionary<string, string> dialogues, string key, out KeyValuePair<string, string> rawDialogue)
         {
@@ -58,12 +88,23 @@ namespace NpcAdventure.Utils
             return false;
         }
 
-        public static bool GetRawDialogue(NPC n, string key, out KeyValuePair<string, string> rawDialogue)
+        public bool GetRawDialogue(string key, out KeyValuePair<string, string> rawDialogue, bool retryReload = true)
         {
-            if (GetRawDialogue(n.Dialogue, key, out rawDialogue))
+            if (GetRawDialogue(this.npc.Dialogue, key, out rawDialogue))
                 return true;
 
-            rawDialogue = new KeyValuePair<string, string>(key, $"{n.Name}.{key}");
+            if (retryReload)
+            {
+                // Dialogue not found? Companion dialogue list probably erased, reload it...
+                this.ReloadDialogues();
+
+                // ...and try again to fetch dialogue
+                if (GetRawDialogue(this.npc.Dialogue, key, out rawDialogue))
+                    return true;
+            }
+
+            // Dialogue still can't be fetch? So we mark this dialogue as undefined and return dialogue key path as text
+            rawDialogue = new KeyValuePair<string, string>(key, $"{this.npc.Name}.{key}");
 
             return false;
         }
@@ -78,52 +119,70 @@ namespace NpcAdventure.Utils
         /// <param name="f">Farmer</param>
         /// <param name="key">Dialogue key</param>
         /// <returns>A dialogue text</returns>
-        public static string GetFriendSpecificDialogueText(NPC n, Farmer f, string key)
+        public string GetFriendSpecificDialogueText(Farmer f, string key)
         {
-            if (Helper.IsSpouseMarriedToFarmer(n, f) && GetRawDialogue(n, $"{key}_Spouse", out KeyValuePair<string, string> rawSpousedDialogue))
+            if (Helper.IsSpouseMarriedToFarmer(this.npc, f) && this.GetRawDialogue($"{key}_Spouse", out KeyValuePair<string, string> rawSpousedDialogue))
             {
                 return rawSpousedDialogue.Value;
             }
 
-            if (f.friendshipData.TryGetValue(n.Name, out Friendship friendship)
+            if (f.friendshipData.TryGetValue(this.npc.Name, out Friendship friendship)
                 && friendship.IsDating()
-                && GetRawDialogue(n, $"{key}_Dating", out KeyValuePair<string, string> rawDatingDialogue))
+                && this.GetRawDialogue($"{key}_Dating", out KeyValuePair<string, string> rawDatingDialogue))
             {
                 return rawDatingDialogue.Value;
             }
 
-            GetRawDialogue(n, key, out KeyValuePair<string, string> rawDialogue);
+            this.GetRawDialogue(key, out KeyValuePair<string, string> rawDialogue);
             return rawDialogue.Value;
         }
 
-        public static bool GetVariableRawDialogue(NPC n, string key, out KeyValuePair<string, string> rawDialogue)
+        public bool GetVariableRawDialogue(string key, out KeyValuePair<string, string> rawDialogue)
         {
             Farmer f = Game1.player;
             VariousKeyGenerator keygen = new VariousKeyGenerator()
             {
                 Date = SDate.Now(),
                 IsNight = Game1.isDarkOut(),
-                FriendshipStatus = f.friendshipData.TryGetValue(n.Name, out Friendship friendship) ? friendship.Status : FriendshipStatus.Friendly,
-                FriendshipHeartLevel = f.getFriendshipHeartLevelForNPC(n.Name),
+                FriendshipStatus = f.friendshipData.TryGetValue(this.npc.Name, out Friendship friendship) ? friendship.Status : FriendshipStatus.Friendly,
+                FriendshipHeartLevel = f.getFriendshipHeartLevelForNPC(this.npc.Name),
                 Weather = Helper.GetCurrentWeatherName(),
             };
 
-            // Generate possible dialogue keys
-            keygen.GenerateVariousKeys(key);
-
             // Try to find a relevant dialogue
+            if (!this.TryFetchVariableDialogue(key, keygen, out rawDialogue))
+            {
+                // No dialogue found? Companion dialogues are probably lost, reload them
+                this.ReloadDialogues();
+
+                // And try dialogue fetch again. 
+                // Returns false when dialogue really not exists and as text will be returned dialogue key path
+                return this.TryFetchVariableDialogue(key, keygen, out rawDialogue);
+            }
+
+            return true;
+        }
+
+        private bool TryFetchVariableDialogue(string baseKey, VariousKeyGenerator keygen, out KeyValuePair<string, string> rawDialogue)
+        {
+            if (keygen.PossibleKeys.Count <= 0)
+            {
+                // Generate possible dialogue keys
+                keygen.GenerateVariousKeys(baseKey);
+            }
+
             foreach (string k in keygen.PossibleKeys)
-                if (GetRawDialogue(n, k, out rawDialogue))
+                if (this.GetRawDialogue(k, out rawDialogue, false))
                     return true;
 
-            rawDialogue = new KeyValuePair<string, string>(key, $"{n.Name}.{key}");
+            rawDialogue = new KeyValuePair<string, string>(baseKey, $"{this.npc.Name}.{baseKey}");
 
             return false;
         }
 
-        public static bool GetVariableRawDialogue(NPC n, string key, GameLocation l, out KeyValuePair<string, string> rawDialogue)
+        public bool GetVariableRawDialogue(string key, GameLocation l, out KeyValuePair<string, string> rawDialogue)
         {
-            return GetVariableRawDialogue(n, $"{key}_{l.Name}", out rawDialogue);
+            return this.GetVariableRawDialogue($"{key}_{l.Name}", out rawDialogue);
         }
 
         /// <summary>
@@ -166,10 +225,10 @@ namespace NpcAdventure.Utils
         /// <param name="n"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static Dialogue GenerateDialogue(NPC n, string key)
+        public Dialogue GenerateDialogue(string key)
         {
-            if (GetVariableRawDialogue(n, key, out KeyValuePair<string, string> rawDilogue))
-                return CreateDialogueFromRaw(n, rawDilogue);
+            if (this.GetVariableRawDialogue(key, out KeyValuePair<string, string> rawDilogue))
+                return CreateDialogueFromRaw(this.npc, rawDilogue);
 
             return null;
         }
@@ -181,11 +240,11 @@ namespace NpcAdventure.Utils
         /// <param name="l"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static Dialogue GenerateDialogue(NPC n, GameLocation l, string key)
+        public Dialogue GenerateDialogue(GameLocation l, string key)
         {
-            if (GetVariableRawDialogue(n, key, l, out KeyValuePair<string, string> rawDialogue))
+            if (this.GetVariableRawDialogue(key, l, out KeyValuePair<string, string> rawDialogue))
             {
-                return CreateDialogueFromRaw(n, rawDialogue);
+                return CreateDialogueFromRaw(this.npc, rawDialogue);
             }
 
             return null;
@@ -197,11 +256,11 @@ namespace NpcAdventure.Utils
         /// <param name="n"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static Dialogue GenerateStaticDialogue(NPC n, string key)
+        public Dialogue GenerateStaticDialogue(string key)
         {
-            if (GetRawDialogue(n, key, out KeyValuePair<string, string> rawDialogue))
+            if (this.GetRawDialogue(key, out KeyValuePair<string, string> rawDialogue))
             {
-                return CreateDialogueFromRaw(n, rawDialogue);
+                return CreateDialogueFromRaw(this.npc, rawDialogue);
             }
 
             return null;
@@ -214,9 +273,9 @@ namespace NpcAdventure.Utils
         /// <param name="l"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static Dialogue GenerateStaticDialogue(NPC n, GameLocation l, string key)
+        public Dialogue GenerateStaticDialogue(GameLocation l, string key)
         {
-            return GenerateStaticDialogue(n, $"{key}_{l.Name}");
+            return this.GenerateStaticDialogue($"{key}_{l.Name}");
         }
 
         public static void SetupCompanionDialogues(NPC n, Dictionary<string, string> dialogues)
