@@ -46,14 +46,7 @@ namespace NpcAdventure.StateMachine.State
             if (this.StateMachine.Companion.doingEndOfRouteAnimation.Value)
                 this.FinishScheduleAnimation();
 
-            this.StateMachine.Companion.faceTowardFarmerTimer = 0;
-            this.StateMachine.Companion.movementPause = 0;
-            this.StateMachine.Companion.followSchedule = false;
-            this.StateMachine.Companion.Schedule = null;
-            this.StateMachine.Companion.controller = null;
-            this.StateMachine.Companion.temporaryController = null;
-            this.StateMachine.Companion.eventActor = true;
-            this.StateMachine.Companion.farmerPassesThrough = true;
+            this.FixProblemsWithNPC();
 
             this.Events.GameLoop.UpdateTicked += this.GameLoop_UpdateTicked;
             this.Events.GameLoop.TimeChanged += this.GameLoop_TimeChanged;
@@ -209,10 +202,13 @@ namespace NpcAdventure.StateMachine.State
         {
             this.StateMachine.Companion.movementPause = 0;
             this.StateMachine.Companion.followSchedule = false;
+            this.StateMachine.Companion.ignoreScheduleToday = true;
             this.StateMachine.Companion.Schedule = null;
             this.StateMachine.Companion.controller = null;
             this.StateMachine.Companion.temporaryController = null;
             this.StateMachine.Companion.eventActor = true;
+            this.StateMachine.Companion.faceTowardFarmerTimer = 0;
+            this.StateMachine.Companion.farmerPassesThrough = true;
         }
 
         private void Player_Warped(object sender, WarpedEventArgs e)

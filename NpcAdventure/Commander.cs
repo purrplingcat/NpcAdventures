@@ -46,13 +46,13 @@ namespace NpcAdventure
         {
             if (!Context.IsWorldReady || !Context.IsMainPlayer)
             {
-                this.monitor.Log("Can't recruit a companion when game is not loaded or player is not main player.");
+                this.monitor.Log("Can't recruit a companion when game is not loaded or player is not main player.", LogLevel.Alert);
                 return;
             }
 
             if (args.Length < 1)
             {
-                this.monitor.Log("Missing NPC name");
+                this.monitor.Log("Missing NPC name", LogLevel.Info);
                 return;
             }
 
@@ -66,13 +66,13 @@ namespace NpcAdventure
 
             if (recruited != null)
             {
-                this.monitor.Log($"You have recruited ${recruited.Name}, unrecruit them first!");
+                this.monitor.Log($"You have recruited ${recruited.Name}, unrecruit them first!", LogLevel.Info);
                 return;
             }
 
             if (!this.npcAdventureMod.CompanionManager.PossibleCompanions.TryGetValue(npcName, out CompanionStateMachine csm))
             {
-                this.monitor.Log($"Cannot recruit '{npcName}' - NPC is not recruitable or doesn't exists");
+                this.monitor.Log($"Cannot recruit '{npcName}' - NPC is not recruitable or doesn't exists", LogLevel.Info);
                 return;
             }
 

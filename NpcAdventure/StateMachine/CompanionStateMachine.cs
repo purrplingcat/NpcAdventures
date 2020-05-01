@@ -64,6 +64,7 @@ namespace NpcAdventure.StateMachine
 
         public StateFlag CurrentStateFlag { get; private set; }
         public Dictionary<int, SchedulePathDescription> BackedupSchedule { get; internal set; }
+        public bool BackedUpIgnoreScheduleToday { get; internal set; }
         public bool RecruitedToday { get; private set; }
         public bool SuggestedToday { get; internal set; }
         public bool CanSuggestToday { get; private set; }
@@ -288,6 +289,7 @@ namespace NpcAdventure.StateMachine
         public void Recruit()
         {
             this.BackedupSchedule = this.Companion.Schedule;
+            this.BackedUpIgnoreScheduleToday = this.Companion.ignoreScheduleToday;
             this.RecruitedToday = true;
 
             // If standing on unpassable tile (like chair, couch or bench), set position to heading passable tile location
