@@ -19,8 +19,8 @@ namespace NpcAdventure.AI.Controller
         private const int COOLDOWN_EFFECTIVE_THRESHOLD = 36;
         private const int COOLDOWN_INITAL = 50;
         private const int COOLDOWN_MINIMUM = COOLDOWN_INITAL - COOLDOWN_EFFECTIVE_THRESHOLD;
-        private const float DEFEND_TILE_RADIUS = 5f;
-        private const float DEFEND_TILE_RADIUS_WARRIOR = 7f;
+        private const float DEFEND_TILE_RADIUS = 5.75f;
+        private const float DEFEND_TILE_RADIUS_WARRIOR = 8f;
         private const float FARMER_AGGRO_RADIUS = 40f;
         private bool potentialIdle = false;
         private readonly IModEvents events;
@@ -35,7 +35,6 @@ namespace NpcAdventure.AI.Controller
         private bool defendFistUsed;
         private List<FarmerSprite.AnimationFrame>[] attackAnimation;
         private int attackSpeedPitch = 0;
-        private int targetLostRetry;
 
         public int SwingThreshold {
             get {
@@ -160,7 +159,6 @@ namespace NpcAdventure.AI.Controller
                 return;
             }
 
-            this.targetLostRetry = 5;
             this.potentialIdle = false;
             this.leader = monster;
             this.pathFinder.GoalCharacter = this.leader;
@@ -239,12 +237,6 @@ namespace NpcAdventure.AI.Controller
             if (this.fightBubbleCooldown > 0)
                 --this.fightBubbleCooldown;
 
-            if (e.IsOneSecond && !this.joystick.IsFollowing && --this.targetLostRetry == 0)
-            {
-                this.potentialIdle = true;
-                this.ai.Monitor.Log("Target lost, withdraw");
-            }
-
             this.DoWeaponSwing();
             base.Update(e);
         }
@@ -298,16 +290,14 @@ namespace NpcAdventure.AI.Controller
                 return;
             }
 
-            if (this.follower.currentLocation.damageMonster(effectiveArea, attrs.minDamage, attrs.maxDamage, false, attrs.knockBack, attrs.addedPrecision, attrs.critChance, attrs.critMultiplier, !criticalFist, this.realLeader as Farmer))
+            if (this.follower.currentLocation.DamageMonsterByCompanion(effectiveArea, attrs.minDamage, attrs.maxDamage,
+                attrs.knockBack, attrs.addedPrecision, attrs.critChance, attrs.critMultiplier, !criticalFist,
+                this.follower, this.realLeader as Farmer))
             {
                 if (criticalFist)
                 {
                     this.follower.currentLocation.playSound("clubSmash");
                     this.ai.Csm.CompanionManager.Hud.GlowSkill("warrior", Color.Red, 1);
-                }
-                else
-                {
-                    this.follower.currentLocation.playSound("clubhit");
                 }
 
                 if (criticalFist || (Game1.random.NextDouble() > .7f && Game1.random.NextDouble() < .3f))
@@ -447,7 +437,6 @@ namespace NpcAdventure.AI.Controller
             this.events.World.NpcListChanged += this.World_NpcListChanged;
             this.weaponSwingCooldown = 0;
             this.fightBubbleCooldown = 0;
-            this.targetLostRetry = 5;
             this.potentialIdle = false;
         }
 

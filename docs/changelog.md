@@ -2,12 +2,12 @@
 
 ## Upcoming release
 
+- Improved fighting
 - Fighter and Warrior companion not fight with monsters which are too near farmer
 - Wife/Husband companion auto-dismisses at midnight (others still at 10pm)
 - Refactored `DialogueHelper` to `DialogueProvider`, added dialogues reload retry (I hope this fixes dialogue loss incident, bug #125)
 - Fighter and Warrior checks only valid monsters around to switch a fight mode
 - Added debug command `npcadventure_recruit` for instant recruit a companion (only for singleplayer or server and for DEBUG PURPOSES ONLY!)
-- Fighters and Warriors withdraw when target lost
 - Refactored cooldown managing
 - Added `scared` skill (this companion occasionally screeches when they see a monster and jump away)
 - Leah got `forager` skill

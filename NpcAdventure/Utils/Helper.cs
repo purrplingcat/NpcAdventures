@@ -226,6 +226,18 @@ namespace NpcAdventure.Utils
             return true;
         }
 
+        public static Vector2 GetAwayFromCharacterTrajectory(Microsoft.Xna.Framework.Rectangle monsterBox, Character who)
+        {
+            Microsoft.Xna.Framework.Rectangle boundingBox = who.GetBoundingBox();
+            double num1 = (double)-(boundingBox.Center.X - monsterBox.Center.X);
+            boundingBox = who.GetBoundingBox();
+            float num2 = (float)(boundingBox.Center.Y - monsterBox.Center.Y);
+            float num3 = Math.Abs((float)num1) + Math.Abs(num2);
+            if ((double)num3 < 1.0)
+                num3 = 5f;
+            return new Vector2((float)num1 / num3 * (float)(50 + Game1.random.Next(-20, 20)), num2 / num3 * (float)(50 + Game1.random.Next(-20, 20)));
+        }
+
         public static string[] GetSegments(string path, int? limit = null)
         {
             return limit.HasValue
