@@ -21,6 +21,7 @@ namespace NpcAdventure.AI.Controller
         private const int COOLDOWN_MINIMUM = COOLDOWN_INITAL - COOLDOWN_EFFECTIVE_THRESHOLD;
         private const float DEFEND_TILE_RADIUS = 5f;
         private const float DEFEND_TILE_RADIUS_WARRIOR = 7f;
+        private const float FARMER_AGGRO_RADIUS = 40f;
         private bool potentialIdle = false;
         private readonly IModEvents events;
         private readonly MeleeWeapon weapon;
@@ -148,7 +149,8 @@ namespace NpcAdventure.AI.Controller
         private void CheckMonsterToFight()
         {
             float defendRadius = this.ai.Csm.HasSkill("warrior") ? DEFEND_TILE_RADIUS_WARRIOR : DEFEND_TILE_RADIUS;
-            Monster monster = Helper.GetNearestMonsterToCharacter(this.follower, defendRadius);
+            Monster monster = Helper.GetNearestMonsterToCharacter(this.follower, defendRadius,
+                m => Vector2.Distance(m.Position, this.realLeader.Position) >= FARMER_AGGRO_RADIUS);
 
             if (monster == null || !Helper.IsValidMonster(monster))
             {

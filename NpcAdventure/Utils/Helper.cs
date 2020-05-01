@@ -171,7 +171,7 @@ namespace NpcAdventure.Utils
             location.addCharacter(follower);
         }
 
-        public static Monster GetNearestMonsterToCharacter(Character me, float tileDistance)
+        public static Monster GetNearestMonsterToCharacter(Character me, float tileDistance, Func<Monster, bool> extraCondition)
         {
             SortedDictionary<float, Monster> nearestMonsters = new SortedDictionary<float, Monster>();
 
@@ -182,7 +182,7 @@ namespace NpcAdventure.Utils
 
                 float monsterDistance = Helper.Distance(me.getTileLocationPoint(), monster.getTileLocationPoint());
 
-                if (monsterDistance < tileDistance && !nearestMonsters.ContainsKey(monsterDistance))
+                if (monsterDistance < tileDistance && !nearestMonsters.ContainsKey(monsterDistance) && extraCondition(monster))
                 {
                     nearestMonsters.Add(monsterDistance, monster);
                 }
@@ -192,6 +192,11 @@ namespace NpcAdventure.Utils
                 return nearestMonsters.Values.First();
 
             return null;
+        }
+
+        public static Monster GetNearestMonsterToCharacter(Character me, float tileDistance)
+        {
+            return GetNearestMonsterToCharacter(me, tileDistance, (m) => true);
         }
 
         /// <summary>
