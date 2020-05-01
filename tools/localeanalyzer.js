@@ -34,7 +34,7 @@ function readOriginal(asset) {
   const fs = require("fs");
   const path = require("path");
   const file = fs.readFileSync(path.resolve(assetsDir, asset + ".json"));
-  const json = JSON.parse(file.toString().trim());
+  const json = JSON.parse(file.toString().trim().replace(/\s/g, ''));
 
   return json;
 }
@@ -52,7 +52,7 @@ function seekForMissing(locale, asset) {
   }
 
   const localizedFile = fs.readFileSync(localizedFilePath);
-  const localizedJson = JSON.parse(localizedFile.toString().trim());
+  const localizedJson = JSON.parse(localizedFile.toString().trim().replace(/\s/g, ''));
 
   for (let key of Object.keys(json)) {
     if (!Object.keys(localizedJson).includes(key)) {
@@ -80,11 +80,18 @@ function walk(locale, contents) {
       const missing = seekForMissing(locale, asset);
       report.push({asset, missing, coverage: coverage(asset, missing.length)})
     } catch (error) {
-      const json = readOriginal(asset);
-      const missing = Object.keys(json) || [];
+      try {
+        const json = readOriginal(asset);
+        const missing = Object.keys(json) || [];
 
-      report.push({asset, missing: [], error: error.message, coverage: coverage(asset, missing.length)});
-      console.log(`E01 (general-error): An error occured while analysing locale '${locale.code}' asset '${asset}'`);
+        report.push({ asset, missing: [], error: error.message, coverage: coverage(asset, missing.length) });
+        console.log(`E01 (general-error): An error occured while analysing locale '${locale.code}' asset '${asset}' - ${error.message}`);
+      } catch (error) {
+        console.error(`Can't analyze covarage for original asset '${asset}, because is broken:`);
+        console.error(`    ${error.message}`);
+        console.error(`Coverage report generator aborted.`);
+        process.exit(4);
+      }
     }
   }
 
