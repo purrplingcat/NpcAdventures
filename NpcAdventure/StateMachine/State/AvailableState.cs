@@ -184,7 +184,7 @@ namespace NpcAdventure.StateMachine.State
             return true;
         }
 
-        public void OnDialogueSpeaked(Dialogue speakedDialogue)
+        public void OnDialogueSpoken(Dialogue speakedDialogue)
         {
             if (speakedDialogue == this.acceptalDialogue)
             {

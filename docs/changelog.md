@@ -2,6 +2,7 @@
 
 ## Upcoming release
 
+- Wife/Husband companion auto-dismisses at midnight (others still at 10pm)
 - Refactored `DialogueHelper` to `DialogueProvider`, added dialogues reload retry (I hope this fixes dialogue loss incident, bug #125)
 - Fighter and Warrior checks only valid monsters around to switch a fight mode
 - Added debug command `npcadventure_recruit` for instant recruit a companion (only for singleplayer or server and for DEBUG PURPOSES ONLY!)

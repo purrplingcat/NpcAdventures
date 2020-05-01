@@ -118,7 +118,7 @@ namespace NpcAdventure.StateMachine
             // Convert state to dialogue detector (if state implements it)
             if (this.currentState is IDialogueDetector detector)
             {
-                detector.OnDialogueSpeaked(speakedDialogue); // Handle this dialogue
+                detector.OnDialogueSpoken(speakedDialogue); // Handle this dialogue
             }
 
             if (speakedDialogue is CompanionDialogue companionDialogue && companionDialogue.SpecialAttributes.Contains("session"))

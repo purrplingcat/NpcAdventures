@@ -13,6 +13,7 @@ using StardewModdingAPI;
 using NpcAdventure.AI;
 using NpcAdventure.Events;
 using NpcAdventure.Dialogues;
+using NpcAdventure.Utils;
 
 namespace NpcAdventure.StateMachine.State
 {
@@ -28,11 +29,13 @@ namespace NpcAdventure.StateMachine.State
         public bool CanPerformAction { get; private set; }
         private BuffManager BuffManager { get; set; }
         public ISpecialModEvents SpecialEvents { get; }
+        public int TimeToBye { get; private set; }
 
         public RecruitedState(CompanionStateMachine stateMachine, IModEvents events, ISpecialModEvents specialEvents, IMonitor monitor) : base(stateMachine, events, monitor)
         {
             this.BuffManager = new BuffManager(stateMachine.Companion, stateMachine.CompanionManager.Farmer, stateMachine.ContentLoader, this.monitor);
             this.SpecialEvents = specialEvents;
+            this.TimeToBye = 2200; // Companions auto-dismiss at 10pm, except married (see end of Entry() method)
         }
 
         public override void Entry()
@@ -83,6 +86,10 @@ namespace NpcAdventure.StateMachine.State
                 this.StateMachine.CompanionManager.Hud.AddKey(key, desc);
             }
 
+            if (Helper.IsSpouseMarriedToFarmer(this.StateMachine.Companion, this.StateMachine.CompanionManager.Farmer))
+            {
+                this.TimeToBye = 2400; // Extend adventuring time to midnight for Wife/Husband
+            }
         }
 
         private void Input_ButtonPressed(object sender, ButtonPressedEventArgs e)
@@ -133,11 +140,11 @@ namespace NpcAdventure.StateMachine.State
             this.StateMachine.CompanionManager.Hud.Reset();
         }
 
-        private void GameLoop_TimeChanged(object sender, TimeChangedEventArgs e)
-        {
+        private void GameLoop_TimeChanged(object sender, TimeChangedEventArgs e) 
+        { 
             this.StateMachine.Companion.clearSchedule();
 
-            if (e.NewTime >= 2200)
+            if (e.NewTime >= this.TimeToBye)
             {
                 NPC companion = this.StateMachine.Companion;
                 Dialogue dismissalDialogue = new Dialogue(
@@ -195,6 +202,9 @@ namespace NpcAdventure.StateMachine.State
             this.ai.Update(e);
         }
 
+        /// <summary>
+        /// Fix a problems with companion while follows farmer.
+        /// </summary>
         private void FixProblemsWithNPC()
         {
             this.StateMachine.Companion.movementPause = 0;
@@ -222,6 +232,11 @@ namespace NpcAdventure.StateMachine.State
             this.TryPushLocationDialogue(e.NewLocation, true);
         }
 
+        /// <summary>
+        /// Try push location based companion dialogue to companion's dialogue stack
+        /// </summary>
+        /// <param name="location">Current location</param>
+        /// <param name="warped">Warped right now to this location?</param>
         private void TryPushLocationDialogue(GameLocation location, bool warped = false)
         {
             Stack<Dialogue> temp = new Stack<Dialogue>(this.StateMachine.Companion.CurrentDialogue.Count);
@@ -264,6 +279,12 @@ namespace NpcAdventure.StateMachine.State
             }
         }
 
+        /// <summary>
+        /// Perform player's (inter)action with Companion
+        /// </summary>
+        /// <param name="who">Player</param>
+        /// <param name="location">Current location mastered an action</param>
+        /// <returns></returns>
         public bool PerformAction(Farmer who, GameLocation location)
         {
             if (this.ai != null && this.ai.PerformAction())
@@ -289,6 +310,12 @@ namespace NpcAdventure.StateMachine.State
             return true;
         }
 
+        /// <summary>
+        /// Companion reacts on player's ask
+        /// </summary>
+        /// <param name="companion"></param>
+        /// <param name="leader"></param>
+        /// <param name="action"></param>
         private void ReactOnAsk(NPC companion, Farmer leader, string action)
         {
             switch (action)
@@ -312,7 +339,11 @@ namespace NpcAdventure.StateMachine.State
             }
         }
 
-        public void OnDialogueSpeaked(Dialogue speakedDialogue)
+        /// <summary>
+        /// Handles after companion's dialogue was spoken.
+        /// </summary>
+        /// <param name="speakedDialogue"></param>
+        public void OnDialogueSpoken(Dialogue speakedDialogue)
         {
             if (speakedDialogue == this.dismissalDialogue)
             {
