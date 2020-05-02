@@ -2,6 +2,7 @@
 
 ## Upcoming release
 
+- Improved healing by doctors (added medkit power, increased healing cooldown, progressive healing only if healing countdown is not under 10% of their progress)
 - Improved fighting
 - Fighter and Warrior companion not fight with monsters which are too near farmer
 - Wife/Husband companion auto-dismisses at midnight (others still at 10pm)

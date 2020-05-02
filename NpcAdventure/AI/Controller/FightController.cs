@@ -144,6 +144,11 @@ namespace NpcAdventure.AI.Controller
 
         public override bool IsIdle => this.CheckIdleState();
 
+        /// <summary>
+        /// Check aggro fight/defend radius for 
+        /// a valid monster for fight or returns companion to farmer
+        /// if no valid monster in specified fight/defend radius.
+        /// </summary>
         private void CheckLeaderRadius()
         {
             Vector2 i = this.follower.GetBoundingBox().Center.ToVector2();
@@ -192,6 +197,11 @@ namespace NpcAdventure.AI.Controller
             return null;   
         }
 
+        /// <summary>
+        /// Find a monster in defined radius. 
+        /// </summary>
+        /// <param name="defendRadius"></param>
+        /// <returns>Null if no monster found, otherwise the monster</returns>
         private Monster FindMonster(float defendRadius)
         {
             return Helper.GetNearestMonsterToCharacter(this.follower, defendRadius,
