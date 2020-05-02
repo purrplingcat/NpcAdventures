@@ -19,9 +19,11 @@ namespace NpcAdventure.AI.Controller
         private const int COOLDOWN_EFFECTIVE_THRESHOLD = 36;
         private const int COOLDOWN_INITAL = 50;
         private const int COOLDOWN_MINIMUM = COOLDOWN_INITAL - COOLDOWN_EFFECTIVE_THRESHOLD;
-        private const float DEFEND_TILE_RADIUS = 5.75f;
-        private const float DEFEND_TILE_RADIUS_WARRIOR = 8f;
-        private const float FARMER_AGGRO_RADIUS = 40f;
+        private const float DEFEND_TILE_RADIUS = 6f;
+        private const float DEFEND_TILE_RADIUS_WARRIOR = 9f;
+        private const float FARMER_AGGRO_RADIUS = 28f;
+        private const float RETURN_RADIUS = 11f * 64;
+        private const float PATH_NULL_RETURN_RADIUS = 4f * 64;
         private bool potentialIdle = false;
         private readonly IModEvents events;
         private readonly MeleeWeapon weapon;
@@ -67,7 +69,7 @@ namespace NpcAdventure.AI.Controller
             this.events = events;
             this.weapon = this.GetSword(sword);
             this.bubbles = content.LoadStrings("Strings/SpeechBubbles");
-            this.fightSpeechTriggerThres = ai.Csm.HasSkill("warrior") ? 0.33 : 0.15;
+            this.fightSpeechTriggerThres = ai.Csm.HasSkill("warrior") ? 0.30 : 0.10;
 
             this.attackAnimation = new List<FarmerSprite.AnimationFrame>[4]
             {
@@ -142,37 +144,74 @@ namespace NpcAdventure.AI.Controller
 
         public override bool IsIdle => this.CheckIdleState();
 
-        /// <summary>
-        /// Check if is here any monster to fight
-        /// </summary>
-        private void CheckMonsterToFight()
+        private void CheckLeaderRadius()
         {
-            float defendRadius = this.ai.Csm.HasSkill("warrior") ? DEFEND_TILE_RADIUS_WARRIOR : DEFEND_TILE_RADIUS;
-            Monster monster = Helper.GetNearestMonsterToCharacter(this.follower, defendRadius,
-                m => Vector2.Distance(m.Position, this.realLeader.Position) >= FARMER_AGGRO_RADIUS);
+            Vector2 i = this.follower.GetBoundingBox().Center.ToVector2();
+            Vector2 l = this.realLeader.GetBoundingBox().Center.ToVector2();
+            float distance = (l - i).Length();
+            float retRadius = this.joystick.pathToFollow != null ? RETURN_RADIUS : PATH_NULL_RETURN_RADIUS;
 
-            if (monster == null || !Helper.IsValidMonster(monster))
+            if (distance >= retRadius && this.leader is Monster)
             {
+                // move back towards leader
                 this.potentialIdle = true;
                 this.leader = null;
                 this.pathFinder.GoalCharacter = null;
-                return;
             }
-
-            this.potentialIdle = false;
-            this.leader = monster;
-            this.pathFinder.GoalCharacter = this.leader;
-            this.DoFightSpeak();
-            this.ai.Monitor.Log("Found valid monster to defeat");
+            else if (distance < RETURN_RADIUS && this.leader == null)
+            {
+                this.leader = this.SearchForNewTarget();
+                if (this.leader != null)
+                {
+                    this.pathFinder.GoalCharacter = this.leader;
+                    this.PathfindingRemakeCheck(); // Force find path to monster immediatelly
+                }
+                else
+                {
+                    this.potentialIdle = true;
+                    this.pathFinder.GoalCharacter = null;
+                }
+            }
         }
 
-        private void DoFightSpeak()
+        /// <summary>
+        /// Check if is here any monster to fight
+        /// </summary>
+        private Monster SearchForNewTarget()
+        {
+            float defendRadius = this.ai.Csm.HasSkill("warrior") ? DEFEND_TILE_RADIUS_WARRIOR : DEFEND_TILE_RADIUS;
+            Monster monster = this.FindMonster(defendRadius);
+
+            if (monster != null && Helper.IsValidMonster(monster))
+            {
+                this.DoFightSpeak(true);
+                this.ai.Monitor.Log("Found valid monster to defeat");
+                return monster;
+            }
+
+            return null;   
+        }
+
+        private Monster FindMonster(float defendRadius)
+        {
+            return Helper.GetNearestMonsterToCharacter(this.follower, defendRadius,
+                m => Vector2.Distance(
+                    m.GetBoundingBox()
+                        .Center
+                        .ToVector2(),
+                    this.realLeader
+                        .GetBoundingBox()
+                        .Center
+                        .ToVector2()) >= FARMER_AGGRO_RADIUS);
+        }
+
+        private void DoFightSpeak(bool onlyEmote = false)
         {
             // Cooldown not expired? Say nothing
             if (this.fightBubbleCooldown != 0)
                 return;
 
-            if (Game1.random.NextDouble() < this.fightSpeechTriggerThres && DialogueProvider.GetBubbleString(this.bubbles, this.follower, "fight", out string text))
+            if (!onlyEmote && Game1.random.NextDouble() < this.fightSpeechTriggerThres && DialogueProvider.GetBubbleString(this.bubbles, this.follower, "fight", out string text))
             {
                 bool isRed = this.ai.Csm.HasSkill("warrior") && Game1.random.NextDouble() < 0.1;
                 this.follower.showTextAboveHead(text, isRed ? 2 : -1);
@@ -202,10 +241,6 @@ namespace NpcAdventure.AI.Controller
             if (this.weaponSwingCooldown > this.SwingThreshold)
                 return false;
 
-            // Go iddle instantly when farmer is too far
-            if (Helper.Distance(this.realLeader.getTileLocationPoint(), this.follower.getTileLocationPoint()) > 11f)
-                return true;
-
             // Go iddle instantly when potential monster is not valid
             if (this.leader is Monster && !Helper.IsValidMonster(this.leader as Monster))
                 return true;
@@ -231,8 +266,7 @@ namespace NpcAdventure.AI.Controller
             if (this.IsIdle || (!Context.IsPlayerFree && !Context.IsMultiplayer))
                 return;
 
-            if (this.leader == null)
-                this.CheckMonsterToFight();
+            this.CheckLeaderRadius();
 
             if (this.fightBubbleCooldown > 0)
                 --this.fightBubbleCooldown;
@@ -438,6 +472,7 @@ namespace NpcAdventure.AI.Controller
             this.weaponSwingCooldown = 0;
             this.fightBubbleCooldown = 0;
             this.potentialIdle = false;
+            this.CheckLeaderRadius();
         }
 
         public void Draw(SpriteBatch spriteBatch)

@@ -173,6 +173,7 @@ namespace NpcAdventure.Utils
 
         public static Monster GetNearestMonsterToCharacter(Character me, float tileDistance, Func<Monster, bool> extraCondition)
         {
+            float thresDistance = tileDistance * 64f;
             SortedDictionary<float, Monster> nearestMonsters = new SortedDictionary<float, Monster>();
 
             foreach (Character c in me.currentLocation.characters)
@@ -180,9 +181,9 @@ namespace NpcAdventure.Utils
                 if (!(c is Monster monster))
                     continue;
 
-                float monsterDistance = Helper.Distance(me.getTileLocationPoint(), monster.getTileLocationPoint());
+                float monsterDistance = Helper.Distance(me.GetBoundingBox().Center, monster.GetBoundingBox().Center);
 
-                if (monsterDistance < tileDistance && !nearestMonsters.ContainsKey(monsterDistance) && extraCondition(monster))
+                if (monsterDistance < thresDistance && !nearestMonsters.ContainsKey(monsterDistance) && extraCondition(monster))
                 {
                     nearestMonsters.Add(monsterDistance, monster);
                 }

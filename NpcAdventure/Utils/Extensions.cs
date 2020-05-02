@@ -34,6 +34,11 @@ namespace NpcAdventure.Utils
             rest = list.Skip(3).ToList();
         }
 
+        public static Vector2 ToVector2(this Point point)
+        {
+            return new Vector2(point.X, point.Y);
+        }
+
         public static bool DamageMonsterByCompanion(
             this GameLocation location,
             Rectangle areaOfEffect,
