@@ -22,15 +22,21 @@
 
 ## 0.11.2 beta
 
+Released *17th April 2020*
+
 - Fixed crash on Linux/Mac when mod's quest was opened. (thx @kdau)
 
 ## 0.11.1 beta
+
+Released *8th April 2020*
 
 - Fixed nullpointer in HintDriver (#122)
 - Fixed Alex's spouse dialogue line
 - Fixed problem with loading asset Data/AnimationDescription on linux and mac
 
 ## 0.11.0 beta
+
+Released *22th February 2020*
 
 - Android support (experimanal) (#103 #106) Thx @MaxPresi
 - Added special errors and warning log messages for known incompatabilities (#101)
@@ -42,16 +48,22 @@
 
 ## 0.10.2 beta
 
+Released *2nd February 2020*
+
 - Fixed text deffects for Maru and Marlon's letter (#90)
 - Fixed typos and grammar in english texts (#77) Thx to @corrinr
 - Marlon's invitation letter will be delivered immediatelly when your day started, if you met all Marlon's conditions and your letter has no been yet. (#92)
 
 ## 0.10.1 beta
 
+Released *18th January 2020*
+
 - Fixed angry kiss rejection covered ask2follow dialog. Now dialog shows immediately when player can't kiss.
 - Better failsafe when animation behavior got broken animation description (no game crash)
 
 ## 0.10.0 beta
+
+Released *12th January 2020*
 
 - New documentation (PR #75)
 - Changed ContentPack format to version `1.1`
@@ -74,10 +86,14 @@
 
 ## 0.9.0 alpha
 
+Released *31th December 2019*
+
 - Added better compatibility with Custom Kissing Mod by Digus (requires Custom Kissing Mod 1.2.0 or newer) (PR #71)
 - Updated Chinese translation
 
 ## 0.8.0 alpha
+
+Released *29th December 2019*
 
 - Added Buffs for companions (PR #67)
 - Added Maru, Emily and Shane location dialogue lines (PR #69)
@@ -89,10 +105,14 @@
 
 ## 0.7.0 alpha
 
+Released *22th December 2019*
+
 - Added chinese translation (by [wu574932346](https://www.nexusmods.com/users/67777356))
 - Fixed empty skill in HUD for Leah and Haley
 
 ## 0.6.0 alpha
+
+Released *20th December 2019*
 
 - Added new companion location dialogue lines for Abigail, Alex, Haley, Sam and Sebastian (thx Cora Shirou)
 - Added French localization (thx [Reikounet](https://www.nexusmods.com/users/70092158))
@@ -106,9 +126,13 @@
 
 ## 0.5.1 alpha
 
+Released *4th December 2019*
+
 - Fixed null pointer crash in fight with Mummy (#57)
 
 ## 0.5.0 alpha
+
+Released *3rd December 2019*
 
 - Added support for content packs and localizations (#50)
 - Added user configuration (via `config.json`, see [SMAPI docs](https://stardewvalleywiki.com/Modding:Player_Guide/Getting_Started#Configure_mods)) (#56)
@@ -124,11 +148,15 @@
 
 ## 0.4.0 alpha
 
+Released *26th November 2019*
+
 - Makes NPC Adventures compatible with SDV 1.4 and SMAPI 3.0
 
 **From this version mod is compatible only with SDV 1.4 and SMAPI 3.0, not with older!**
 
 ## 0.3.0 alpha
+
+Released *20th November 2019*
 
 - Different personal skills: warrior, fighter and doctor (next comming soon)
 - Doctor can heal you if your health is under 30% and can try to save your life before death
@@ -140,11 +168,15 @@
 
 ## 0.2.0 alpha
 
+Released *12th November 2019*
+
 - Idle mode (idle animations) (PR #36)
 - Fight speech bubbles (PR #29)
 - Refactored reflection (little bit)
 
 ## 0.1.0 alpha
+
+Released *31th October 2019*
 
 - Fixed NPC's end of route animation (PR #25)
 - Fix English a bit (PR #11)
@@ -161,6 +193,8 @@
 - Changed versioning system (See [wiki Versioning plan](https://github.com/purrplingcat/PurrplingMod/wiki/Versioning-plan))
 
 ## 1.0.0-prealpha
+
+Released *22th October 2019*
 
 Only for demo and preview purposes.
 
