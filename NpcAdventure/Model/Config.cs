@@ -15,5 +15,11 @@ namespace NpcAdventure.Model
         public bool ShowHUD { get; set; } = true;
         public bool EnableDebug { get; set; } = false;
         public bool AdventureMode { get; set; } = true;
+        public ExperimentalFeatures Experimental { get; set; } = new ExperimentalFeatures();
+
+        public class ExperimentalFeatures
+        {
+            public bool FightOverCompanion { get; set; } = false;
+        }
     }
 }

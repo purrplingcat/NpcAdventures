@@ -20,6 +20,7 @@ namespace NpcAdventure.Patches
         {
             try
             {
+                Console.Write(who.UsingTool);
                 bool canKiss = (bool)TPMC.Instance?.CustomKissing.CanKissNpc(who, __instance) && (bool)TPMC.Instance?.CustomKissing.HasRequiredFriendshipToKiss(who, __instance);
 
                 // Save has been kissed flag to state for use in postfix (we want to know previous has kissed state before kiss)

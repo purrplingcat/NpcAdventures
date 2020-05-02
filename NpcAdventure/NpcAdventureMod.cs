@@ -115,6 +115,13 @@ namespace NpcAdventure
                 new Patches.CompanionSayHiPatch(this.CompanionManager),
                 new Patches.GameLocationDrawPatch((SpecialModEvents)this.SpecialEvents)
             );
+
+            if (this.Config.Experimental.FightOverCompanion)
+            {
+                this.Patcher.Apply(new Patches.GameUseToolPatch(this.CompanionManager));
+                this.Monitor.Log("Enabled experimental feature: FightOverCompanion.", LogLevel.Alert);
+                this.Monitor.Log("   This feature may affect game stability, you can disable it in config.json", LogLevel.Alert);
+            }
         }
 
         private void Specialized_LoadStageChanged(object sender, LoadStageChangedEventArgs e)
