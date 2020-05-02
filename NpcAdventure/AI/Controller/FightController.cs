@@ -22,9 +22,9 @@ namespace NpcAdventure.AI.Controller
         private const int COOLDOWN_EFFECTIVE_THRESHOLD = 36;
         private const int COOLDOWN_INITAL = 50;
         private const int COOLDOWN_MINIMUM = COOLDOWN_INITAL - COOLDOWN_EFFECTIVE_THRESHOLD;
-        private const float FARMER_AGGRO_RADIUS = 24f;
-        private const float RETURN_RADIUS = 11f * 64;
-        private const float PATH_NULL_RETURN_RADIUS = 4f * 64;
+        private const float FARMER_AGGRO_RADIUS = 48f;
+        private const float RETURN_RADIUS = 11f * Game1.tileSize;
+        private const float PATH_NULL_RETURN_RADIUS = 4f * Game1.tileSize;
         private bool potentialIdle = false;
         private readonly IModEvents events;
         private readonly MeleeWeapon weapon;
@@ -191,7 +191,8 @@ namespace NpcAdventure.AI.Controller
 
             if (monster != null && Helper.IsValidMonster(monster))
             {
-                this.DoFightSpeak(true);
+                if (Game1.random.NextDouble() < .3f)
+                    this.DoFightSpeak(true);
                 this.ai.Monitor.Log("Found valid monster to defeat");
                 return monster;
             }
@@ -314,6 +315,7 @@ namespace NpcAdventure.AI.Controller
             {
                 attrs.knockBack *= 3.6f;
                 attrs.smashAround /= 2f;
+                this.fistCoolDown = 240;
             }
 
             if (this.ai.Csm.HasSkill("warrior"))
@@ -328,17 +330,16 @@ namespace NpcAdventure.AI.Controller
             if (criticalFist && this.follower.FacingDirection != 0)
             {
                 this.follower.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite("TileSheets\\animations", new Rectangle(0, 960, 128, 128), 60f, 4, 0, this.follower.Position, false, this.follower.FacingDirection == 3, 1f, 0.0f, Color.White, .5f, 0.0f, 0.0f, 0.0f, false));
-                this.fistCoolDown = 750;
             }
 
             companionBox.Inflate(4, 4); // Personal space
             effectiveArea.Inflate((int)(effectiveArea.Width * attrs.smashAround + attrs.addedEffectiveArea), (int)(effectiveArea.Height * attrs.smashAround + attrs.addedEffectiveArea));
 
-            if (!criticalFist && !this.defendFistUsed && this.ai.Csm.HasSkill("warrior") && companionBox.Intersects(enemyBox) && this.weaponSwingCooldown == this.CooldownTimeout)
+            if (!criticalFist && !this.defendFistUsed && this.ai.Csm.HasSkill("warrior") && companionBox.Intersects(enemyBox) && this.weaponSwingCooldown == this.CooldownTimeout && this.fistCoolDown <= 0)
             {
                 this.ai.Monitor.Log("Critical dangerous: Using defense fists!");
                 this.defendFistUsed = true;
-                this.DoDamage(true); // Force fist when no damage given to a monster with weapon
+                this.DoDamage(true); // Force fist when monster is too close
                 return;
             }
 
@@ -350,7 +351,7 @@ namespace NpcAdventure.AI.Controller
                 {
                     this.follower.currentLocation.playSound("clubSmash");
                     this.ai.Csm.CompanionManager.Hud.GlowSkill("warrior", Color.Red, 1);
-                    this.fistCoolDown = 3000;
+                    this.fistCoolDown = 1200;
                 }
 
                 if (criticalFist || (Game1.random.NextDouble() > .7f && Game1.random.NextDouble() < .3f))
@@ -413,10 +414,17 @@ namespace NpcAdventure.AI.Controller
 
         private int GetAttackPitch()
         {
-            Farmer farmer = this.ai.player as Farmer;
+            Farmer farmer = this.ai.player;
             int weaponSpeed = this.weapon?.speed.Value ?? 400;
             int swipeDelay = (400 - weaponSpeed) / 4;
-            int combatLevel = farmer?.combatLevel ?? 0;
+            int combatLevel = farmer.CombatLevel;
+
+            if (this.ai.Csm.HasSkill("warrior"))
+            {
+                // Warriors are more skilled
+                combatLevel += farmer.combatLevel >= 5 ? 2 : 1;
+            }
+
             double skill = combatLevel * Math.Log(Math.Pow(combatLevel, 2) + 1) + Math.Pow(combatLevel, 2) + combatLevel;
 
             return (int)Math.Round(skill) + Game1.random.Next(-10, 10) - swipeDelay + (int)Math.Round(Game1.player.DailyLuck);
@@ -488,10 +496,11 @@ namespace NpcAdventure.AI.Controller
         public override void Activate()
         {
             this.events.World.NpcListChanged += this.World_NpcListChanged;
+            this.joystick.BlockedTimer = 30;
             this.weaponSwingCooldown = 0;
             this.fightBubbleCooldown = 0;
-            this.fistCoolDown = 600;
             this.potentialIdle = false;
+            this.fistCoolDown = 0;
             this.CheckLeaderRadius();
         }
 
