@@ -2,8 +2,9 @@
 
 ## Upcoming release
 
+- Added critical fist cooldown
 - Improved healing by doctors (added medkit power, increased healing cooldown, progressive healing only if healing countdown is not under 10% of their progress)
-- Improved fighting
+- Improved fighting (better check leader radius, improved damage monster, less speechbubble spam while fighting)
 - Fighter and Warrior companion not fight with monsters which are too near farmer
 - Wife/Husband companion auto-dismisses at midnight (others still at 10pm)
 - Refactored `DialogueHelper` to `DialogueProvider`, added dialogues reload retry (I hope this fixes dialogue loss incident, bug #125)
@@ -17,7 +18,7 @@
 - Mod attempts to detect potential conflicting patches and inform player in the log (in debug mode as warning, otherwise as info level log)
 - Mod uses internal harmony lib in SMAPI (remove 0harmony.dll from the mod folder when upgrading)
 - Harmony patching is now more safer (Hope this can help to solve problems with harmony patches on Linux/Mac)
-- Changed a license
+- Changed license
 
 ## 0.11.2 beta
 

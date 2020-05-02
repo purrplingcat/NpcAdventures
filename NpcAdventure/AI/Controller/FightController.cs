@@ -16,12 +16,13 @@ namespace NpcAdventure.AI.Controller
 {
     internal class FightController : FollowController, Internal.IDrawable
     {
+        public const float DEFEND_TILE_RADIUS = 6f;
+        public const float DEFEND_TILE_RADIUS_WARRIOR = 9f;
+
         private const int COOLDOWN_EFFECTIVE_THRESHOLD = 36;
         private const int COOLDOWN_INITAL = 50;
         private const int COOLDOWN_MINIMUM = COOLDOWN_INITAL - COOLDOWN_EFFECTIVE_THRESHOLD;
-        private const float DEFEND_TILE_RADIUS = 6f;
-        private const float DEFEND_TILE_RADIUS_WARRIOR = 9f;
-        private const float FARMER_AGGRO_RADIUS = 28f;
+        private const float FARMER_AGGRO_RADIUS = 24f;
         private const float RETURN_RADIUS = 11f * 64;
         private const float PATH_NULL_RETURN_RADIUS = 4f * 64;
         private bool potentialIdle = false;
@@ -32,10 +33,11 @@ namespace NpcAdventure.AI.Controller
         private readonly float attackRadius;
         private readonly float backupRadius;
         private readonly double fightSpeechTriggerThres;
+        private readonly List<FarmerSprite.AnimationFrame>[] attackAnimation;
         private int weaponSwingCooldown = 0;
         private int fightBubbleCooldown = 0;
+        private int fistCoolDown = 0;
         private bool defendFistUsed;
-        private List<FarmerSprite.AnimationFrame>[] attackAnimation;
         private int attackSpeedPitch = 0;
 
         public int SwingThreshold {
@@ -69,7 +71,7 @@ namespace NpcAdventure.AI.Controller
             this.events = events;
             this.weapon = this.GetSword(sword);
             this.bubbles = content.LoadStrings("Strings/SpeechBubbles");
-            this.fightSpeechTriggerThres = ai.Csm.HasSkill("warrior") ? 0.30 : 0.10;
+            this.fightSpeechTriggerThres = ai.Csm.HasSkill("warrior") ? 0.25 : 0.7;
 
             this.attackAnimation = new List<FarmerSprite.AnimationFrame>[4]
             {
@@ -265,6 +267,11 @@ namespace NpcAdventure.AI.Controller
                 this.weaponSwingCooldown--;
             }
 
+            if (this.fistCoolDown > 0)
+            {
+                --this.fistCoolDown;
+            }
+
             if (this.weaponSwingCooldown > this.SwingThreshold && !this.defendFistUsed)
             {
                 this.DoDamage();
@@ -321,6 +328,7 @@ namespace NpcAdventure.AI.Controller
             if (criticalFist && this.follower.FacingDirection != 0)
             {
                 this.follower.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite("TileSheets\\animations", new Rectangle(0, 960, 128, 128), 60f, 4, 0, this.follower.Position, false, this.follower.FacingDirection == 3, 1f, 0.0f, Color.White, .5f, 0.0f, 0.0f, 0.0f, false));
+                this.fistCoolDown = 750;
             }
 
             companionBox.Inflate(4, 4); // Personal space
@@ -342,6 +350,7 @@ namespace NpcAdventure.AI.Controller
                 {
                     this.follower.currentLocation.playSound("clubSmash");
                     this.ai.Csm.CompanionManager.Hud.GlowSkill("warrior", Color.Red, 1);
+                    this.fistCoolDown = 3000;
                 }
 
                 if (criticalFist || (Game1.random.NextDouble() > .7f && Game1.random.NextDouble() < .3f))
@@ -481,6 +490,7 @@ namespace NpcAdventure.AI.Controller
             this.events.World.NpcListChanged += this.World_NpcListChanged;
             this.weaponSwingCooldown = 0;
             this.fightBubbleCooldown = 0;
+            this.fistCoolDown = 600;
             this.potentialIdle = false;
             this.CheckLeaderRadius();
         }
