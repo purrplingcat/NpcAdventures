@@ -1,16 +1,8 @@
 ﻿using Harmony;
-using Microsoft.Xna.Framework.Graphics;
-using NpcAdventure.Events;
-using NpcAdventure.Internal;
 using NpcAdventure.StateMachine;
-using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Monsters;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static NpcAdventure.StateMachine.CompanionStateMachine;
 
 namespace NpcAdventure.Patches

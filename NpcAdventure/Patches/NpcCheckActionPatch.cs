@@ -1,5 +1,7 @@
 ﻿using Harmony;
 using NpcAdventure.Compatibility;
+using NpcAdventure.Model;
+using StardewModdingAPI;
 using StardewValley;
 using System;
 
@@ -8,28 +10,49 @@ namespace NpcAdventure.Patches
     internal class NpcCheckActionPatch : Patch<NpcCheckActionPatch>
     {
         private CompanionManager Manager { get; set; }
+        private IInputHelper Input { get; }
+        private Config Config { get; }
+
         public override string Name => nameof(NpcCheckActionPatch);
 
-        public NpcCheckActionPatch(CompanionManager manager)
+        public NpcCheckActionPatch(CompanionManager manager, IInputHelper input, Config config)
         {
             this.Manager = manager;
+            this.Input = input;
+            this.Config = config;
             Instance = this;
         }
 
-        private static void Before_checkAction(NPC __instance, ref bool __state, Farmer who)
+        private static bool Before_checkAction(NPC __instance, ref bool __result, ref bool __state, Farmer who, GameLocation l)
         {
             try
             {
-                Console.Write(who.UsingTool);
+                if (Instance.Config.RequestsWithShift)
+                {
+                    // If requests (ask to follow and etc) enabled, process CSM check action only in this way
+                    // Shift button must be hold for ask to follow, show companion menu dialog and etc
+                    if (Instance.Input.IsDown(Instance.Config.RequestsShiftButton) && Instance.Manager.CheckAction(who, __instance, l))
+                    {
+                        __result = true;
+                        return false;
+                    }
+
+                    return true;
+                }
+
                 bool canKiss = (bool)TPMC.Instance?.CustomKissing.CanKissNpc(who, __instance) && (bool)TPMC.Instance?.CustomKissing.HasRequiredFriendshipToKiss(who, __instance);
 
                 // Save has been kissed flag to state for use in postfix (we want to know previous has kissed state before kiss)
                 // Mark as kissed when we can't kiss them (cover angry emote when try to kiss - vanilla and custom kissing mod)
                 __state = __instance.hasBeenKissedToday || !canKiss;
+
+                return true;
             } catch (Exception ex)
             {
                 Instance.LogFailure(ex, nameof(Before_checkAction));
                 __state = false; // Fallback: Mark NPC as NOT kissed today for after patch
+
+                return true;
             }
         }
 
@@ -39,7 +62,7 @@ namespace NpcAdventure.Patches
         {
             try
             {
-                if (__instance.CurrentDialogue.Count > 0)
+                if (__instance.CurrentDialogue.Count > 0 || Instance.Config.RequestsWithShift)
                     return;
 
                 // Check our action when vanilla check action don't triggered or spouse was kissed today and farmer try to kiss again

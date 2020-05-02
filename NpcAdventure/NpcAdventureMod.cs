@@ -106,18 +106,25 @@ namespace NpcAdventure
 
         private void ApplyPatches()
         {
+            // Core patches (important)
             this.Patcher.Apply(
                 new Patches.MailBoxPatch((SpecialModEvents)this.SpecialEvents),
                 new Patches.QuestPatch((SpecialModEvents)this.SpecialEvents),
                 new Patches.SpouseReturnHomePatch(this.CompanionManager),
                 new Patches.GetCharacterPatch(this.CompanionManager),
-                new Patches.NpcCheckActionPatch(this.CompanionManager),
-                new Patches.CompanionSayHiPatch(this.CompanionManager),
+                new Patches.NpcCheckActionPatch(this.CompanionManager, this.Helper.Input, this.Config),
                 new Patches.GameLocationDrawPatch((SpecialModEvents)this.SpecialEvents)
             );
 
-            if (this.Config.Experimental.FightOverCompanion)
+            if (this.Config.AvoidSayHiToMonsters)
             {
+                // Optional patch: Avoid say hi to monsters while companioning (this patch enabled by default)
+                this.Patcher.Apply(new Patches.CompanionSayHiPatch(this.CompanionManager));
+            }
+
+            if (this.Config.Experimental.FightThruCompanion)
+            {
+                // Optional experimental patch: Avoid annoying dialogue shown while use sword over companion (patch disabled by default)
                 this.Patcher.Apply(new Patches.GameUseToolPatch(this.CompanionManager));
                 this.Monitor.Log("Enabled experimental feature: FightOverCompanion.", LogLevel.Alert);
                 this.Monitor.Log("   This feature may affect game stability, you can disable it in config.json", LogLevel.Alert);

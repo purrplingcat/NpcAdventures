@@ -2,7 +2,8 @@
 
 ## Upcoming release
 
-- Finally fixed annoying dialogue shown while fighting with companion (disabled by default. To enable switch on option `Experimental.FightOverCompanion` in `config.json`)
+- Option for aks for recruit/show companion dialog with hold shift key (optional, disabled by default. To enable switch on `RequestsWithShift`, `RequestsShiftButton` to change requests shift key binding in `config.json`)
+- Finally fixed annoying dialogue shown while fighting with companion (disabled by default. To enable switch on option `Experimental.FightThruCompanion` in `config.json`)
 - Added critical fist cooldown
 - Improved healing by doctors (added medkit power, increased healing cooldown, progressive healing only if healing countdown is not under 10% of their progress)
 - Improved fighting (better check leader radius, improved damage monster, less speechbubble spam while fighting)
