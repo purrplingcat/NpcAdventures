@@ -18,22 +18,25 @@ Beginning with version *0.11.0* there's an experimental support for Android SMAP
 - **HUD may be drawn at an incorrect position on some devices.** - If you have this problem, you can disable the HUD in configuration file. (Set `ShowHUD` to `false`)
 - **The game may crash on Android 5.1 and older** - Can't fix it, because it's caused by SMAPI. Android SMAPI has an experimental harmony patching, you can report these crashes to @MartyrPher (developer of SMAPI for Android). Remember Android 5.1 and older is not officialy supported by this mod.
 
-## Upgrading from alpha versions (from 0.9 and older)
+## Adventure mode
 
-### Players
-
-There is one big change. You can't recruit companions until you recive an invitation from Marlon and you don't see his event. You can get invitation when:
+From version *0.10.0* there is one big change. You can't recruit companions until you recive an invitation from Marlon and you don't see his event. You can get invitation when:
 
 - You have access to Adventurer's guild
 - Reached 20 level of mines
 - You have a 66% of required hearts with any recruitable NPC
 
-If you already match all of this conditions, you will get invitation letter morning. 
-IMPORTANT: You must go out from your Farm house, otherwise you will not receive letter.
+If you already match all of this conditions, you will get invitation letter morning.
+
+## Upgrading from 0.11.0 bet to 0.12.0 and newer
 
 ### Modders
 
-There are some changes in mod's code. You must do some edits in your content pack for make it compatible with new version. Follow [Modder's upgrade guide](../modding/upgrading.md).
+There are some breaking changes for 0.12.0 affects existing content packs. You must do some edits in your content pack for make it compatible with new version, see the [Modder's upgrade guide](../modding/upgrading.md).
+
+### Players
+
+For players has no any affections. You can use your mod in standard way without any additional changes. If you want to enable new optional features or experimental features, see [Configuration](configuration.md).
 
 ## See also
 
