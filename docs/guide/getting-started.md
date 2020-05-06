@@ -18,6 +18,14 @@ Beginning with version *0.11.0* there's an experimental support for Android SMAP
 - **HUD may be drawn at an incorrect position on some devices.** - If you have this problem, you can disable the HUD in configuration file. (Set `ShowHUD` to `false`)
 - **The game may crash on Android 5.1 and older** - Can't fix it, because it's caused by SMAPI. Android SMAPI has an experimental harmony patching, you can report these crashes to @MartyrPher (developer of SMAPI for Android). Remember Android 5.1 and older is not officialy supported by this mod.
 
+## Experimental features
+
+**NOTE:** Remember that these features are experimental and can negativelly affect gameplay and game stability and may cause bugs. All experimental features are disabled by default and must be explicitly enabled in [configuration](configuration.md). See the `Experimental` section in `config.json`.
+
+### Allow fight through companion (without annyoing dialogue)
+
+Fight togehther with your companion with monsters without showing annoying companion dialogue. You can enable this experimental feature in configuration by switch option `Experimental.FightThruCompanion` to `true`. When this feature is enabled and you want to show companion dialogue, you must do right-click on companion.
+
 ## Upgrading from alpha versions (from 0.9 and older)
 
 ### Players
