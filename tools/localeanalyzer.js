@@ -1,12 +1,13 @@
 const assetsDir = __dirname + "/../NpcAdventure/assets"
 const unofficialLocaleDir = __dirname + "/../unofficial/locale";
+const excludedLocaleDir = __dirname + "/../Contrib/Locale";
 const suffix = "json";
 const supportedLocales = [
   {code: "pt-BR", name: "Portuguese", dir: assetsDir, official: true},
-  {code: "fr-FR", name: "French", dir: assetsDir, official: true},
   {code: "zh-CN", name: "Chinese", dir: assetsDir, official: true},
   {code: "es-ES", name: "Spanish", dir: assetsDir, official: true },
   {code: "hu-HU", name: "Hungary", dir: assetsDir, official: true},
+  {code: "zh-CN", name: "Chinese", dir: excludedLocaleDir + "/zn-CN", official: false},
   {code: "ja-JP", name: "Japanese", dir: unofficialLocaleDir + "/ja-JP", official: false},
   {code: "ru-RU", name: "Russian", dir: unofficialLocaleDir + "/ru-RU", official: false},
 ];
@@ -34,7 +35,7 @@ const knownContents = [
 function readOriginal(asset) {
   const fs = require("fs");
   const path = require("path");
-  const file = fs.readFileSync(path.resolve(assetsDir, asset + ".json"));
+  const file = fs.readFileSync(path.resolve(assetsDir, asset + `.${suffix}`));
   const json = JSON.parse(file.toString().trim().replace(/\s/g, ''));
 
   return json;
@@ -45,7 +46,7 @@ function seekForMissing(locale, asset) {
   const fs = require("fs");
   const path = require("path");
   const json = readOriginal(asset);
-  const localizedFilePath = path.resolve(locale.dir, asset + `.${locale.code}.json`);
+  const localizedFilePath = path.resolve(locale.dir, asset + `.${locale.code}.${suffix}`);
 
   if (!fs.existsSync(localizedFilePath)) {
     console.log(`W01 (untranslated-asset): Asset '${asset}' is not translated into '${locale.code}'`);

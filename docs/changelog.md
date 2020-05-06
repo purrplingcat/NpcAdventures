@@ -12,6 +12,7 @@
 - Added critical fist cooldown
 - Improved healing by doctors (added medkit power, increased healing cooldown, progressive healing only if healing countdown is not under 10% of their progress)
 - Improved fighting (better check leader radius, improved damage monster, less speechbubble spam while fighting)
+- Removed outdated and unmaintained localizations: French and Chinese (Chinese is still available as standalone package)
 - Fighter and Warrior companion not fight with monsters which are too near farmer
 - Wife/Husband companion auto-dismisses at midnight (others still at 10pm)
 - Refactored `DialogueHelper` to `DialogueProvider`, added dialogues reload retry (I hope this fixes dialogue loss incident, bug #125)
