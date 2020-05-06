@@ -18,6 +18,7 @@
     4. [Buffs](modding/buffs.md)
     5. [Quests](modding/quests.md)
     6. [Idle behaviors](modding/idle.md)
-    7. [General strings](modding/strings.md)
+    7. [Bag delivery letters](modding/bag-letters.md)
+    8. [General strings](modding/strings.md)
 
 Need help with something? Join [PurrplingCat's discord](https://discord.gg/wnEDqKF) and ask for help.
