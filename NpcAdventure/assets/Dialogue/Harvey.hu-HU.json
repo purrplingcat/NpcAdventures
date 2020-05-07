@@ -9,7 +9,7 @@
   "companionSuggest_Yes": "Csak győződj meg róla, hogy ne terheld le magad és tarts szünetet, oké?$h",
   "companionSuggest_No": "Nincs mit. Csak ne terheld túl magad, @!",
   "heal": "Maradj nyugton. Ez egy kicsit csípni fog.$1",
-  "nomedkits": "Oh-oh, elfogyott az orvosi készletem.$7",
+  "nomedkits": "Ó-ó, elfogyott az orvosi készletem.$7",
   "companion_Beach_summer": "Az óceán hullámjai nagyon nyugodtak, remek stresszcsökkentő.#$b#Hacsak, persze, félsz a víztől, akkor nem annyira békés...$2#$b#Ha stresszesnek érzed magad, elmenjünk?$6#$b#Túl sokat aggódok, nem igaz?$2#$b#Elnézést.$2",
   "companion_Farm_Spouse": "Teljesen boldog vagyok attól, hogy csak a tornácon ülünk kedves, remélem nem aggódsz miattam amikor nem vagyunk együtt!$1",
   "companion_Farm_Spouse~1": "Micsoda látvány, @. Én egy boldog ember vagyok.$4",
@@ -21,7 +21,7 @@
   "companion_Mountain": "Nagyon békés egészen Maru házáig, csodálatosan szép részén lakik a völgynek.#$b#Sok időt töltesz vele, @? Ő egy szeretnivaló nő, igazán okos.$6#$b#Hálás vagyok a klinikai segítségéért, és a társaságáért.$1",
   "companion_Mountain_Spouse": "Gyakran látom Demetriust itt kint tanulmányozni a helyi növény és állatvilágot.#$b#Én jobban kedvelem az emberi test biológiáját, de rendkívül tisztelem az etikai munkáját!",
   "companion_Mountain_Spouse~1": "Igazán jó Maruval barátságban lenni, de mindig is csak az volt, ugye kedvesem?#$b#Te jelented nekem a mindenséget...$4",
-  "companion_Sewer": "Oh kedvesem, ez a hely igazán nedves, és borzalmas a szaga...$2#$b#Azt tanácsolom, hogy jelentősen minél kevesebb időt töltsünk itt lent, @.$2",
+  "companion_Sewer": "Ó kedvesem, ez a hely igazán nedves, és borzalmas a szaga...$2#$b#Azt tanácsolom, hogy jelentősen minél kevesebb időt töltsünk itt lent, @.$2",
   "companion_AdventureGuild": "Ezek az emberek úgy néz ki tudják a dolgukat.#$b#Én csak nem vágyok ilyen életre.$1",
   "companion_WizardHouse": "Őszintén, nem igazán érdekel a varázslat és az összes misztikus csapdái.#$b#Túlságosan titkolózó, hogy szeressem, túlságosan kalandos. Ellentétben a tudomány és orvosság, tanulható bárki által.#$b#Megérteni az emberi formát és tudni, hogyan kell csontot helyre rakni vagy fertőzést kezelni... az elég varázslat nekem.$1"
 }

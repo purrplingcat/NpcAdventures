@@ -1,5 +1,5 @@
 {
-  "askToFollow": "Megkéred {0}, hogy kövessen?",
+  "askToFollow": "Megkéred {0}, hogy kövessen?",  
   "recruitedWant": "Mit szeretnél?",
   "recruitedWant.bag": "Használhatom a táskád?",
   "recruitedWant.dismiss": "Ma jól éreztem magam veled, de van valami amit el kell most intéznem",
@@ -14,7 +14,7 @@
   "skillDescription.doctor": "Fel tud gyógyítani, ha az életed 30% alá esik.#Csak beszélj a követőddel, hogy ha megvagy sérülve.",
   "skill.fighter": "Harcos ({0} képessége)",
   "skillDescription.fighter": "Karddal tud harcolni.",
-  "recruitedCompanionHint": "Társ: {0}",
+  "recruitedCompanionHint": "Csatlós: {0}",
   "companionState_follow": "Státusz: Követ",
   "companionState_idle": "Státusz: Tétlen",
   "companionState_fight": "Státusz: Harcol",
@@ -23,6 +23,6 @@
   "hudSkillUsed": "(Képesség elhasználva)",
   "newObjective": "Új Napló Bejegyzés",
   "objectiveUpdate": "Napló Frissítve",
-  "questObjective.recruitment": "{0}/{1} társ toborozva",
+  "questObjective.recruitment": "{0}/{1} csatlós toborozva",
   "prosteticsChangeButton": "Nyomd meg '{0}', hogy megváltoztassa {1} áldást."
 }
