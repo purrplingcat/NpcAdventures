@@ -17,5 +17,12 @@
   "recruitedCompanionHint": "Companhias recrutadas: {0}",
   "companionState_follow": "Status: Seguindo",
   "companionState_idle": "Status: Parado",
-  "companionState_fight": "Status: Lutando"
+  "companionState_fight": "Status: Lutando",
+  "spouseWife": "esposa",
+  "spouseHusband": "marido",
+  "hudSkillUsed": "(Efito de habilidade sendo usada)",
+  "newObjective": "Nova entrada no Diario!",
+  "objectiveUpdate": "Diario Atualizado!",
+  "questObjective.recruitment": "{0}/{1} pessoas recrutadas",
+  "prosteticsChangeButton": "Aperte '{0}' para mudar o aprimoramento sintético de {1} ."
 }

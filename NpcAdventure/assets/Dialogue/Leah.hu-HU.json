@@ -1,0 +1,23 @@
+{
+  "companionAccepted": "Feltétlenül! Szeretnék néhány virágot szedni.",
+  "companionRejected": "Egy kicsit elfoglalt vagyok bármilyen felfedezéshez ma. Elnézést.",
+  "companionRejectedNight": "Nem gondolod, hogy túlságosan késő van most felfedezni?",
+  "companionDismiss": "Oké. Jó volt kikapcsolódni!",
+  "companionDismissAuto": "Itt az ideje, hogy haza menjek. Köszi szépen, @.$h",
+  "companionRecruited": "Képzelem milyen érdekes dolgokat találunk az út során!$h",
+  "companionSuggest": "Az éléskamrám majdnem üres. Elkéne mennem gyűjtögetni.#$q -1 -1#Jönnél, @? Találhatsz valami hasznosat is.#$r -1 0 Igen#Az jó lenne. Menjünk!#$r -1 0 Nem# Nem tudok. De köszönöm a meghívást.",
+  "companionSuggest_Yes": "Jó! Valami ötlet, hogy merre induljunk?$h",
+  "companionSuggest_No": "Megpróbálok valamit szerezni neked. Ugyan, nem ígérek semmit...",
+  "companion_Farm": "Itt a lehetőségem, hogy gazdálkodjak! Mondtam már, hogy ez szerintem mókás?$h",
+  "companion_Farm~1": "Igazán szeretek a kezeimmel dolgozni mint egy szobrász, gondolom te is hasonlóan érzel a takarmányaid iránt.",
+  "companion_Farm_Spouse": "Vegyél egy mély levegőt, @, élvezd. Olyan elképesztő munkát végeztél itt, annyira büszke vagyok rád!$1",
+  "companion_Town": "Ez a város kicsinek bizonyul azoknak az embereknek akik nagyvárosból jöttek, de elég könnyű volt alkalmazkodni, legalábbis nekem. És neked, @?",
+  "companion_Town_Spouse": "Még a városban is van néhány hely gyűjtögetésre, ez egy igazán elképesztő völgy! Annyi élet van erre!",
+  "companion_Beach": "A hullámok hangja mindig megnyugtat engem, kissé fáradtnak érzem magam...#$b#Ne aggódj, nem vagyok egyébként álmos. Tényleg!$1",
+  "companion_Mountain": "Nem tudom kitalálni, hogy felnézzek és élvezzem a gyönyörű tájat, vagy lenézzek és gyűjtögessek!$7#$b#Mit kéne csinálnom, @?$3",
+  "companion_Mountain_Spouse": "Kikéne vennem egy nap kirándulást valamelyik nap és lefestenem a hegyi tavat. Van valami nyugtató ezen a területen.",
+  "companion_Forest": "Megtanultam az erdőt a második otthonomként látni.#$b#Nem csak, hogy nyugalmat érzek itt, de megtalálok majdnem mindent ahhoz, hogy éljek!",
+  "companion_Forest_Spouse": "Örülök, hogy megtartottam a kis kabinomat miután összeházasodtunk, @, ez olyan, mintha vakációznánk az erdőben!$1",
+  "companion_Mine": "Ez nem egy hely amit megszoktam látogatni, de köszönöm, hogy ma megmutattál néhány új dolgot, @.",
+  "companion_Mine_Spouse": "Vedd lazán kedves, csak mi ketten vagyunk és mindig egy kicsit ideges vagyok ha itt vagyunk.$2"
+}
