@@ -5,7 +5,7 @@
   "companionDismiss": "Persze, akkor úton vagyok. Remélem legközelebb is hívni fogsz.",
   "companionDismissAuto": "Attól félek itt az ideje, hogy menjek, @. Köszönöm, hogy elvittél erre az elbűvölő utazásra!$h",
   "companionRecruited": "Fantasztikus! Mindig keresek valami inspirálót az írásomhoz.",
-  "companionSuggest": "Heló, @. Gondoltam teszek egy frissítő sétát és szerzek egy kis inspirációt.#$q -1 -1# Szeretnél elkísérni?#$r -1 0 Igen#Igen, miért ne? Hadd szedjem össze a cuccaim.#$r -1 0 Nem#Bocsi, ma van pár elintézni való dolgom. Talán legközelebb?",
+  "companionSuggest": "Heló, @. Gondoltam teszek egy frissítő sétát és szerzek egy kis inspirációt.#$q -1 -1#Szeretnél elkísérni?#$r -1 0 Igen#Igen, miért ne? Hadd szedjem össze a cuccaim.#$r -1 0 Nem#Bocsi, ma van pár elintézni való dolgom. Talán legközelebb?",
   "companionSuggest_Yes": "Nagyszerű! Ne törődj velem, ha hirtelen írni szeretnék!$h",
   "companionSuggest_No": "Ó, hát persze. Ne aggódj emiatt, biztos vagyok benne, hogy útjaink újra keresztezik egymást.",
   "companion_Farm": "Nagyon jól megy a farmod, @. Feltételezem nem tengervízzel locsolod a terméseidet.$1",

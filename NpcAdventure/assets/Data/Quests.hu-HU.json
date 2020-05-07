@@ -1,6 +1,6 @@
 ﻿{
-  "1": "Location/Egy Új Kaland Kezdete/Marlon szeretne veled beszélni a többi lakóról a városban. Menj el a Kalandorok Szövetségéhez du. 2 és 10 óra között, hogy találkozz vele./Menj el a Kalandorok Szövetségéhez/AdventureGuild/0/false/2",
-  "2": "Basic/Hívj meg valakit, hogy csatlakozzon/Marlon mesélt valami érdekeset a többi városlakóról. Kérj meg egy agglegényt vagy facér nőt, hogy kövessen és nézd meg, mit mondanak. Lehet nem csatlakoznak addig, amíg jobban meg nem ismernek./Toborozz egy csatlóst/recruit/250/true/3",
+  "1": "Location/Egy Új Kaland Kezdete/Marlon szeretne veled beszélni a többi lakóról a városban. Menj el a Kalandorok Céhéhez du. 2 és 10 óra között, hogy találkozz vele./Menj el a Kalandorok Céhéhez/AdventureGuild/0/false/2",
+  "2": "Basic/Hívj meg valakit.../Marlon mesélt valami érdekeset a többi városlakóról. Kérj meg egy agglegényt vagy facér nőt, hogy kövessen és nézd meg, mit mondanak. Lehet nem csatlakoznak addig, amíg jobban meg nem ismernek./Toborozz egy csatlóst/recruit/250/true/3",
   "3": "Recruitment/Toborozz 5 csatlóst/Találkoztál az első csatlósoddal, de van több. Sikeresen toborozz be még 4 csatlóst./null/5/1000/true/4",
   "4": "Recruitment/Minél több, annál jobb/Ismerd meg még jobban a lakosokat. Sikeresen hívj meg 10 csatlóst, hogy kövessen./null/10/1250/true"
 }

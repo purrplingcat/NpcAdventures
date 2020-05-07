@@ -5,7 +5,7 @@
   "companionDismiss": "Oké. Jó volt kikapcsolódni!",
   "companionDismissAuto": "Itt az ideje, hogy haza menjek. Köszi szépen, @.$h",
   "companionRecruited": "Képzelem milyen érdekes dolgokat találunk az út során!$h",
-  "companionSuggest": "Az éléskamrám majdnem üres. Elkéne mennem gyűjtögetni.#$q -1 -1#Jönnél, @? Találhatsz valami hasznosat is.#$r -1 0 Igen#Az jó lenne. Menjünk!#$r -1 0 Nem# Nem tudok. De köszönöm a meghívást.",
+  "companionSuggest": "Az éléskamrám majdnem üres. Elkéne mennem gyűjtögetni.#$q -1 -1#Jönnél, @? Találhatsz valami hasznosat is.#$r -1 0 Igen#Az jó lenne. Menjünk!#$r -1 0 Nem#Nem tudok. De köszönöm a meghívást.",
   "companionSuggest_Yes": "Jó! Valami ötlet, hogy merre induljunk?$h",
   "companionSuggest_No": "Megpróbálok valamit szerezni neked. Ugyan, nem ígérek semmit...",
   "companion_Farm": "Itt a lehetőségem, hogy gazdálkodjak! Mondtam már, hogy ez szerintem mókás?$h",
