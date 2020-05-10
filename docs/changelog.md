@@ -2,6 +2,7 @@
 
 ## Upcoming release
 
+- Redone events checking (added option to enable check NA's events by patched `GameLocation.checkForEvents()` method - EXPERIMENTAL, to enable switch on `Experimental.UseCheckForEventsPatch` in `config.json`) - this fixes re-enter location for trig NA event if more events in stack to play in location.
 - Different (customized) bag delivery letters for each companion NPC
 - Option for aks for recruit/show companion dialog with hold shift key (optional, disabled by default. To enable switch on `RequestsWithShift`, `RequestsShiftButton` to change requests shift key binding in `config.json`)
 - Finally fixed annoying dialogue shown while fighting with companion (disabled by default. To enable switch on option `Experimental.FightThruCompanion` in `config.json`)
