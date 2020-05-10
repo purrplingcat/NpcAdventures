@@ -242,7 +242,8 @@ namespace NpcAdventure.AI.Controller
                 {
                     if (!this.NoCharging && --this.timeout <= 0)
                     {
-                        this.follower.doEmote(8);
+                        if (Game1.random.Next(1, 4) == 1)
+                            this.follower.doEmote(8);
                         this.follower.isCharging = true;
                     }
                 }
@@ -328,7 +329,6 @@ namespace NpcAdventure.AI.Controller
                 (this.follower.xVelocity != 0 || this.follower.yVelocity != 0))
             {
                 Rectangle wbBB = this.follower.GetBoundingBox();
-                GameLocation location = this.follower.currentLocation;
                 int ts = Game1.tileSize;
                 bool xBlocked, yBlocked;
                 xBlocked = yBlocked = false;
@@ -391,7 +391,7 @@ namespace NpcAdventure.AI.Controller
                 Vector2 tileAhead = (bbVector + velocity) / 64;
                 Vector2 tileBehind = (bbVector - velocity) / 64;
                 Vector2 tileBehindNeighbor1, tileBehindNeighbor2;
-                bool neighborsUpDown = Math.Abs(velocity.X) > Math.Abs(velocity.Y);
+
                 if (Math.Abs(velocity.X) > Math.Abs(velocity.Y))
                 {
                     tileBehindNeighbor1 = tileBehind + new Vector2(-Math.Sign(velocity.X), 1);

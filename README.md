@@ -28,10 +28,12 @@ Download this mod on **[Nexusmods](https://nexusmods.com/stardewvalley/mods/4582
 - Next morning you can find a package with your items you saved in companion's backpack
 - Idle animations
 - Speech bubbles while companion fighting
-- Different personal skills: warrior, fighter and doctor (next comming soon)
+- [UPDATED] Different personal skills: warrior, fighter, doctor, forager and scared (next comming soon)
 - Doctor can heal you if your health is under 30% and can try to save your life before death
 - Warrior can use critical defense fists
 - Fighter can level up (syncing level with player) and can upgrade swords
+- [NEW] Forager can occasionally forage and give you foraged items.
+- [NEW] Companion with scared skill can be scared when see a monster.
 - Display personal skills in HUD (with mouseover tooltip)
 - Better critical defense fist fight animation and sound
 - Support for content packs and localizations. You can add custom NPC as companion (see [how to create content pack](https://github.com/purrplingcat/PurrplingMod/wiki/Content-packs) on wiki)
@@ -45,8 +47,11 @@ Download this mod on **[Nexusmods](https://nexusmods.com/stardewvalley/mods/4582
 - Debug mode for developers and content pack creators (by default disabled, you can enable it in config)
 - Added debug command `npcadventure_eligible` for eligible player to recruit, DEBUG AND ADVENTURE MODE ONLY!-
 - New documentation for players and modders/content creators
-- [NEW] Support for localizations in content packs
-- [NEW] Android support (experimental) Thx @MaxPresi
+- Support for localizations in content packs
+- Android support (experimental) Thx @MaxPresi
+- [NEW] Fight through companion without annoying dialogue (experimental, you can enable it in `config.json`)
+- [NEW] Recruit and ask companions with hold a *shift* key (you can enable it in `config.json`)
+- [NEW] Wife/Husband companion auto-dismisses at midnight (others still at 10pm)
 
 Next features comming soon...
 

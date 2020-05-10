@@ -173,6 +173,7 @@ namespace NpcAdventure.Utils
 
         public static Monster GetNearestMonsterToCharacter(Character me, float tileDistance, Func<Monster, bool> extraCondition)
         {
+            float thresDistance = tileDistance * 64f;
             SortedDictionary<float, Monster> nearestMonsters = new SortedDictionary<float, Monster>();
 
             foreach (Character c in me.currentLocation.characters)
@@ -180,9 +181,9 @@ namespace NpcAdventure.Utils
                 if (!(c is Monster monster))
                     continue;
 
-                float monsterDistance = Helper.Distance(me.getTileLocationPoint(), monster.getTileLocationPoint());
+                float monsterDistance = Helper.Distance(me.GetBoundingBox().Center, monster.GetBoundingBox().Center);
 
-                if (monsterDistance < tileDistance && !nearestMonsters.ContainsKey(monsterDistance) && extraCondition(monster))
+                if (monsterDistance < thresDistance && !nearestMonsters.ContainsKey(monsterDistance) && extraCondition(monster))
                 {
                     nearestMonsters.Add(monsterDistance, monster);
                 }
@@ -224,6 +225,18 @@ namespace NpcAdventure.Utils
 
             // All other monsters all valid
             return true;
+        }
+
+        public static Vector2 GetAwayFromCharacterTrajectory(Microsoft.Xna.Framework.Rectangle monsterBox, Character who)
+        {
+            Microsoft.Xna.Framework.Rectangle boundingBox = who.GetBoundingBox();
+            double num1 = (double)-(boundingBox.Center.X - monsterBox.Center.X);
+            boundingBox = who.GetBoundingBox();
+            float num2 = (float)(boundingBox.Center.Y - monsterBox.Center.Y);
+            float num3 = Math.Abs((float)num1) + Math.Abs(num2);
+            if ((double)num3 < 1.0)
+                num3 = 5f;
+            return new Vector2((float)num1 / num3 * (float)(50 + Game1.random.Next(-20, 20)), num2 / num3 * (float)(50 + Game1.random.Next(-20, 20)));
         }
 
         public static string[] GetSegments(string path, int? limit = null)

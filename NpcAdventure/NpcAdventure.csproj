@@ -124,6 +124,7 @@
     <Compile Include="Model\BagDumpInfo.cs" />
     <Compile Include="Model\CompanionMetaData.cs" />
     <Compile Include="Internal\Patching\GamePatcher.cs" />
+    <Compile Include="Patches\GameUseToolPatch.cs" />
     <Compile Include="Patches\GetCharacterPatch.cs" />
     <Compile Include="Internal\Patching\IPatch.cs" />
     <Compile Include="Patches\NpcCheckActionPatch.cs" />
