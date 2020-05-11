@@ -168,7 +168,7 @@ namespace NpcAdventure.StateMachine
             Package dumpedBag = new Package(this.Bag.items.ToList(), place)
             {
                 GivenFrom = this.Name,
-                Message = this.ContentLoader.LoadString("Strings/Strings:bagItemsSentLetter", this.CompanionManager.Farmer.Name, this.Companion.displayName)
+                Message = this.ContentLoader.LoadString($"Strings/Mail:bagItemsSentLetter.{this.Companion.Name}", this.CompanionManager.Farmer.Name, this.Companion.displayName)
             };
 
             farm.objects.Add(place, dumpedBag);

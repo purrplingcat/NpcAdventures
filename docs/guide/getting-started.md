@@ -26,18 +26,27 @@ Beginning with version *0.11.0* there's an experimental support for Android SMAP
 
 Fight togehther with your companion with monsters without showing annoying companion dialogue. You can enable this experimental feature in configuration by switch option `Experimental.FightThruCompanion` to `true`. When this feature is enabled and you want to show companion dialogue, you must do right-click on companion.
 
+## Upgrading from 0.11.0 beta to 0.12.0 and newer
+
+### Modders
+
+There are some breaking changes for 0.12.0 affects existing content packs. You must do some edits in your content pack for make it compatible with new version, see the [Modder's upgrade guide](../modding/upgrading.md).
+
+### Players
+
+For players has no any affections. You can use your mod in standard way without any additional changes. If you want to enable new optional features or experimental features, see [Configuration](configuration.md).
+
 ## Upgrading from alpha versions (from 0.9 and older)
 
 ### Players
 
-There is one big change. You can't recruit companions until you recive an invitation from Marlon and you don't see his event. You can get invitation when:
+From version *0.10.0* there is one big change. You can't recruit companions until you recive an invitation from Marlon and you don't see his event. You can get invitation when:
 
 - You have access to Adventurer's guild
 - Reached 20 level of mines
 - You have a 66% of required hearts with any recruitable NPC
 
-If you already match all of this conditions, you will get invitation letter morning. 
-IMPORTANT: You must go out from your Farm house, otherwise you will not receive letter.
+If you already match all of this conditions, you will get invitation letter morning.
 
 ### Modders
 

@@ -2,6 +2,7 @@
 
 ## Upcoming release
 
+- Different (customized) bag delivery letters for each companion NPC
 - Option for aks for recruit/show companion dialog with hold shift key (optional, disabled by default. To enable switch on `RequestsWithShift`, `RequestsShiftButton` to change requests shift key binding in `config.json`)
 - Finally fixed annoying dialogue shown while fighting with companion (disabled by default. To enable switch on option `Experimental.FightThruCompanion` in `config.json`)
 - Added critical fist cooldown
