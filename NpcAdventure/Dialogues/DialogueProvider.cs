@@ -2,6 +2,7 @@
 using NpcAdventure.Utils;
 using StardewModdingAPI.Utilities;
 using StardewValley;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,6 +19,7 @@ namespace NpcAdventure.Dialogues
         private readonly NPC npc;
         private readonly IContentLoader contentLoader;
         private readonly string sourcePrefix;
+        private Dictionary<string, string> dialogueCache;
 
         /// <summary>
         /// Create an instance of dialogue provider with assigned NPC and content loader
@@ -29,16 +31,28 @@ namespace NpcAdventure.Dialogues
             this.npc = npc;
             this.contentLoader = contentLoader;
             this.sourcePrefix = sourcePrefix;
-
-            this.ReloadDialogues();
+            this.dialogueCache = new Dictionary<string, string>();
         }
 
         /// <summary>
-        /// Reload dialogues from source to NPC's dialogue registry
+        /// (Re)load dialogues from source to NPC's dialogue registry
         /// </summary>
-        public void ReloadDialogues()
+        public void LoadDialogues()
         {
-            SetupCompanionDialogues(this.npc, this.contentLoader.LoadStrings($"{this.sourcePrefix}{this.npc.Name}"));
+            this.dialogueCache = this.contentLoader.LoadStrings($"{this.sourcePrefix}{this.npc.Name}");
+
+            SetupCompanionDialogues(this.npc, this.dialogueCache);
+            Console.Write($"Dialogues for {this.npc.Name} loaded.");
+        }
+
+        private void ReloadIfMissing(string key)
+        {
+            if (this.dialogueCache.ContainsKey(key) && !this.npc.Dialogue.ContainsKey(key))
+            {
+                // Reaload and refresh NPC dialogues only when 
+                // the key is missing in NPC dialogue registry but in pre-loaded cache this key exists.
+                this.LoadDialogues();
+            }
         }
 
         public static bool GetRawDialogue(Dictionary<string, string> dialogues, string key, out KeyValuePair<string, string> rawDialogue)
@@ -96,7 +110,7 @@ namespace NpcAdventure.Dialogues
             if (retryReload)
             {
                 // Dialogue not found? Companion dialogue list probably erased, reload it...
-                this.ReloadDialogues();
+                this.ReloadIfMissing(key);
 
                 // ...and try again to fetch dialogue
                 if (GetRawDialogue(this.npc.Dialogue, key, out rawDialogue))
@@ -153,7 +167,7 @@ namespace NpcAdventure.Dialogues
             if (!this.TryFetchVariableDialogue(key, keygen, out rawDialogue))
             {
                 // No dialogue found? Companion dialogues are probably lost, reload them
-                this.ReloadDialogues();
+                this.ReloadIfMissing(key);
 
                 // And try dialogue fetch again. 
                 // Returns false when dialogue really not exists and as text will be returned dialogue key path

@@ -146,7 +146,7 @@ namespace NpcAdventure.StateMachine
             }
 
             // Setup dialogues for companion for this day
-            this.Dialogues.ReloadDialogues();
+            this.Dialogues.LoadDialogues();
 
             this.RecruitedToday = false;
             this.SuggestedToday = false;
