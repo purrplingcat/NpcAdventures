@@ -120,7 +120,7 @@ namespace NpcAdventure.AI
             this.hud.SetCompanionState(state);
         }
 
-        private bool IsThereAnyMonster(float distance = MONSTER_DISTANCE)
+        private bool IsThereAnyMonster(float distance)
         {
             Monster monster = Helper.GetNearestMonsterToCharacter(this.npc, distance);
 
@@ -148,7 +148,10 @@ namespace NpcAdventure.AI
                 && !this.cooldown.IsRunning(CHANGE_STATE_COOLDOWN)
                 && this.CurrentState != State.FIGHT
                 && this.PlayerIsNear()
-                && this.IsThereAnyMonster())
+                && this.IsThereAnyMonster(
+                    this.Csm.HasSkill("warrior") 
+                    ? FightController.DEFEND_TILE_RADIUS_WARRIOR 
+                    : FightController.DEFEND_TILE_RADIUS))
             {
                 this.ChangeState(State.FIGHT);
                 this.Monitor.Log("A 50ft monster is here!");

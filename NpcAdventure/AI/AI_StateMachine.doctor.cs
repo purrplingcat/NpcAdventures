@@ -9,7 +9,7 @@ namespace NpcAdventure.AI
 {
     internal partial class AI_StateMachine
     {
-        const int HEAL_COUNTDOWN = 2000;
+        const int HEAL_COUNTDOWN = 4800;
 
         private int medkits = 3;
         private int healCooldown = 0;
@@ -17,10 +17,12 @@ namespace NpcAdventure.AI
 
         private bool TryHealFarmer()
         {
-            if (this.medkits > 0 && this.player.health < this.player.maxHealth && this.player.health > 0)
+            if (this.medkits > 0 && this.player.health < (this.player.maxHealth / 3) && this.player.health > 0)
             {
-                int healthBonus = (this.player.maxHealth / 100) * (this.player.getFriendshipHeartLevelForNPC(this.npc.Name) / 2); // % health bonus based on friendship hearts
-                int health = Math.Max(10, (1 / this.player.health * 10) + Game1.random.Next(0, (int)(this.player.maxHealth * .1f))) + healthBonus;
+                float healthBonus = (this.player.maxHealth / 100) * (this.player.getFriendshipHeartLevelForNPC(this.npc.Name) / 2); // % health bonus based on friendship hearts
+                float medkitPower = 1 + (this.player.FarmingLevel * (this.player.ForagingLevel + 1)) / 100; 
+                float baseHealth = Math.Max(10, (1 / this.player.health * 10) + Game1.random.Next(0, (int)(this.player.maxHealth * .1f))) + healthBonus;
+                int health = (int)(baseHealth * medkitPower);
                 this.player.health += health;
                 this.healCooldown = HEAL_COUNTDOWN;
                 this.medkits--;
@@ -30,8 +32,10 @@ namespace NpcAdventure.AI
 
                 Game1.drawDialogue(this.npc, this.Csm.Dialogues.GetFriendSpecificDialogueText(this.player, "heal"));
                 Game1.addHUDMessage(new HUDMessage(this.Csm.ContentLoader.LoadString("Strings/Strings:healed", this.npc.displayName, health), HUDMessage.health_type));
+                this.player.currentLocation.playSound("healSound");
                 this.hud.GlowSkill("doctor", Color.Lime, HEAL_COUNTDOWN / 60);
                 this.Monitor.Log($"{this.npc.Name} healed you! Remaining medkits: {this.medkits}", LogLevel.Info);
+                this.Monitor.Log($"Health bonus: {healthBonus}; Medkit power: {medkitPower}; Base amount: {baseHealth}; Got total amount: {health}");
                 return true;
             }
 
@@ -79,10 +83,10 @@ namespace NpcAdventure.AI
             // Countdown to companion can heal you if heal cooldown greather than zero
             if (this.healCooldown > 0 && Context.IsPlayerFree)
             {
-                // Every 3 seconds while countdown add 1% of maxhealth to player's health (Companion heal side-effect) 
-                // Take effect when cooldown half way though and player's health is lower than 60% of maxhealth
+                // Every 3 seconds while countdown is not under 70% of progress add 1% of maxhealth to player's health (Companion heal side-effect) 
+                // Take effect when cooldown half way though and player's health is lower than 61% of maxhealth
                 // Adds count of friendship hearts as health bonus
-                if (e.IsMultipleOf(180) && (this.healCooldown > HEAL_COUNTDOWN / 2) && this.player.health < (this.player.maxHealth * .6f))
+                if (e.IsMultipleOf(180) && (this.healCooldown > HEAL_COUNTDOWN * .7f) && this.player.health < (this.player.maxHealth * .61f))
                     this.player.health += Math.Max(1, (int)Math.Round(this.player.maxHealth * .01f)) + (int)Math.Round(this.player.getFriendshipHeartLevelForNPC(this.npc.Name) / 4f);
 
                 this.healCooldown--;

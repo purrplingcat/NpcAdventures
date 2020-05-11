@@ -5,7 +5,8 @@ const supportedLocales = [
   {code: "pt-BR", name: "Portuguese", dir: assetsDir, official: true},
   {code: "fr-FR", name: "French", dir: assetsDir, official: true},
   {code: "zh-CN", name: "Chinese", dir: assetsDir, official: true},
-  {code: "es-ES", name: "Spanish", dir: assetsDir, official: true},
+  {code: "es-ES", name: "Spanish", dir: assetsDir, official: true },
+  {code: "hu-HU", name: "Hungary", dir: assetsDir, official: true},
   {code: "ja-JP", name: "Japanese", dir: unofficialLocaleDir + "/ja-JP", official: false},
   {code: "ru-RU", name: "Russian", dir: unofficialLocaleDir + "/ru-RU", official: false},
 ];
