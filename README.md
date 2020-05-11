@@ -61,12 +61,12 @@ Next features comming soon...
 | --------- | --------------- | ---------------------------- |
 | Abigail   | Warrior         | +1 Speed, +1 Luck, +1 Attack |
 | Alex      | Warrior         | +1 Speed, +2 Attack          |
-| Haley     |                 | +2 Luck                      |
+| Haley     | Scared          | +2 Luck                      |
 | Maru      | Doctor          | +1 Mining, +1 Luck, +1 Speed |
 | Shane     |                 | +3 Farming                   |
 | Leah      | Forager         | +2 Foraging                  |
 | Emily     |                 | +2 Mining                    |
-| Penny     |                 | +3 Farming                   |
+| Penny     | Forager         | +3 Farming                   |
 | Sam       |                 | +2 Speed                     |
 | Sebastian | Warrior         | +1 Speed, +1 Luck, +1 Attack |
 | Elliott   |                 | +3 Fishing                   |
@@ -78,7 +78,7 @@ For some NPCs listed above we're missing companion dialogues. You can help us an
 
 ### Adventure mode
 
-By default this mod is played in adventure mode. This mode brings quests and events to interaction with your companions. For enable companion asking you must reach **10 level of mines**, have granted access to **Adventurer's guild** and received **letter from Marlon with invitation** and seen **Adventure begins** event with Marlon. Then you can ask villagers to companion. Marlon's letter you will receive morning when you reached **level 20, you have a 66% (3 hearts for default level 5 required hearts) of required heart level with any recruitable villager and you have an access to Adventurer's guild.** You already reached level and you have access and you installed/updated this mod? You will receive letter morning immediately (must to go out from FarmHouse to receive it tomorrow).
+By default this mod is played in adventure mode. This mode brings quests and events to interaction with your companions. For enable companion asking you must reach **20 level of mines**, have granted access to **Adventurer's guild** and received **letter from Marlon with invitation** and seen **Adventure begins** event with Marlon. Then you can ask villagers to companion. Marlon's letter you will receive morning when you reached **level 20, you have a 66% (3 hearts for default level 5 required hearts) of required heart level with any recruitable villager and you have an access to Adventurer's guild.** You already reached level and you have access and you installed/updated this mod? You will receive letter morning immediately (must to go out from FarmHouse to receive it tomorrow).
 
 ### Classic mode
 

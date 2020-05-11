@@ -12,11 +12,11 @@ namespace NpcAdventure.Internal.Patching
         private readonly bool paranoid;
         private readonly HarmonyInstance harmony;
 
-        public GamePatcher(IMonitor monitor, bool paranoid = true)
+        public GamePatcher(string uid, IMonitor monitor, bool paranoid = true)
         {
             this.monitor = monitor;
             this.paranoid = paranoid;
-            this.harmony = HarmonyInstance.Create("cz.purrplingcat.npcadventures");
+            this.harmony = HarmonyInstance.Create(uid);
         }
 
         public void CheckPatches()

@@ -40,7 +40,7 @@ namespace NpcAdventure
 
             this.Config = helper.ReadConfig<Config>();
             this.ContentLoader = new ContentLoader(this.Helper.Content, this.Helper.ContentPacks, this.ModManifest.UniqueID, "assets", this.Monitor);
-            this.Patcher = new GamePatcher(this.Monitor, this.Config.EnableDebug);
+            this.Patcher = new GamePatcher(this.ModManifest.UniqueID, this.Monitor, this.Config.EnableDebug);
             this.RegisterEvents(helper.Events);
             Commander.Register(this);
         }
