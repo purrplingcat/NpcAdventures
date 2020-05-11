@@ -3,7 +3,7 @@
   "Author": "PurrplingCat",
   "Version": "0.12.0-dev",
   "Description": "It's time to adventure! Go to an adventure with Pelican Town's villagers!",
-  "UniqueID": "purrplingcat.npcadventures",
+  "UniqueID": "purrplingcat.npcadventure",
   "EntryDll": "NpcAdventure.dll",
   "MinimumApiVersion": "3.2.0",
   "UpdateKeys": [

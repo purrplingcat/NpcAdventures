@@ -2,44 +2,6 @@
 
 ## Update to version 0.12.0 beta
 
-### Changed mod unique ID
-
-Mod's unique ID has been changed in version 0.12.0. The ID is no longer ~~`purrplingcat.npcadventure`~~, but new valid ID is `purrplingcat.npcadventures` (added 's' to end of mod UID string). This change affects all contentpacks for NPC Adventures and other mods which depends on this mod. Please change NPC Adventures mod id in dependencies in your content packs/mods.
-
-**WARNING:** If you don't migrate your content packs (or depending mods) to new version by change NA's uid in your dependencies, your contentpack is no longer compatible with NPC Adventures.
-
-#### Update NA mod uid in Content Packs
-
-In content packs for NPC Adventures just change `ContentPackFor.UniqueID` to `purrplingcat.npcadventures` in your `manifest.json`. Don't forget update `MinimumVersion` too. After upgrade it will looks like:
-
-```js
-{
-  // ...
-  "ContentPackFor": {
-    "UniqueID": "purrplingcat.npcadventures",
-    "MinimumVersion": "0.12.0"
-  }
-  // ...
-}
-```
-
-#### Update Dependencies in other mods
-
-If you have a mod or other contentpack (not direct for NA) which depends on NPC Adventures, just find old NA uid in `Dependencies` section in your `manifest.json` and replace it with the new `purrplingcat.npcadventures`. After update your dependencies will look like:
-
-```js
-{
-  // ...
-  "Dependencies": [
-    // ...
-    {
-      "UniqueID": "CPBoardingHouse"
-    },
-    // ...
-  ] 
-}
-```
-
 ### Bag delivery content source changed
 
 Text source for bag delivery letters is now in `Strings/Mail` under key `bagItemsSentLetter.<NPC_name>`. As a content pack author you must define string for bag delivery letter for each custom NPC which you have in your content pack. See [How to define bag delivery letters](bag-letters.md)
