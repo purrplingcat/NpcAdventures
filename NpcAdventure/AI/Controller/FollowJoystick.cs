@@ -200,10 +200,19 @@ namespace NpcAdventure.AI.Controller
 
         protected void ApplyVelocity(GameLocation currentLocation)
         {
+            if (currentLocation == null)
+                return;
+
             Rectangle boundingBox = this.follower.GetBoundingBox();
             boundingBox.X += (int)this.follower.xVelocity;
             boundingBox.Y -= (int)this.follower.yVelocity;
-            if (currentLocation == null || !currentLocation.isCollidingPosition(boundingBox, Game1.viewport, true, 0, false, this.follower) || this.follower.isCharging)
+
+            NPC collidingNpc = currentLocation?.isCollidingWithCharacter(boundingBox);
+            bool collidingWithVillagerOrMonster = collidingNpc != null && (collidingNpc.isVillager() || collidingNpc.IsMonster);
+
+            if (collidingWithVillagerOrMonster
+                || !currentLocation.isCollidingPosition(boundingBox, Game1.viewport, true, 0, false, this.follower)
+                || this.follower.isCharging)
             {
                 this.follower.position.X += this.follower.xVelocity;
                 this.follower.position.Y -= this.follower.yVelocity;
