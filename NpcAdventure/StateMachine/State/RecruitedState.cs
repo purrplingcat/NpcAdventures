@@ -162,7 +162,7 @@ namespace NpcAdventure.StateMachine.State
             }
 
             // Try to push new or change location dialogue randomly until or no location dialogue was pushed
-            int until = this.dialoguePushTime + (Game1.random.Next(1, 3) * 10);
+            int until = this.dialoguePushTime + (Game1.random.Next(1, 5) * 10);
             if ((e.NewTime > until || this.currentLocationDialogue == null))
                 this.TryPushLocationDialogue(this.StateMachine.Companion.currentLocation);
 
