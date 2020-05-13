@@ -56,6 +56,16 @@ namespace NpcAdventure
             events.GameLoop.GameLaunched += this.GameLoop_GameLaunched;
             events.GameLoop.UpdateTicked += this.GameLoop_UpdateTicked;
             events.Display.RenderingHud += this.Display_RenderingHud;
+            events.Player.Warped += this.Player_Warped;
+        }
+
+        private void Player_Warped(object sender, WarpedEventArgs e)
+        {
+            if (!this.Config.Experimental.UseCheckForEventsPatch && Context.IsWorldReady && this.GameMaster.Mode != GameMasterMode.OFFLINE)
+            {
+                // Check for NPC Adventures events in the old way by player warped event. This way will be removed in 0.16.0
+                this.GameMaster.CheckForEvents(e.NewLocation, e.Player);
+            }
         }
 
         private void GameLoop_Saving(object sender, SavingEventArgs e)
@@ -126,9 +136,20 @@ namespace NpcAdventure
             {
                 // Optional experimental patch: Avoid annoying dialogue shown while use sword over companion (patch disabled by default)
                 this.Patcher.Apply(new Patches.GameUseToolPatch(this.CompanionManager));
-                this.Monitor.Log("Enabled experimental feature: FightOverCompanion.", LogLevel.Alert);
-                this.Monitor.Log("   This feature may affect game stability, you can disable it in config.json", LogLevel.Alert);
+                this.LogExperimental("FightOverCompanion");
             }
+
+            if (this.Config.Experimental.UseCheckForEventsPatch)
+            {
+                this.Patcher.Apply(new Patches.CheckEventPatch(this.GameMaster));
+                this.LogExperimental("NewEventChecking");
+            }
+        }
+
+        private void LogExperimental(string featureName)
+        {
+            this.Monitor.Log($"You are enabled experimental feature '{featureName}' in mod's config.json.", LogLevel.Warn);
+            this.Monitor.Log("   This feature may affect game stability, you can disable it in config.json", LogLevel.Warn);
         }
 
         private void Specialized_LoadStageChanged(object sender, LoadStageChangedEventArgs e)
@@ -210,6 +231,7 @@ namespace NpcAdventure
                 this.Monitor.Log("Started in non-adventure mode", LogLevel.Info);
 
             this.CompanionManager.InitializeCompanions(this.ContentLoader, this.Helper.Events, this.SpecialEvents, this.Helper.Reflection);
+            this.Patcher.CheckPatches();
         }
     }
 }

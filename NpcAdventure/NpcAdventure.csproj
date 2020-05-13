@@ -106,7 +106,9 @@
     <Compile Include="Driver\HintDriver.cs" />
     <Compile Include="Driver\MailDriver.cs" />
     <Compile Include="Driver\StuffDriver.cs" />
+    <Compile Include="Events\IManagedEvent.cs" />
     <Compile Include="Events\ISpecialModEvents.cs" />
+    <Compile Include="Events\ManagedEvent.cs" />
     <Compile Include="Events\SpecialModEvents.cs" />
     <Compile Include="HUD\CompanionDisplay.cs" />
     <Compile Include="HUD\CompanionSkill.cs" />
@@ -124,6 +126,7 @@
     <Compile Include="Model\BagDumpInfo.cs" />
     <Compile Include="Model\CompanionMetaData.cs" />
     <Compile Include="Internal\Patching\GamePatcher.cs" />
+    <Compile Include="Patches\CheckEventPatch.cs" />
     <Compile Include="Patches\GameUseToolPatch.cs" />
     <Compile Include="Patches\GetCharacterPatch.cs" />
     <Compile Include="Internal\Patching\IPatch.cs" />
@@ -150,6 +153,8 @@
     <Compile Include="Story\IScenario.cs" />
     <Compile Include="Story\Scenario\AdventureBegins.cs" />
     <Compile Include="Story\Scenario\BaseScenario.cs" />
+    <Compile Include="Story\GameMasterEvents.cs" />
+    <Compile Include="Story\IGameMasterEvents.cs" />
     <Compile Include="Story\Scenario\QuestScenario.cs" />
     <Compile Include="Story\StoryHelper.cs" />
     <Compile Include="Dialogues\VariousKeyGenerator.cs" />

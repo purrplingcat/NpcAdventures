@@ -1,5 +1,6 @@
 ﻿using NpcAdventure.Loader;
 using NpcAdventure.Utils;
+using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using System;
