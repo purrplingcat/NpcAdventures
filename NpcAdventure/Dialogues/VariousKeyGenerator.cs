@@ -82,7 +82,7 @@ namespace NpcAdventure.Dialogues
             };
         }
 
-        public void GenerateVariousKeys(string baseKey)
+        public void GenerateVariousKeys()
         {
             string[] conditionbasedVariants = this.CreateConditionbasedVariants();
             string[] timebasedVariants = this.CreateTimebasedVariants();
@@ -90,18 +90,18 @@ namespace NpcAdventure.Dialogues
             // <key>_<time>_<cond>[<friendship>]
             foreach (string timebased in timebasedVariants)
                 foreach (string conditioned in conditionbasedVariants)
-                    this.Enhance(baseKey + timebased + conditioned);
+                    this.Enhance(timebased + conditioned);
 
             // <key>_<cond>[<friendship>]
             foreach (string conditioned in conditionbasedVariants)
-                this.Enhance(baseKey + conditioned);
+                this.Enhance(conditioned);
 
             // <key>_<time>[<friendship>]
             foreach (string timebased in timebasedVariants)
-                this.Enhance(baseKey + timebased);
+                this.Enhance(timebased);
 
             // <key>[<friendship>]
-            this.Enhance(baseKey);
+            this.Enhance("");
         }
     }
 }

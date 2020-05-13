@@ -20,6 +20,8 @@ namespace NpcAdventure.Dialogues
         private readonly NPC npc;
         private readonly IContentLoader contentLoader;
         private readonly string sourcePrefix;
+        private readonly SortedDictionary<string, List<string>> keyLookupCache;
+        private readonly VariousKeyGenerator keygen;
         private Dictionary<string, string> dialogueCache;
 
         /// <summary>
@@ -33,6 +35,30 @@ namespace NpcAdventure.Dialogues
             this.contentLoader = contentLoader;
             this.sourcePrefix = sourcePrefix;
             this.dialogueCache = new Dictionary<string, string>();
+            this.keyLookupCache = new SortedDictionary<string, List<string>>();
+            this.keygen = new VariousKeyGenerator();
+        }
+
+        /// <summary>
+        /// Setup dialogue provider for new day.
+        /// Change dialogue key generator settings, clear all provider's caches,
+        /// (re)load dialogue strings from content source and assign them to NPC's dialogue registry
+        /// </summary>
+        public void SetupForNewDay()
+        {
+            Farmer f = Game1.player;
+
+            this.keygen.Date = SDate.Now();
+            this.keygen.Weather = Helper.GetCurrentWeatherName();
+            this.keygen.IsNight = Game1.isDarkOut();
+            this.keygen.FriendshipHeartLevel = f.getFriendshipHeartLevelForNPC(this.npc.Name);
+            this.keygen.FriendshipStatus = FetchFriendshipStatus(f, this.npc);
+
+            this.keyLookupCache.Clear();
+            this.dialogueCache.Clear();
+            this.keygen.PossibleKeys.Clear();
+            this.keygen.GenerateVariousKeys();
+            this.LoadDialogues();
         }
 
         /// <summary>
@@ -46,7 +72,12 @@ namespace NpcAdventure.Dialogues
             Console.Write($"Dialogues for {this.npc.Name} loaded.");
         }
 
-        private void ReloadIfMissing(string key)
+        /// <summary>
+        /// Refresh dialogues to NPC dialogue registry 
+        /// if the key missing in this registry but exists in content source.
+        /// </summary>
+        /// <param name="key">Probably missing key</param>
+        private void ReloadIfLost(string key)
         {
             if (this.dialogueCache.ContainsKey(key) && !this.npc.Dialogue.ContainsKey(key))
             {
@@ -56,6 +87,13 @@ namespace NpcAdventure.Dialogues
             }
         }
 
+        /// <summary>
+        /// Returns a raw dialogue string as key-value pair from specified dialogue registry
+        /// </summary>
+        /// <param name="dialogues">A dialogue registry</param>
+        /// <param name="key">For which key we want to fetch a dialogue?</param>
+        /// <param name="rawDialogue">Fetched dialogue. Value part is <paramref name="key"/> if dialogue not exists for this key</param>
+        /// <returns>True if raw dialogue found and returned in <paramref name="rawDialogue"/></returns>
         public static bool GetRawDialogue(Dictionary<string, string> dialogues, string key, out KeyValuePair<string, string> rawDialogue)
         {
             var keys = from _key in dialogues.Keys
@@ -103,6 +141,14 @@ namespace NpcAdventure.Dialogues
             return false;
         }
 
+        /// <summary>
+        /// Returns a raw dialogue string as key-value pair from NPC's dialogue registry.
+        /// If dialogue for requested key was lost from NPC's registry, refresh it and try again.
+        /// </summary>
+        /// <param name="key">For which key we want to fetch a dialogue?</param>
+        /// <param name="rawDialogue">Fetched dialogue. Value part is <paramref name="key"/> if dialogue not exists for this key</param>
+        /// <param name="retryReload">Reload dialogues to NPC's regisry if lost them?</param>
+        /// <returns>True if raw dialogue found and returned in <paramref name="rawDialogue"/></returns>
         public bool GetRawDialogue(string key, out KeyValuePair<string, string> rawDialogue, bool retryReload = true)
         {
             if (GetRawDialogue(this.npc.Dialogue, key, out rawDialogue))
@@ -111,7 +157,7 @@ namespace NpcAdventure.Dialogues
             if (retryReload)
             {
                 // Dialogue not found? Companion dialogue list probably erased, reload it...
-                this.ReloadIfMissing(key);
+                this.ReloadIfLost(key);
 
                 // ...and try again to fetch dialogue
                 if (GetRawDialogue(this.npc.Dialogue, key, out rawDialogue))
@@ -126,11 +172,10 @@ namespace NpcAdventure.Dialogues
 
         /// <summary>
         /// Returns a dialogue text for NPC as string.
-        /// Can returns spouse dialogue, if famer are married with NPC and this dialogue is defined
+        /// Can returns spouse dialogue, if farmer are married with NPC and this dialogue is defined
         /// 
         /// Lookup dialogue key patterns: {key}_Spouse, {key}_Dating {key}
         /// </summary>
-        /// <param name="n">NPC</param>
         /// <param name="f">Farmer</param>
         /// <param name="key">Dialogue key</param>
         /// <returns>A dialogue text</returns>
@@ -152,49 +197,103 @@ namespace NpcAdventure.Dialogues
             return rawDialogue.Value;
         }
 
+        /// <summary>
+        /// Get a variated dialogue by environment state, concreted day or month, friendship atatus and more.
+        /// </summary>
+        /// <param name="key">Key of requested kind of dialogue</param>
+        /// <param name="rawDialogue">The requested dialogue. If the dialogue not exists, contains a <paramref name="key"/> as dialogue text.</param>
+        /// <returns>True if requested kind of dialogue exists.</returns>
         public bool GetVariableRawDialogue(string key, out KeyValuePair<string, string> rawDialogue)
         {
-            Farmer f = Game1.player;
-            VariousKeyGenerator keygen = new VariousKeyGenerator()
-            {
-                Date = SDate.Now(),
-                IsNight = Game1.isDarkOut(),
-                FriendshipStatus = f.friendshipData.TryGetValue(this.npc.Name, out Friendship friendship) ? friendship.Status : FriendshipStatus.Friendly,
-                FriendshipHeartLevel = f.getFriendshipHeartLevelForNPC(this.npc.Name),
-                Weather = Helper.GetCurrentWeatherName(),
-            };
-
             // Try to find a relevant dialogue
-            if (!this.TryFetchVariableDialogue(key, keygen, out rawDialogue))
+            if (!this.TryFetchVariableDialogue(key, out rawDialogue))
             {
                 // No dialogue found? Companion dialogues are probably lost, reload them
-                this.ReloadIfMissing(key);
+                this.ReloadIfLost(key);
 
                 // And try dialogue fetch again. 
                 // Returns false when dialogue really not exists and as text will be returned dialogue key path
-                return this.TryFetchVariableDialogue(key, keygen, out rawDialogue);
+                return this.TryFetchVariableDialogue(key, out rawDialogue);
             }
 
             return true;
         }
 
-        private bool TryFetchVariableDialogue(string baseKey, VariousKeyGenerator keygen, out KeyValuePair<string, string> rawDialogue)
+        private bool TryFetchVariableDialogue(string baseKey, out KeyValuePair<string, string> rawDialogue)
         {
-            if (keygen.PossibleKeys.Count <= 0)
+            if (this.CheckGeneratedKeysIntegrity())
             {
-                // Generate possible dialogue keys
-                keygen.GenerateVariousKeys(baseKey);
+                // Clear key lookup cache, pre-generated possible keys (they are outdated now)
+                // and regenerate new relevant possible keys
+                this.keyLookupCache.Clear();
+                this.keygen.PossibleKeys.Clear();
+                this.keygen.GenerateVariousKeys();
             }
 
-            foreach (string k in keygen.PossibleKeys)
-                if (this.GetRawDialogue(k, out rawDialogue, false))
-                    return true;
+            if (!this.keyLookupCache.ContainsKey(baseKey))
+            {
+                // Filter only existing dialogues possible keys and save them to cache under baseKey
+                var filteredPossibleKeys = from key in this.keygen.PossibleKeys
+                                           where this.dialogueCache.ContainsKey(baseKey + key)
+                                           select key;
 
+                this.keyLookupCache.Add(baseKey, filteredPossibleKeys.ToList());
+            }
+
+
+            foreach (string k in this.keyLookupCache[baseKey])
+                if (this.GetRawDialogue(baseKey + k, out rawDialogue, false))
+                    return true;
             rawDialogue = new KeyValuePair<string, string>(baseKey, $"{this.npc.Name}.{baseKey}");
 
             return false;
         }
 
+        private bool CheckGeneratedKeysIntegrity()
+        {
+            Farmer f = Game1.player;
+            var isNight = Game1.isDarkOut();
+            FriendshipStatus friendshipStatus = FetchFriendshipStatus(f, this.npc);
+            var heartLevel = f.getFriendshipHeartLevelForNPC(this.npc.Name);
+            bool invalidated = false;
+
+            if (this.keygen.IsNight != isNight || this.keygen.FriendshipStatus != friendshipStatus || this.keygen.FriendshipHeartLevel != heartLevel)
+            {
+                this.keygen.IsNight = isNight;
+                this.keygen.FriendshipHeartLevel = heartLevel;
+                this.keygen.FriendshipStatus = friendshipStatus;
+                invalidated = true;
+            }
+
+            if (!invalidated && this.keygen.PossibleKeys.Count <= 0)
+            {
+                invalidated = true;
+            }
+
+            return invalidated;
+        }
+
+        private static FriendshipStatus FetchFriendshipStatus(Farmer f, NPC n)
+        {
+            if (f.friendshipData.TryGetValue(n.Name, out Friendship friendship))
+            {
+                return friendship.Status;
+            }
+            
+            return FriendshipStatus.Friendly;
+        }
+
+        /// <summary>
+        /// Get a variated dialogue for a game location by environment state, 
+        /// concreted day or month, friendship atatus and more.
+        /// </summary>
+        /// <param name="key">Key of requested kind of dialogue</param>
+        /// <param name="l">For which location?</param>
+        /// <param name="rawDialogue">
+        ///     The requested dialogue. 
+        ///     If the dialogue not exists, contains a <paramref name="key"/> and location name as dialogue text.
+        /// </param>
+        /// <returns>True if requested kind of dialogue exists.</returns>
         public bool GetVariableRawDialogue(string key, GameLocation l, out KeyValuePair<string, string> rawDialogue)
         {
             return this.GetVariableRawDialogue($"{key}_{l.Name}", out rawDialogue);
@@ -293,6 +392,11 @@ namespace NpcAdventure.Dialogues
             return this.GenerateStaticDialogue($"{key}_{l.Name}");
         }
 
+        /// <summary>
+        /// Setup dialogues from specific registry to companion NPC's dialogue registry.
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="dialogues"></param>
         public static void SetupCompanionDialogues(NPC n, Dictionary<string, string> dialogues)
         {
             foreach (var pair in dialogues)
