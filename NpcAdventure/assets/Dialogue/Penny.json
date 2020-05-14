@@ -8,6 +8,8 @@
   "companionSuggest": "Vincent and Jas are asking me more questions than I can answer about where we live.#$q -1 -1#Could you accompany me while I explore the valley, @? Maybe you can benefit from that too.#$r -1 0 Yes#Sure, that'd be nice. Let's go!#$r -1 0 No#Today I can't. But thanks for inviting me.",
   "companionSuggest_Yes": "Thank you! That's kind of you.$h",
   "companionSuggest_No": "Oh, sorry. I didn't know you were busy. Enjoy your day!",
+  "farmerRunAway": "@! I'm coming, wait up!",
+  "giveForages": "Hey, @, look what I found! Here, this is for you.",
   "companion_Beach": "Would you like to collect some shells?#$b#They would make for some nice decorations!$1",
   "companion_Beach~1": "It's a bit noisy here from the crashing waves.#$b#Oh, I'm not complaining! Just making an observation... sorry.$4",
   "companion_Beach_Dating": "The beach is so pretty, I should take Vincent and Jas here more often.#$b#Maybe you and I could have a date here sometime, if you wanted to?$4",
