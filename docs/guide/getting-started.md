@@ -24,7 +24,7 @@ If you play this mod together with StardewValley Expanded, it's recommended to e
 
 ## Experimental features
 
-**NOTE:** Remember that these features are experimental and can negativelly affect gameplay and game stability and may cause bugs. All experimental features are disabled by default and must be explicitly enabled in [configuration](configuration.md). See the `Experimental` section in `config.json`.
+**NOTE:** Remember that these features are experimental and can negativelly affect gameplay and game stability and may cause bugs. All experimental features are disabled by default and must be explicitly enabled in [configuration](configuration.md). See the `Experimental` section in `config.json`. For more info read [about experimental features](experimental.md).
 
 ### Allow fight through companion (without annyoing dialogue)
 

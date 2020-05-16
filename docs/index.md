@@ -4,6 +4,8 @@
 
 1. [Getting started](guide/getting-started.md)
 2. [Configuration](guide/configuration.md)
+    1. [Requests with shift key](guide/requests-with-shift.md)
+    2. [Experimental features](guide/experimental.md)
 3. Gameplay
 4. [Full changelog](changelog.md)
 

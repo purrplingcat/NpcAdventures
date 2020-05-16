@@ -31,3 +31,5 @@ Bellow you can see a configuration schema with default values
 ## See also
 
 - [Getting started](getting-started.md)
+- [Experimental features](experimental.md)
+- [Requests with shift key](requests.with-shift.md)
