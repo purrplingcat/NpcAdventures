@@ -107,12 +107,11 @@ Beginning with version *0.11.0* there's an experimental support for Android SMAP
 - ⚠️ **Automatic gates** - NOT COMPATIBLE! Companion can stuck in gate when gate is automatic closed after farmer.
 - ⚠️ **Json Assets** - CAN'T USE CUSTOM ITEMS FOR COMPANIONS. Can't use custom weapons in disposition file from JA in your content packs, because this mod not exported stacit item ids.
 
-## Translations
+## Official translations
 
 - English (Corashirou, [RememberEmber](https://www.nexusmods.com/users/11961608), [PurrplingCat](https://www.nexusmods.com/users/68185132))
-- Portuguese Brazilian ([andril11](https://www.nexusmods.com/users/68848663)) (55% covered)
-- French ([Reikounet](https://www.nexusmods.com/users/70092158)) (49% covered)
-- Chinese ([wu574932346](https://www.nexusmods.com/users/67777356)) (53% covered)
+- Portuguese Brazilian ([andril11](https://www.nexusmods.com/users/68848663)) (100% covered)
+- Spanish ([mardrest](https://www.nexusmods.com/stardewvalley/users/74323508)) (100% covered)
 
 ## Feature preview
 
@@ -149,9 +148,15 @@ More features comming soon...
 ## Contributors
 
 - [purrplingcat](https://www.nexusmods.com/users/68185132) - main developer and producer
-- Corashirou - author of dialogues and texts
 - [RememberEmber](https://www.nexusmods.com/users/11961608) - author of dialogues and texts
+- [CallMeFoxie](https://www.nexusmods.com/users/76989063) - Multiplayer support compatibility code
 - [andril11](https://www.nexusmods.com/users/68848663) - Portuguese translation
+- [mardrest](https://www.nexusmods.com/stardewvalley/users/74323508) - Spanish translation
+
+### In past worked with us
+
+- Corashirou - dialogues and texts
+- smirkii - dialogues and texts
 - [Reikounet](https://www.nexusmods.com/users/70092158) - French translation
 - [wu574932346](https://www.nexusmods.com/users/67777356) - Chinese translation
 

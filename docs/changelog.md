@@ -1,6 +1,8 @@
 # Full changelog
 
-## Upcoming release
+## 0.12.0 beta "Go out"
+
+Released **22nd May 2020**
 
 - Fighters don't fight with bones of mummy when mummy was "defeated"
 - Recruited companion run to farmer when they are too far.
@@ -42,7 +44,7 @@ Released *8th April 2020*
 - Fixed Alex's spouse dialogue line
 - Fixed problem with loading asset Data/AnimationDescription on linux and mac
 
-## 0.11.0 beta
+## 0.11.0 beta "It's finally here, uf"
 
 Released *22th February 2020*
 
@@ -69,7 +71,7 @@ Released *18th January 2020*
 - Fixed angry kiss rejection covered ask2follow dialog. Now dialog shows immediately when player can't kiss.
 - Better failsafe when animation behavior got broken animation description (no game crash)
 
-## 0.10.0 beta
+## 0.10.0 beta "New adventure begins"
 
 Released *12th January 2020*
 
