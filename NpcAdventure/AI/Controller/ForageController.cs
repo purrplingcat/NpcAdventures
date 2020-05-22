@@ -421,7 +421,7 @@ namespace NpcAdventure.AI.Controller
                 return;
             }
 
-            if (this.joystick.AcquireTarget(this.PickTile(vTree, (tree is Bush bush ? bush.size + 1 : 1), 1)))
+            if (this.joystick.AcquireTarget(this.PickTile(vTree, (tree is Bush bush ? bush.size.Value + 1 : 1), 1)))
             {
                 this.targetObject = tree;
             } else

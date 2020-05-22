@@ -1,4 +1,4 @@
-﻿using System;
+﻿using StardewModdingAPI;
 using System.Collections.Generic;
 
 namespace NpcAdventure.Loader
@@ -41,5 +41,12 @@ namespace NpcAdventure.Loader
         /// Invalidate mod's cached assets
         /// </summary>
         void InvalidateCache();
+
+        /// <summary>
+        /// Get direct asset key
+        /// </summary>
+        /// <param name="assetName"></param>
+        /// <returns></returns>
+        string GetAssetKey(string assetName);
     }
 }

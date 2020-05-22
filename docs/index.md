@@ -22,6 +22,7 @@
     6. [Idle behaviors](modding/idle.md)
     7. [Bag delivery letters](modding/bag-letters.md)
     8. [General strings](modding/strings.md)
+    9. [Sprites](modding/sprites.md)
 4. [Debugging with commands](modding/commands.md)
 
 Need help with something? Join [PurrplingCat's discord](https://discord.gg/wnEDqKF) and ask for help.

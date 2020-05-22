@@ -130,8 +130,8 @@ namespace NpcAdventure
                 new Patches.SpouseReturnHomePatch(this.CompanionManager),
                 new Patches.GetCharacterPatch(this.CompanionManager),
                 new Patches.NpcCheckActionPatch(this.CompanionManager, this.Helper.Input, this.Config),
-                new Patches.GameLocationDrawPatch((SpecialModEvents)this.SpecialEvents)
-                // new Patches.GameLocationUpdatePatch(this.CompanionManager)
+                new Patches.GameLocationDrawPatch((SpecialModEvents)this.SpecialEvents),
+                new Patches.GameLocationPerformActionPatch(this.CompanionManager)
             );
 
             if (this.Config.AvoidSayHiToMonsters)
