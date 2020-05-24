@@ -7,6 +7,32 @@ namespace NpcAdventure.Loader
 {
     internal static class AssetPatchHelper
     {
+        internal static void ApplyPatch<TModel>(TModel target, TModel source)
+        {
+            if (typeof(TModel).IsGenericType && typeof(TModel).GetGenericTypeDefinition() == typeof(Dictionary<,>))
+            {
+                MethodInfo method = typeof(AssetPatchHelper).GetMethod(nameof(ApplyDictionary), BindingFlags.Static | BindingFlags.NonPublic);
+
+                if (method == null)
+                    throw new InvalidOperationException($"Can't fetch the internal {nameof(ApplyDictionary)} method.");
+
+                MakeKeyValuePatcher<TModel>(method).Invoke(null, new object[] { target, source });
+                return;
+            }
+
+            throw new AssetPatchException(typeof(TModel));
+        }
+
+        private static void ApplyDictionary<TKey, TValue>(IDictionary<TKey, TValue> target, IDictionary<TKey, TValue> source)
+        {
+            source.ToList().ForEach(s => target[s.Key] = s.Value);
+        }
+
+        internal static Dictionary<TKey, TValue> ToDictionary<TKey, TValue, SKey, SValue>(Dictionary<SKey, SValue> dict)
+        {
+            return dict.ToDictionary(p => (TKey)(object)p.Key, p => (TValue)(object)p.Value);
+        }
+
         internal static MethodInfo MakeKeyValuePatcher<T>(MethodInfo patchMethod)
         {
             // get dictionary's key/value types

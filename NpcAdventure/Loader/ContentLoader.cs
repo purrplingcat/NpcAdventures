@@ -1,8 +1,8 @@
-﻿using Microsoft.Xna.Framework.Content;
-using StardewModdingAPI;
+﻿using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace NpcAdventure.Loader
 {
@@ -14,66 +14,97 @@ namespace NpcAdventure.Loader
     {
         private readonly IMonitor monitor;
         private readonly Dictionary<string, object> assetCache;
+        private readonly IContentPackHelper contentPacks;
+        private readonly ContentPackManager contentPackManager;
 
-        private IContentHelper Helper { get; }
-        private string ModName { get; }
+        public IDataHelper Data { get; }
+        private IContentHelper Assets { get; }
+        public ITranslationHelper Translation { get; }
+        public string DirectoryPath { get; }
 
         /// <summary>
         /// Creatre new instance of custom service ContentLoader
         /// </summary>
-        /// <param name="helper">SMAPI's Content helper</param>
-        /// <param name="modName">Path to mod's root directory, Like path/to/mod.</param>
-        /// <param name="assetsDir">Path to mod's assets dir, like `assets`. Thats mean assets dir is `path/to/mod/assets` </param>
+        /// <param name="helper"></param>>
         /// <param name="monitor"></param>
-        public ContentLoader(IContentHelper helper, IContentPackHelper contentPacks, string modName, string assetsDir, IMonitor monitor)
+        public ContentLoader(IModHelper helper, IMonitor monitor)
         {
-            this.Helper = helper;
-            this.ModName = modName;
+            this.Data = helper.Data;
+            this.Assets = helper.Content;
+            this.Translation = helper.Translation;
+            this.DirectoryPath = helper.DirectoryPath;
             this.assetCache = new Dictionary<string, object>();
+            this.contentPacks = helper.ContentPacks;
+            this.contentPackManager = new ContentPackManager(helper.ContentPacks, helper.Translation, monitor);
             this.monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
-
-            // Assign asset source manager to load and edit mod's assets
-            AssetsManager assetsManager = new AssetsManager(modName, assetsDir, helper, new ContentPackProvider(modName, contentPacks, monitor), monitor);
-            this.Helper.AssetLoaders.Add(assetsManager);
-            this.Helper.AssetEditors.Add(assetsManager);
         }
 
         /// <summary>
         /// Load an mod content asset
         /// </summary>
-        /// <typeparam name="T">Type of asset to be loaded</typeparam>
-        /// <param name="assetName">Name of asset, like `Strings/Strings` or `Dialogue/Abigail` and etc</param>
+        /// <typeparam name="TModel">Type of asset to be loaded</typeparam>
+        /// <param name="path">Name of asset, like `Strings/Strings` or `Dialogue/Abigail` and etc</param>
         /// <returns>Loaded content of asset</returns>
-        public T Load<T>(string assetName)
+        public Dictionary<TKey, TValue> Load<TKey, TValue>(string path)
         {
-            string assetPath = $"{this.ModName}/{assetName}";
             // Try to get asset from our map cache
-            if (this.assetCache.TryGetValue(assetPath, out object asset))
-                return (T)asset;
+            if (this.assetCache.TryGetValue(path, out object asset))
+                return (Dictionary<TKey, TValue>)asset;
 
-            try
-            {
-                T newAsset = this.Helper.Load<T>(assetPath, ContentSource.GameContent);
+            string locale = this.Assets.CurrentLocale;
+            Dictionary<TKey, TValue> baseData;
 
-                this.assetCache.Add(assetPath, (object)newAsset);
+            // If this content doesn't exists in mod scope, try load them from content packs
+            if (!this.HasFile($"assets/{path}.json"))
+                return this.FallbackLoad<TKey, TValue>(path);
 
-                return newAsset;
-            }
-            catch (ContentLoadException e)
-            {
-                this.monitor.Log($"Cannot load asset {assetName}", LogLevel.Error);
-                throw e;
-            }
+            baseData = this.Assets.Load<Dictionary<TKey, TValue>>($"assets/{path}.json");
+
+            this.ApplyTranslation(path, locale, baseData); // Apply translations                
+            this.contentPackManager.Apply(baseData, path); // Apply content packs
+            this.assetCache.Add(path, baseData); // Save to cache
+
+            return baseData;
+        }
+
+        private Dictionary<TKey, TValue> FallbackLoad<TKey, TValue>(string path)
+        {
+            var baseData = new Dictionary<TKey, TValue>();
+
+            
+            if (!this.contentPackManager.Apply(baseData, path))
+                this.monitor.Log($"Cannot load asset `{path}`", LogLevel.Error);
+
+            return baseData;
+        }
+
+        private bool HasFile(string path)
+        {
+            return File.Exists(Path.Combine(this.DirectoryPath, path.Replace('/', Path.DirectorySeparatorChar)));
+        }
+
+        private void ApplyTranslation<TKey, TValue>(string path, string locale, Dictionary<TKey, TValue> baseData)
+        {
+            if (string.IsNullOrEmpty(locale))
+                return;
+
+            this.monitor.VerboseLog($"Trying to load localised file `assets/{path}.{locale}.json` for `{path}`, locale `{locale}`");
+            var translatedData = this.Data.ReadJsonFile<Dictionary<TKey, TValue>>($"assets/{path}.{locale}.json");
+
+            if (translatedData != null)
+                AssetPatchHelper.ApplyPatch(baseData, translatedData);
+            else
+                this.monitor.Log($"No translations for {path} locale {locale}");
         }
 
         /// <summary>
         /// Loads a string dictionary asset
         /// </summary>
-        /// <param name="stringsAssetName">Name of asset, like `Strings/Strings` or `Dialogue/Abigail` and etc</param>
+        /// <param name="path">Name of asset, like `Strings/Strings` or `Dialogue/Abigail` and etc</param>
         /// <returns>Loaded dictionary of strings</returns>
-        public Dictionary<string, string> LoadStrings(string stringsAssetName)
+        public Dictionary<string, string> LoadStrings(string path)
         {
-            return this.Load<Dictionary<string, string>>(stringsAssetName);
+            return this.Load<string, string>(path);
         }
 
         /// <summary>
@@ -113,11 +144,33 @@ namespace NpcAdventure.Loader
         /// </summary>
         public void InvalidateCache()
         {
-            foreach (string assetPath in this.assetCache.Keys)
-                this.Helper.InvalidateCache(assetPath); // Remove file from SMAPI's file cache
-
-            // And clear our assets map
             this.assetCache.Clear();
+        }
+
+        public string GetAssetKey(string assetName)
+        {
+            string lead = assetName.Split('/')[0];
+            if (lead == "~")
+            {
+                // Get asset key inside the mod
+                return this.Assets.GetActualAssetKey($"assets/{assetName.Substring(2)}");
+            }
+
+            if (lead.StartsWith("@"))
+            {
+                var pack = this.contentPacks.GetOwned().FirstOrDefault(cp => cp.Manifest.UniqueID.Equals(lead.Substring(1)));
+
+                if (pack != null)
+                {
+                    // Get asset key inside specified mod's content pack
+                    return pack.GetActualAssetKey(assetName.Remove(0, lead.Length + 1));
+                }
+
+                this.monitor.Log($"Unknown content pack uid `{lead.Substring(1)}`");
+            }
+
+            // Get asset key in game folder
+            return this.Assets.GetActualAssetKey(assetName, ContentSource.GameContent);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Netcode;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Monsters;
 using System;
@@ -32,6 +33,12 @@ namespace NpcAdventure.Utils
             second = list.Count > 1 ? list[1] : default(T); // or throw
             third = list.Count > 1 ? list[2] : default(T); // or throw
             rest = list.Skip(3).ToList();
+        }
+
+        public static bool EqualsMajorMinor(this ISemanticVersion baseVersion, ISemanticVersion version)
+        {
+            return baseVersion.MajorVersion == version.MajorVersion 
+                && baseVersion.MinorVersion == version.MinorVersion;
         }
 
         public static Vector2 ToVector2(this Point point)

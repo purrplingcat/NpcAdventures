@@ -37,9 +37,9 @@ namespace NpcAdventure
             {
                 this.Monitor.Log("Android support is an experimental feature, may cause some problems. Before you report a bug please content me on my discord https://discord.gg/wnEDqKF Thank you.", LogLevel.Alert);
             }
-
+            
             this.Config = helper.ReadConfig<Config>();
-            this.ContentLoader = new ContentLoader(this.Helper.Content, this.Helper.ContentPacks, this.ModManifest.UniqueID, "assets", this.Monitor);
+            this.ContentLoader = new ContentLoader(helper, this.Monitor);
             this.Patcher = new GamePatcher(this.ModManifest.UniqueID, this.Monitor, this.Config.EnableDebug);
             this.RegisterEvents(helper.Events);
             Commander.Register(this);
