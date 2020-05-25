@@ -72,8 +72,7 @@ namespace NpcAdventure.Loader
         private Dictionary<TKey, TValue> FallbackLoad<TKey, TValue>(string path)
         {
             var baseData = new Dictionary<TKey, TValue>();
-
-            
+              
             if (!this.contentPackManager.Apply(baseData, path))
                 this.monitor.Log($"Cannot load asset `{path}`", LogLevel.Error);
 

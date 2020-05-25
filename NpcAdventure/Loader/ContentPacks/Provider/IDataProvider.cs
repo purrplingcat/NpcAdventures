@@ -8,6 +8,6 @@ namespace NpcAdventure.Loader.ContentPacks.Provider
 {
     interface IDataProvider
     {
-        Dictionary<TKey, TValue> Provide<TKey, TValue>(string path);
+        bool Apply<TKey, TValue>(Dictionary<TKey, TValue> target, string path);
     }
 }

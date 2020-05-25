@@ -61,13 +61,7 @@ namespace NpcAdventure.Loader
 
             foreach (var pack in this.packs)
             {
-                var toApply = pack.Load<TKey, TValue>(path);
-
-                if (toApply != null)
-                {
-                    AssetPatchHelper.ApplyPatch(target, toApply);
-                    applied = true;
-                }
+                applied |= pack.Apply(target, path);
             }
 
             return applied;

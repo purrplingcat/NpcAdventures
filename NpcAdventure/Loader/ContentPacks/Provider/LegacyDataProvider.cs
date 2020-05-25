@@ -19,26 +19,32 @@ namespace NpcAdventure.Loader.ContentPacks.Provider
         public ManagedContentPack Managed { get; }
         public IMonitor Monitor { get; private set; }
 
-        public Dictionary<TKey, TValue> Provide<TKey, TValue>(string path)
+        public bool Apply<TKey, TValue>(Dictionary<TKey, TValue> target, string path)
         {
-            var baseData = new Dictionary<TKey, TValue>();
             var patches = new List<LegacyChanges>();
 
-            patches.AddRange(this.GetPatchesForAsset(path, "Load"));
-            patches.AddRange(this.GetPatchesForAsset(path, "Edit"));
+            patches.AddRange(this.GetPatchesForAsset(path, "Replace"));
+            patches.AddRange(this.GetPatchesForAsset(path, "Patch"));
 
             if (patches.Count() < 1)
             {
-                return null;
+                return false;
             }
 
             foreach (var patch in patches)
             {
-                AssetPatchHelper.ApplyPatch(baseData, this.Managed.Pack.LoadAsset<Dictionary<TKey, TValue>>(patch.FromFile));
+                if (patch.Action == "Replace")
+                {
+                    if (target.Count > 0)
+                        this.Monitor.Log($"Content pack `{this.Managed.Pack.Manifest.Name}` patch `{patch.LogName}` replaces contents for `{path}`.", LogLevel.Alert);
+                    target.Clear(); // Load replaces all content
+                }
+
+                AssetPatchHelper.ApplyPatch(target, this.Managed.Pack.LoadAsset<Dictionary<TKey, TValue>>(patch.FromFile));
                 this.Monitor.Log($"Applied content patch `{patch.LogName}` from content pack `{this.Managed.Pack.Manifest.Name}`");
             }
 
-            return baseData;
+            return true;
         }
 
         private List<LegacyChanges> GetPatchesForAsset(string path, string action)

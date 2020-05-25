@@ -53,5 +53,10 @@ namespace NpcAdventure.Loader.ContentPacks.Provider
 
             return (T)obj;
         }
+
+        public bool Apply<TKey, TValue>(Dictionary<TKey, TValue> target, string path)
+        {
+            return false;
+        }
     }
 }
