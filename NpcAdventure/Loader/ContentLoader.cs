@@ -51,12 +51,14 @@ namespace NpcAdventure.Loader
             if (this.assetCache.TryGetValue(path, out object asset))
                 return (Dictionary<TKey, TValue>)asset;
 
-            string locale = this.Assets.CurrentLocale;
+            string locale = this.Assets.CurrentLocale.ToLower();
             Dictionary<TKey, TValue> baseData;
 
             // If this content doesn't exists in mod scope, try load them from content packs
             if (!this.HasFile($"assets/{path}.json"))
+            {
                 return this.FallbackLoad<TKey, TValue>(path);
+            }
 
             baseData = this.Assets.Load<Dictionary<TKey, TValue>>($"assets/{path}.json");
 
@@ -88,8 +90,8 @@ namespace NpcAdventure.Loader
             if (string.IsNullOrEmpty(locale))
                 return;
 
-            this.monitor.VerboseLog($"Trying to load localised file `assets/{path}.{locale}.json` for `{path}`, locale `{locale}`");
-            var translatedData = this.Data.ReadJsonFile<Dictionary<TKey, TValue>>($"assets/{path}.{locale}.json");
+            this.monitor.VerboseLog($"Trying to load localised file `locale/{locale}/{path}.json` for `{path}`, locale `{locale}`");
+            var translatedData = this.Data.ReadJsonFile<Dictionary<TKey, TValue>>($"locale/{locale}/{path}.json");
 
             if (translatedData != null)
                 AssetPatchHelper.ApplyPatch(baseData, translatedData);
