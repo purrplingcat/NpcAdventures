@@ -9,7 +9,7 @@ namespace NpcAdventure.Loader.ContentPacks
     /// <summary>Handles loading assets from content packs.</summary>
     internal class ManagedContentPack
     {
-        private static string[] SUPPORTED_FORMATS = { "1.2", "1.3", "1.4" };
+        private static string[] SUPPORTED_FORMATS = { "1.1", "1.2", "1.3" };
 
         /// <summary>The managed content pack.</summary>
         public IContentPack Pack { get; }
@@ -96,12 +96,12 @@ namespace NpcAdventure.Loader.ContentPacks
                 notices.Add($"Ignore field `LogName` in format version `{formatVersion}`");
             }
 
-            if (!formatVersion.IsOlderThan("1.4") && string.IsNullOrEmpty(change.Action))
+            if (!formatVersion.IsOlderThan("1.3") && string.IsNullOrEmpty(change.Action))
             {
                 change.Action = "Patch"; // Action patch is a default action in format >=1.3
             }
 
-            if (formatVersion.IsOlderThan("1.4") && (change.Action == "Load" || change.Action == "Edit"))
+            if (formatVersion.IsOlderThan("1.3") && (change.Action == "Load" || change.Action == "Edit"))
             {
                 var replace = change.Action == "Load" ? "Replace" : "Patch";
 

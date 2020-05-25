@@ -1,5 +1,10 @@
 # Full changelog
 
+## Upcoming version
+
+- Updated content pack definition format to version 1.4
+- Redone content and content pack loader
+
 ## 0.12.0 beta "Go out"
 
 Released **22nd May 2020**
