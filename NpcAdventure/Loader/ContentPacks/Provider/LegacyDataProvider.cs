@@ -1,10 +1,7 @@
 ﻿using NpcAdventure.Loader.ContentPacks.Data;
 using StardewModdingAPI;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NpcAdventure.Loader.ContentPacks.Provider
 {

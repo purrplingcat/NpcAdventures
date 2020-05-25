@@ -31,11 +31,9 @@ namespace NpcAdventure.Loader.ContentPacks
 
             this.legacyDataProvider = new LegacyDataProvider(this);
             this.dataProvider = new DataProvider(this);
-
-            this.Initialize();
         }
 
-        private void Initialize()
+        public void Initialize()
         {
             if (!this.Pack.HasFile("content.json"))
                 throw new ContentPackException("Declaration file `content.json` not found!");

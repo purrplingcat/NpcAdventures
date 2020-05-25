@@ -1,10 +1,8 @@
 ﻿using NpcAdventure.Loader.ContentPacks;
-using NpcAdventure.Model;
+using NpcAdventure.Loader.ContentPacks.Data;
 using StardewModdingAPI;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace NpcAdventure.Loader
 {
@@ -13,6 +11,7 @@ namespace NpcAdventure.Loader
         private readonly ITranslationHelper translation;
         private readonly IMonitor monitor;
         private readonly List<ManagedContentPack> packs;
+        private readonly Dictionary<string, List<IManifest>> knownReplaceAplicators;
 
         /// <summary>
         /// Provides patches from content packs into mod's content
@@ -24,8 +23,35 @@ namespace NpcAdventure.Loader
         {
             this.translation = translation;
             this.monitor = monitor;
+            this.knownReplaceAplicators = new Dictionary<string, List<IManifest>>();
             this.packs = this.LoadPacks(helper);
-            
+        }
+
+        private void SaveUsedReplaceAplicators(Contents packContents, IManifest packManifest)
+        {
+            var targetsToReplace = from change in packContents.Changes
+                             where change.Action == "Replace"
+                             select change.Target;
+
+            foreach (var target in targetsToReplace)
+            {
+                if (this.knownReplaceAplicators.ContainsKey(target))
+                {
+                    this.knownReplaceAplicators[target].Add(packManifest);
+                }
+                else
+                { 
+                    this.knownReplaceAplicators.Add(target, new List<IManifest> { packManifest });
+                }
+            }
+        }
+
+        private void CheckMultipleUsedReplaceAplicators()
+        {
+            foreach (var aplicator in this.knownReplaceAplicators)
+            {
+                this.monitor.Log($"Detected multiple replace patches for `{aplicator.Key}`.\n    replace patches applied by: {string.Join(", ", aplicator.Value.Select(m => m.Name))}", LogLevel.Warn);
+            }
         }
 
         /// <summary>
@@ -42,7 +68,12 @@ namespace NpcAdventure.Loader
             {
                 try
                 {
-                    managed.Add(new ManagedContentPack(pack, this.translation, this.monitor));
+                    var managedPack = new ManagedContentPack(pack, this.translation, this.monitor);
+
+                    managedPack.Initialize();
+                    managed.Add(managedPack);
+                    this.SaveUsedReplaceAplicators(managedPack.Contents, managedPack.Pack.Manifest);
+                    
                     this.monitor.Log($"Loaded content pack `{pack.Manifest.Name}`");
                 } catch (ContentPackException e)
                 {
@@ -50,6 +81,7 @@ namespace NpcAdventure.Loader
                 }
             }
 
+            this.CheckMultipleUsedReplaceAplicators();
             this.monitor.Log($"Loaded {managed.Count} content packs", LogLevel.Info);
 
             return managed;
