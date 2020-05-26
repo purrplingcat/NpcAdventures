@@ -2,7 +2,9 @@
 
 ## Upcoming version
 
-- Updated content pack definition format to version 1.4
+- Old format content packs trigs an "unsafe" warning when they are loaded. (yellow only for debug mode)
+- Content pack in the new format (1.3) are safer.
+- Updated content pack definition format to version 1.3
 - Redone content and content pack loader
 
 ## 0.12.0 beta "Go out"
