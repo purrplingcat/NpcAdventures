@@ -35,19 +35,25 @@ namespace NpcAdventure.Loader.ContentPacks.Provider
             {
                 if (patch.Action == "Replace" && this.Managed.Contents.AllowUnsafePatches)
                 {
-                    if (this.paranoid && target.Count > 0)
-                        this.Monitor.Log($"Content pack `{this.Managed.Pack.Manifest.Name}` patch `{patch.LogName}` replaces all contents for `{path}`.", LogLevel.Alert);
+                    if (target.Count > 0)
+                        this.Monitor.Log(
+                            $"Content pack `{this.Managed.Pack.Manifest.Name}` patch `{patch.LogName}` replaces all contents for `{path}`.", 
+                            this.paranoid ? LogLevel.Alert : LogLevel.Trace);
                     target.Clear(); // Load replaces all content
                 }
 
-                var possiblyOverrided = AssetPatchHelper.ApplyPatch(target, this.Managed.Pack.LoadAsset<Dictionary<TKey, TValue>>(patch.FromFile), patch.AllowOverrides);
+                var possiblyOverrided = AssetPatchHelper.ApplyPatch(target, this.Managed.Pack.LoadAsset<Dictionary<TKey, TValue>>(patch.FromFile), patch.CanOverride);
                 this.Monitor.Log($"Applied content patch `{patch.LogName}` from content pack `{this.Managed.Pack.Manifest.Name}`");
 
-                if (this.paranoid && possiblyOverrided.Count() > 0)
+                if (possiblyOverrided.Count() > 0)
                 {
-                    this.Monitor.Log($"Found content data key conflicts for `{patch.Target}` by patch `{patch.LogName}` in content pack `{this.Managed.Pack.Manifest.Name}`.", LogLevel.Alert);
-                    this.Monitor.Log($"   Conflicted keys: {string.Join(", ", possiblyOverrided)}", LogLevel.Alert);
-                    this.Monitor.Log($"Affected parts of contents {(patch.AllowOverrides ? "ARE OVERIDDEN!!!" : "NOT overidden.")}", LogLevel.Alert);
+                    var loglevel = (this.paranoid || !patch.CanOverride) ? LogLevel.Alert : LogLevel.Trace;
+                    this.Monitor.Log($"Found content data key conflicts for `{patch.Target}` by patch `{patch.LogName}` in content pack `{this.Managed.Pack.Manifest.Name}`.", loglevel);
+                    this.Monitor.Log($"   Conflicted keys: {string.Join(", ", possiblyOverrided)}", loglevel);
+                    this.Monitor.Log($"Affected parts of contents {(patch.CanOverride ? "ARE OVERRIDDEN!!!" : "are NOT overridden.")}", loglevel);
+                    if (!patch.CanOverride)
+                        this.Monitor.Log(
+                            $"If you want to override these keys, you can allow it by set `CanOverride: true` on this patch and allow unsafe patches for this content pack by `AllowUnsafePatches: true`", loglevel);
                 }
             }
 

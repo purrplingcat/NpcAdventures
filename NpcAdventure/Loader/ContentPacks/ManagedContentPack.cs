@@ -79,7 +79,7 @@ namespace NpcAdventure.Loader.ContentPacks
                     this.Monitor.Log($"      Detected content replacer `{change.LogName}` for `{change.Target}`");
                 }
 
-                if (change.AllowOverrides)
+                if (change.CanOverride)
                 {
                     this.Monitor.Log($"      Existing key overrides by `{change.LogName}` allowed for `{change.Target}`");
                 }
@@ -129,7 +129,7 @@ namespace NpcAdventure.Loader.ContentPacks
 
                 notices.Add($"Rewrite action `{change.Action}` -> `{replace}`");
                 change.Action = replace;
-                change.AllowOverrides = true;
+                change.CanOverride = true;
             }
 
             return notices;
@@ -151,7 +151,7 @@ namespace NpcAdventure.Loader.ContentPacks
                 problems.Add($"Unknown action `{change.Action}`");
             if (change.Action == "Replace" && !this.Contents.AllowUnsafePatches)
                 problems.Add($"Can't use action `Replace` in safe mode! Set `AllowUnsafePatches` to `true` or remove this patch.");
-            if (change.AllowOverrides && !this.Contents.AllowUnsafePatches)
+            if (change.CanOverride && !this.Contents.AllowUnsafePatches)
                 problems.Add($"Can't allow key overrides by this patch in safe mode! Set `AllowUnsafePatches` to `true` or remove this patch.");
 
             return problems;
