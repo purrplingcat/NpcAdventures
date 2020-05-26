@@ -10,7 +10,7 @@ namespace NpcAdventure.Loader
     /// Content loader for NPC Adventure mod's contents
     /// All asset files must be in JSON format
     /// </summary>
-    public class ContentLoader : IContentLoader
+    internal class ContentLoader : IContentLoader
     {
         private readonly IMonitor monitor;
         private readonly Dictionary<string, object> assetCache;
@@ -27,7 +27,7 @@ namespace NpcAdventure.Loader
         /// </summary>
         /// <param name="helper"></param>>
         /// <param name="monitor"></param>
-        public ContentLoader(IModHelper helper, IMonitor monitor)
+        public ContentLoader(IModHelper helper, ContentPackManager contentPackManager, IMonitor monitor)
         {
             this.Data = helper.Data;
             this.Assets = helper.Content;
@@ -35,7 +35,7 @@ namespace NpcAdventure.Loader
             this.DirectoryPath = helper.DirectoryPath;
             this.assetCache = new Dictionary<string, object>();
             this.contentPacks = helper.ContentPacks;
-            this.contentPackManager = new ContentPackManager(helper.ContentPacks, helper.Translation, monitor);
+            this.contentPackManager = contentPackManager ?? throw new ArgumentNullException(nameof(contentPackManager));
             this.monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
         }
 

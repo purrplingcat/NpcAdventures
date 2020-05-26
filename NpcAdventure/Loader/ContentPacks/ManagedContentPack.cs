@@ -9,28 +9,24 @@ namespace NpcAdventure.Loader.ContentPacks
     /// <summary>Handles loading assets from content packs.</summary>
     internal class ManagedContentPack
     {
-        private static string[] SUPPORTED_FORMATS = { "1.1", "1.2", "1.3" };
+        public static string[] SUPPORTED_FORMATS = { "1.1", "1.2", "1.3" };
 
         /// <summary>The managed content pack.</summary>
         public IContentPack Pack { get; }
-        public ITranslationHelper Translation { get; }
         public IMonitor Monitor { get; }
 
         private readonly LegacyDataProvider legacyDataProvider;
-        private readonly DataProvider dataProvider;
 
         public Contents Contents { get; private set; }
+        public ISemanticVersion FormatVersion { get; internal set; }
 
         /// <summary>Construct an instance.</summary>
         /// <param name="pack">The content pack to manage.</param>
-        public ManagedContentPack(IContentPack pack, ITranslationHelper translation, IMonitor monitor)
+        public ManagedContentPack(IContentPack pack, IMonitor monitor, bool paranoid = false)
         {
             this.Pack = pack;
-            this.Translation = translation;
             this.Monitor = monitor;
-
-            this.legacyDataProvider = new LegacyDataProvider(this);
-            this.dataProvider = new DataProvider(this);
+            this.legacyDataProvider = new LegacyDataProvider(this, paranoid);
         }
 
         public void Load()
@@ -41,13 +37,29 @@ namespace NpcAdventure.Loader.ContentPacks
                 throw new ContentPackException("Declaration file `content.json` not found!");
 
             this.Contents = this.Pack.ReadJsonFile<Contents>("content.json");
+            this.FormatVersion = new SemanticVersion(this.Contents.Format);
+            this.VerifyContentPack();
+        }
 
-            var version = new SemanticVersion(this.Contents.Format);
-
-            if (!this.CheckFormatVersion(version))
+        private void VerifyContentPack()
+        {
+            if (!this.CheckFormatVersion(this.FormatVersion))
                 throw new ContentPackException($"Unsupported format `{this.Contents.Format}`");
 
-            this.VerifyPatches(version);
+            this.Monitor.Log($"      Detected format version {this.FormatVersion}");
+
+            if (this.Contents.AllowUnsafePatches)
+            {
+                this.Monitor.Log($"      Unsafe patches for this content pack are allowed!");
+            }
+
+            if (this.FormatVersion.IsOlderThan("1.3"))
+            {
+                this.Contents.AllowUnsafePatches = true;
+                this.Monitor.Log("      Force allow unsafe patches old content pack format (format version <1.3)");
+            }
+
+            this.VerifyPatches(this.FormatVersion);
         }
 
         private void VerifyPatches(ISemanticVersion formatVersion)
@@ -65,6 +77,11 @@ namespace NpcAdventure.Loader.ContentPacks
                 if (change.Action == "Replace")
                 {
                     this.Monitor.Log($"      Detected content replacer `{change.LogName}` for `{change.Target}`");
+                }
+
+                if (change.AllowOverrides)
+                {
+                    this.Monitor.Log($"      Existing key overrides by `{change.LogName}` allowed for `{change.Target}`");
                 }
 
                 if (rewriteNotices.Count > 0)
@@ -112,6 +129,7 @@ namespace NpcAdventure.Loader.ContentPacks
 
                 notices.Add($"Rewrite action `{change.Action}` -> `{replace}`");
                 change.Action = replace;
+                change.AllowOverrides = true;
             }
 
             return notices;
@@ -131,11 +149,15 @@ namespace NpcAdventure.Loader.ContentPacks
                 problems.Add("Locale can't be used for `Replace` action! Use action `Patch` instead for localization patches");
             if (change.Action != null && !change.Action.Equals("Replace") && !change.Action.Equals("Patch"))
                 problems.Add($"Unknown action `{change.Action}`");
+            if (change.Action == "Replace" && !this.Contents.AllowUnsafePatches)
+                problems.Add($"Can't use action `Replace` in safe mode! Set `AllowUnsafePatches` to `true` or remove this patch.");
+            if (change.AllowOverrides && !this.Contents.AllowUnsafePatches)
+                problems.Add($"Can't allow key overrides by this patch in safe mode! Set `AllowUnsafePatches` to `true` or remove this patch.");
 
             return problems;
         }
 
-        private bool CheckFormatVersion(SemanticVersion semanticVersion)
+        private bool CheckFormatVersion(ISemanticVersion semanticVersion)
         {
             foreach (var compareTo in SUPPORTED_FORMATS)
             {

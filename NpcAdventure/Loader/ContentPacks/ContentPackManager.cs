@@ -9,38 +9,26 @@ namespace NpcAdventure.Loader
 {
     class ContentPackManager
     {
-        private readonly ITranslationHelper translation;
         private readonly IMonitor monitor;
+        private readonly bool paranoid;
         private readonly List<ManagedContentPack> packs;
-        private readonly Dictionary<string, List<IManifest>> knownReplaceAplicators;
 
         /// <summary>
         /// Provides patches from content packs into mod's content
         /// </summary>
-        /// <param name="modName"></param>
-        /// <param name="helper"></param>
         /// <param name="monitor"></param>
-        public ContentPackManager(IContentPackHelper helper, ITranslationHelper translation, IMonitor monitor)
+        public ContentPackManager(IMonitor monitor, bool paranoid = false)
         {
-            this.translation = translation;
             this.monitor = monitor;
-            this.knownReplaceAplicators = new Dictionary<string, List<IManifest>>();
-            this.packs = this.LoadPacks(helper);
+            this.paranoid = paranoid;
+            this.packs = new List<ManagedContentPack>();
         }
 
-        private void CheckForMultipleReplacers(List<ManagedContentPack> packs)
+        private void CheckForDangerousReplacers(List<ManagedContentPack> packs)
         {
-            var replacers = from pack in packs
-                            from change in pack.Contents.Changes
-                            where change.Action == "Replace"
-                            select Tuple.Create(change, pack.Pack.Manifest);
-            var multipleReplacers = from multiple in (from replacer in replacers group replacer by replacer.Item1.Target)
-                                    where multiple.Count() > 1
-                                    select multiple;
-            var incompatiblePacks = from groupedIncompatibles in multipleReplacers.Select(g => g.Select(r => r.Item2).Distinct())
-                                    where groupedIncompatibles.Count() > 1
-                                    from incompatible in groupedIncompatibles
-                                    select incompatible;
+            ExtractPacksWithReplacers(packs,
+                out IEnumerable<IGrouping<string, Tuple<LegacyChanges, IManifest>>> multipleReplacers,
+                out IEnumerable<IManifest> incompatiblePacks);
 
             foreach (var replacerGroup in multipleReplacers)
             {
@@ -51,7 +39,7 @@ namespace NpcAdventure.Loader
                     replacer.Item1.Disabled = true;
                 }
                 this.monitor.Log("   All affected patches was disabled and none of them will be applyied, but some problems may be caused while gameplay.", LogLevel.Error);
-            }   
+            }
 
             if (incompatiblePacks.Count() > 0)
             {
@@ -61,36 +49,82 @@ namespace NpcAdventure.Loader
             }
         }
 
-        /// <summary>
-        /// Parse content pack definitions and loads possible patches
-        /// </summary>
-        /// <param name="helper"></param>
-        /// <returns></returns>
-        private List<ManagedContentPack> LoadPacks(IContentPackHelper helper)
+        private static void ExtractPacksWithReplacers(List<ManagedContentPack> packs,
+            out IEnumerable<IGrouping<string, Tuple<LegacyChanges, IManifest>>> multipleReplacers,
+            out IEnumerable<IManifest> incompatiblePacks)
         {
-            var managed = new List<ManagedContentPack>();
+            var replacers = from pack in packs
+                            from change in pack.Contents.Changes
+                            where change.Action == "Replace"
+                            select Tuple.Create(change, pack.Pack.Manifest);
+            multipleReplacers = from multiple in (from replacer in replacers group replacer by replacer.Item1.Target)
+                                where multiple.Count() > 1
+                                select multiple;
+            incompatiblePacks = from groupedIncompatibles in multipleReplacers.Select(g => g.Select(r => r.Item2).Distinct())
+                                where groupedIncompatibles.Count() > 1
+                                from incompatible in groupedIncompatibles
+                                select incompatible;
+        }
 
+        /// <summary>
+        /// Loads and verify content packs.
+        /// </summary>
+        /// <returns></returns>
+        public void LoadContentPacks(IEnumerable<IContentPack> contentPacks)
+        {
             this.monitor.Log("Loading content packs ...");
 
             // Try to load content packs and their's patches
-            foreach (var pack in helper.GetOwned())
+            foreach (var pack in contentPacks)
             {
                 try
                 {
-                    var managedPack = new ManagedContentPack(pack, this.translation, this.monitor);
+                    var managedPack = new ManagedContentPack(pack, this.monitor, this.paranoid);
 
                     managedPack.Load();
-                    managed.Add(managedPack);
+                    this.packs.Add(managedPack);
                 } catch (ContentPackException e)
                 {
-                    this.monitor.Log($"Unable to load content pack `{pack.Manifest.Name}`:\n   {e.Message}", LogLevel.Error);
+                    this.monitor.Log($"Unable to load content pack `{pack.Manifest.Name}`:", LogLevel.Error);
+                    this.monitor.Log($"   {e.Message}", LogLevel.Error);
                 }
             }
 
-            this.monitor.Log($"Loaded {managed.Count} content packs", LogLevel.Info);
-            this.CheckForMultipleReplacers(managed);
+            this.monitor.Log($"Loaded {this.packs.Count} content packs:", LogLevel.Info);
+            this.packs.ForEach(mp => this.monitor.Log($"   {mp.Pack.Manifest.Name} {mp.Pack.Manifest.Version} by {mp.Pack.Manifest.Author}", LogLevel.Info));
+            this.CheckCurrentFormat(this.packs);
+            this.CheckUnsafe(this.packs);
+            this.CheckForDangerousReplacers(this.packs);
+        }
 
-            return managed;
+        private void CheckCurrentFormat(List<ManagedContentPack> packs)
+        {
+            var currentFormatVersion = ManagedContentPack.SUPPORTED_FORMATS[ManagedContentPack.SUPPORTED_FORMATS.Length - 1];
+            var usesOldFormat = from pack in packs
+                                where pack.FormatVersion.IsOlderThan(currentFormatVersion)
+                                select pack;
+
+            if (usesOldFormat.Count() > 0)
+            {
+                this.monitor.Log($"Detected {usesOldFormat.Count()} content packs which use old format:", LogLevel.Info);
+                this.monitor.Log($"   It's recommended to update these content packs to the new format.", LogLevel.Info);
+                usesOldFormat.ToList().ForEach(p => this.monitor.Log($"   - {p.Pack.Manifest.Name} (format {p.FormatVersion})", LogLevel.Info));
+            }
+        }
+
+        private void CheckUnsafe(List<ManagedContentPack> packs)
+        {
+            var unsafePacks = from pack in packs
+                              where pack.Contents.AllowUnsafePatches == true
+                              select pack;
+
+            if (unsafePacks.Count() > 0)
+            {
+                var loglevel = this.paranoid ? LogLevel.Warn : LogLevel.Info;
+                this.monitor.Log($"Detected {unsafePacks.Count()} content packs with allowed unsafe patches:", loglevel);
+                this.monitor.Log("   These content packs can replace some contents in mod and/or in other content packs (full content replace, existing keys override).", loglevel);
+                unsafePacks.ToList().ForEach(p => this.monitor.Log($"   - {p.Pack.Manifest.Name} {(p.FormatVersion.IsOlderThan("1.3") ? "(DANGEROUS! Uses unsafe format)" : "")}", loglevel));
+            }
         }
 
         public bool Apply<TKey, TValue>(Dictionary<TKey, TValue> target, string path)

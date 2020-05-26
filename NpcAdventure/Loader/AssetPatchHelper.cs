@@ -7,7 +7,7 @@ namespace NpcAdventure.Loader
 {
     internal static class AssetPatchHelper
     {
-        internal static void ApplyPatch<TModel>(TModel target, TModel source)
+        internal static IEnumerable<object> ApplyPatch<TModel>(TModel target, TModel source, bool allowOverrides = true)
         {
             if (typeof(TModel).IsGenericType && typeof(TModel).GetGenericTypeDefinition() == typeof(Dictionary<,>))
             {
@@ -16,16 +16,30 @@ namespace NpcAdventure.Loader
                 if (method == null)
                     throw new InvalidOperationException($"Can't fetch the internal {nameof(ApplyDictionary)} method.");
 
-                MakeKeyValuePatcher<TModel>(method).Invoke(null, new object[] { target, source });
-                return;
+                return (IEnumerable<object>)MakeKeyValuePatcher<TModel>(method).Invoke(null, new object[] { target, source, allowOverrides });
             }
 
             throw new AssetPatchException(typeof(TModel));
         }
 
-        private static void ApplyDictionary<TKey, TValue>(IDictionary<TKey, TValue> target, IDictionary<TKey, TValue> source)
+        private static IEnumerable<TKey> ApplyDictionary<TKey, TValue>(IDictionary<TKey, TValue> target, IDictionary<TKey, TValue> source, bool allowOverrides)
         {
-            source.ToList().ForEach(s => target[s.Key] = s.Value);
+            var conflicts = new List<TKey>();
+
+            foreach (KeyValuePair<TKey, TValue> field in source)
+            {
+                if (target.ContainsKey(field.Key))
+                {
+                    conflicts.Add(field.Key);
+
+                    if (!allowOverrides)
+                        continue;
+                }
+
+                target[field.Key] = field.Value;
+            }
+
+            return conflicts.Distinct();
         }
 
         internal static Dictionary<TKey, TValue> ToDictionary<TKey, TValue, SKey, SValue>(Dictionary<SKey, SValue> dict)

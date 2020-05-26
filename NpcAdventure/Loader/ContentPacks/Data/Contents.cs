@@ -14,5 +14,6 @@ namespace NpcAdventure.Loader.ContentPacks.Data
 
         // Legacy field (formats 1.1 - 1.3)
         public List<LegacyChanges> Changes { get; set; }
+        public bool AllowUnsafePatches { get; set; } = false;
     }
 }

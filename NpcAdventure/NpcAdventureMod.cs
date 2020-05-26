@@ -28,21 +28,26 @@ namespace NpcAdventure
         internal GamePatcher Patcher { get; private set; }
         internal GameMaster GameMaster { get; private set; }
         internal Config Config { get; private set; } = new Config();
+        internal ContentPackManager ContentPackManager { get; private set; }
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+            this.Config = helper.ReadConfig<Config>();
+
             if (Constants.TargetPlatform == GamePlatform.Android)
             {
                 this.Monitor.Log("Android support is an experimental feature, may cause some problems. Before you report a bug please content me on my discord https://discord.gg/wnEDqKF Thank you.", LogLevel.Alert);
             }
-            
-            this.Config = helper.ReadConfig<Config>();
-            this.ContentLoader = new ContentLoader(helper, this.Monitor);
+
+            Commander.Register(this);
+
+            this.ContentPackManager = new ContentPackManager(this.Monitor, this.Config.EnableDebug);
+            this.ContentLoader = new ContentLoader(helper, this.ContentPackManager, this.Monitor);
             this.Patcher = new GamePatcher(this.ModManifest.UniqueID, this.Monitor, this.Config.EnableDebug);
             this.RegisterEvents(helper.Events);
-            Commander.Register(this);
+            this.ContentPackManager.LoadContentPacks(helper.ContentPacks.GetOwned());
         }
 
         private void RegisterEvents(IModEvents events)
