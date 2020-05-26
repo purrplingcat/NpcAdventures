@@ -33,8 +33,10 @@ namespace NpcAdventure.Loader.ContentPacks
             this.dataProvider = new DataProvider(this);
         }
 
-        public void Initialize()
+        public void Load()
         {
+            this.Monitor.Log($"   Loading content pack `{this.Pack.Manifest.Name}`");
+
             if (!this.Pack.HasFile("content.json"))
                 throw new ContentPackException("Declaration file `content.json` not found!");
 
@@ -60,14 +62,19 @@ namespace NpcAdventure.Loader.ContentPacks
                 if (change.LogName == null)
                     change.LogName = $"Patch #{num}";
 
+                if (change.Action == "Replace")
+                {
+                    this.Monitor.Log($"      Detected content replacer `{change.LogName}` for `{change.Target}`");
+                }
+
                 if (rewriteNotices.Count > 0)
                 {
-                    rewriteNotices.ForEach(e => this.Monitor.Log($"{e} in patch `{change.LogName}` from `{this.Pack.Manifest.Name}`", LogLevel.Debug));
+                    rewriteNotices.ForEach(e => this.Monitor.Log($"      {e} in patch `{change.LogName}`"));
                 }
 
                 if (errors.Count > 0)
                 {
-                    this.Monitor.Log($"Content pack patch `{change.LogName}` from `{this.Pack.Manifest.Name}` was skipped due to errors:", LogLevel.Error);
+                    this.Monitor.Log($"Skipped content pack `{this.Pack.Manifest.Name}` patch `{change.LogName}` due to errors:", LogLevel.Error);
                     errors.ForEach(e => this.Monitor.Log($"   - {e}", LogLevel.Error));
                     this.Contents.Changes.RemoveAt(i--);
                 }

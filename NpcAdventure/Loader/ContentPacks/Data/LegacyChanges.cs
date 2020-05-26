@@ -13,5 +13,6 @@ namespace NpcAdventure.Loader.ContentPacks.Data
         public string FromFile { get; set; }
         public string Locale { get; set; }
         public string LogName { get; set; }
+        public bool Disabled { get; internal set; }
     }
 }

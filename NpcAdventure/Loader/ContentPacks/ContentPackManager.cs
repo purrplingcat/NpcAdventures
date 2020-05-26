@@ -1,6 +1,7 @@
 ﻿using NpcAdventure.Loader.ContentPacks;
 using NpcAdventure.Loader.ContentPacks.Data;
 using StardewModdingAPI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -27,30 +28,36 @@ namespace NpcAdventure.Loader
             this.packs = this.LoadPacks(helper);
         }
 
-        private void SaveUsedReplaceAplicators(Contents packContents, IManifest packManifest)
+        private void CheckForMultipleReplacers(List<ManagedContentPack> packs)
         {
-            var targetsToReplace = from change in packContents.Changes
-                             where change.Action == "Replace"
-                             select change.Target;
+            var replacers = from pack in packs
+                            from change in pack.Contents.Changes
+                            where change.Action == "Replace"
+                            select Tuple.Create(change, pack.Pack.Manifest);
+            var multipleReplacers = from multiple in (from replacer in replacers group replacer by replacer.Item1.Target)
+                                    where multiple.Count() > 1
+                                    select multiple;
+            var incompatiblePacks = from groupedIncompatibles in multipleReplacers.Select(g => g.Select(r => r.Item2).Distinct())
+                                    where groupedIncompatibles.Count() > 1
+                                    from incompatible in groupedIncompatibles
+                                    select incompatible;
 
-            foreach (var target in targetsToReplace)
+            foreach (var replacerGroup in multipleReplacers)
             {
-                if (this.knownReplaceAplicators.ContainsKey(target))
+                this.monitor.Log($"Multiple content replacers was detected for `{replacerGroup.Key}`:", LogLevel.Error);
+                foreach (var replacer in replacerGroup)
                 {
-                    this.knownReplaceAplicators[target].Add(packManifest);
+                    this.monitor.Log($"   - Patch `{replacer.Item1.LogName}` in content pack `{replacer.Item2.Name}`", LogLevel.Error);
+                    replacer.Item1.Disabled = true;
                 }
-                else
-                { 
-                    this.knownReplaceAplicators.Add(target, new List<IManifest> { packManifest });
-                }
-            }
-        }
+                this.monitor.Log("   All affected patches was disabled and none of them will be applyied, but some problems may be caused while gameplay.", LogLevel.Error);
+            }   
 
-        private void CheckMultipleUsedReplaceAplicators()
-        {
-            foreach (var aplicator in this.knownReplaceAplicators)
+            if (incompatiblePacks.Count() > 0)
             {
-                this.monitor.Log($"Detected multiple replace patches for `{aplicator.Key}`.\n    replace patches applied by: {string.Join(", ", aplicator.Value.Select(m => m.Name))}", LogLevel.Warn);
+                this.monitor.Log($"These content packs are probably incompatible with each other:", LogLevel.Error);
+                incompatiblePacks.ToList().ForEach(p => this.monitor.Log($"   - {p.Name}", LogLevel.Error));
+                this.monitor.Log($"To resolve this problem you can remove some of them.", LogLevel.Error);
             }
         }
 
@@ -63,6 +70,8 @@ namespace NpcAdventure.Loader
         {
             var managed = new List<ManagedContentPack>();
 
+            this.monitor.Log("Loading content packs ...");
+
             // Try to load content packs and their's patches
             foreach (var pack in helper.GetOwned())
             {
@@ -70,19 +79,16 @@ namespace NpcAdventure.Loader
                 {
                     var managedPack = new ManagedContentPack(pack, this.translation, this.monitor);
 
-                    managedPack.Initialize();
+                    managedPack.Load();
                     managed.Add(managedPack);
-                    this.SaveUsedReplaceAplicators(managedPack.Contents, managedPack.Pack.Manifest);
-                    
-                    this.monitor.Log($"Loaded content pack `{pack.Manifest.Name}`");
                 } catch (ContentPackException e)
                 {
                     this.monitor.Log($"Unable to load content pack `{pack.Manifest.Name}`:\n   {e.Message}", LogLevel.Error);
                 }
             }
 
-            this.CheckMultipleUsedReplaceAplicators();
             this.monitor.Log($"Loaded {managed.Count} content packs", LogLevel.Info);
+            this.CheckForMultipleReplacers(managed);
 
             return managed;
         }
