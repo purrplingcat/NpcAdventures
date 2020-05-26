@@ -22,6 +22,7 @@ namespace NpcAdventure.Loader.ContentPacks.Provider
         public bool Apply<TKey, TValue>(Dictionary<TKey, TValue> target, string path)
         {
             var patches = new List<LegacyChanges>();
+            var contentPackName = this.Managed.Pack.Manifest.Name;
 
             patches.AddRange(this.GetPatchesForAsset(path, "Replace"));
             patches.AddRange(this.GetPatchesForAsset(path, "Patch"));
@@ -37,18 +38,28 @@ namespace NpcAdventure.Loader.ContentPacks.Provider
                 {
                     if (target.Count > 0)
                         this.Monitor.Log(
-                            $"Content pack `{this.Managed.Pack.Manifest.Name}` patch `{patch.LogName}` replaces all contents for `{path}`.", 
+                            $"Content pack `{contentPackName}` patch `{patch.LogName}` replaces all contents for `{path}`.", 
                             this.paranoid ? LogLevel.Alert : LogLevel.Trace);
                     target.Clear(); // Load replaces all content
                 }
 
-                var possiblyOverrided = AssetPatchHelper.ApplyPatch(target, this.Managed.Pack.LoadAsset<Dictionary<TKey, TValue>>(patch.FromFile), patch.CanOverride);
-                this.Monitor.Log($"Applied content patch `{patch.LogName}` from content pack `{this.Managed.Pack.Manifest.Name}`");
+                var isLocalized = !string.IsNullOrEmpty(patch.Locale);
+                var patchData = this.Managed.Pack.LoadAsset<Dictionary<TKey, TValue>>(patch.FromFile);
+                var possiblyOverrided = AssetPatchHelper.ApplyPatch(target, patchData, patch.CanOverride || isLocalized);
 
-                if (possiblyOverrided.Count() > 0)
+                this.Monitor.Log($"Applied content patch `{patch.LogName}` from content pack `{contentPackName}`");
+
+                if (isLocalized && patchData.Count() > 0)
+                {
+                    var covered = possiblyOverrided.Count();
+                    var extraAdded = patchData.Count() - covered;
+
+                    this.Monitor.Log($"Applied content pack `{contentPackName}` translation patch `{patch.LogName}` to `{patch.Locale}` for `{path}`, covered {covered} keys ({extraAdded} extra added)");
+                }
+                else if (possiblyOverrided.Count() > 0)
                 {
                     var loglevel = (this.paranoid || !patch.CanOverride) ? LogLevel.Alert : LogLevel.Trace;
-                    this.Monitor.Log($"Found content data key conflicts for `{patch.Target}` by patch `{patch.LogName}` in content pack `{this.Managed.Pack.Manifest.Name}`.", loglevel);
+                    this.Monitor.Log($"Found content data key conflicts for `{patch.Target}` by patch `{patch.LogName}` in content pack `{contentPackName}`.", loglevel);
                     this.Monitor.Log($"   Conflicted keys: {string.Join(", ", possiblyOverrided)}", loglevel);
                     this.Monitor.Log($"Affected parts of contents {(patch.CanOverride ? "ARE OVERRIDDEN!!!" : "are NOT overridden.")}", loglevel);
                     if (!patch.CanOverride)

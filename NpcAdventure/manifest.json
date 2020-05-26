@@ -1,7 +1,7 @@
 {
   "Name": "NPC Adventures",
   "Author": "PurrplingCat",
-  "Version": "0.13.0-dev",
+  "Version": "0.13.0-dev+nightbuild.12.g1198884",
   "Description": "It's time to adventure! Go to an adventure with Pelican Town's villagers!",
   "UniqueID": "purrplingcat.npcadventure",
   "EntryDll": "NpcAdventure.dll",

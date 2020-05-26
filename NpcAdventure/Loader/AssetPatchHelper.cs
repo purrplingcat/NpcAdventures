@@ -22,9 +22,9 @@ namespace NpcAdventure.Loader
             throw new AssetPatchException(typeof(TModel));
         }
 
-        private static IEnumerable<TKey> ApplyDictionary<TKey, TValue>(IDictionary<TKey, TValue> target, IDictionary<TKey, TValue> source, bool allowOverrides)
+        private static IEnumerable<object> ApplyDictionary<TKey, TValue>(IDictionary<TKey, TValue> target, IDictionary<TKey, TValue> source, bool allowOverrides)
         {
-            var conflicts = new List<TKey>();
+            var conflicts = new List<object>();
 
             foreach (KeyValuePair<TKey, TValue> field in source)
             {
@@ -39,7 +39,8 @@ namespace NpcAdventure.Loader
                 target[field.Key] = field.Value;
             }
 
-            return conflicts.Distinct();
+            var r = conflicts.Distinct();
+            return r;
         }
 
         internal static Dictionary<TKey, TValue> ToDictionary<TKey, TValue, SKey, SValue>(Dictionary<SKey, SValue> dict)

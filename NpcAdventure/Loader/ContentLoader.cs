@@ -95,10 +95,20 @@ namespace NpcAdventure.Loader
             this.monitor.VerboseLog($"Trying to load localised file `locale/{locale}/{path}.json` for `{path}`, locale `{locale}`");
             var translatedData = this.Data.ReadJsonFile<Dictionary<TKey, TValue>>($"locale/{locale}/{path}.json");
 
-            if (translatedData != null)
-                AssetPatchHelper.ApplyPatch(baseData, translatedData);
-            else
+            if (translatedData == null)
+            {
                 this.monitor.Log($"No translations for {path} locale {locale}");
+                return;
+                
+            }
+
+            var covered = AssetPatchHelper.ApplyPatch(baseData, translatedData, true);
+
+            if (covered.Count() > 0)
+            {
+                var extraAdded = translatedData.Count() - covered.Count();
+                this.monitor.Log($"Applied mod's translation to `{locale}` for `{path}`, covered {covered.Count()} keys ({extraAdded} extra added)");
+            }
         }
 
         /// <summary>
