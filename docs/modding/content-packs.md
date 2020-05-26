@@ -45,7 +45,7 @@ In your content pack folder create file `content.json` and we can define custom 
       "FromFile": "assets/data/companionDispositions.json"
     },
     {
-      "Target": "Dialogue/Ashley",
+      "Target": "Dialogue/Ashley", // target will be created if they don't exists
       "FromFile": "assets/dialogues/ashley.json",
       "LogName": "Ashley's dialogue" // Optional. Can be used for edit action too
     }
