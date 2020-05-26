@@ -7,7 +7,7 @@ namespace NpcAdventure.Loader
 {
     internal static class AssetPatchHelper
     {
-        internal static IEnumerable<object> ApplyPatch<TModel>(TModel target, TModel source, bool allowOverrides = true)
+        internal static IEnumerable<object> ApplyPatch<TModel>(TModel target, TModel source, bool allowOverrides)
         {
             if (typeof(TModel).IsGenericType && typeof(TModel).GetGenericTypeDefinition() == typeof(Dictionary<,>))
             {
