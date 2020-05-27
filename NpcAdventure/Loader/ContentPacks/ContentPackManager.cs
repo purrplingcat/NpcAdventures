@@ -51,8 +51,7 @@ namespace NpcAdventure.Loader
             this.monitor.Log($"Loaded {this.packs.Count} content packs:", LogLevel.Info);
             this.packs.ForEach(mp => this.monitor.Log($"   {mp.Pack.Manifest.Name} {mp.Pack.Manifest.Version} by {mp.Pack.Manifest.Author}", LogLevel.Info));
             this.CheckCurrentFormat(this.packs);
-            this.CheckUnsafe(this.packs);
-            this.CheckForDangerousReplacers(this.packs);
+            this.CheckForUsingReplacers(this.packs);
         }
 
         /// <summary>
@@ -100,74 +99,20 @@ namespace NpcAdventure.Loader
         /// (may apply replaces and overrides)
         /// </summary>
         /// <param name="packs"></param>
-        private void CheckUnsafe(List<ManagedContentPack> packs)
+        private void CheckForUsingReplacers(List<ManagedContentPack> packs)
         {
-            var unsafePacks = from pack in packs
-                              where pack.Contents.AllowUnsafePatches == true
-                              select pack;
+            var unsafePacks = (from pack in packs
+                              from patch in pack.Contents.Changes
+                              where patch.Action == "Replace"
+                              select pack).Distinct();
 
             if (unsafePacks.Count() > 0)
             {
                 var loglevel = this.paranoid ? LogLevel.Warn : LogLevel.Info;
-                this.monitor.Log($"Detected {unsafePacks.Count()} content packs with allowed unsafe patches:", loglevel);
-                this.monitor.Log("   These content packs can replace some contents in mod and/or in other content packs (full content replace, existing keys override).", loglevel);
-                unsafePacks.ToList().ForEach(p => this.monitor.Log($"   - {p.Pack.Manifest.Name} {(p.FormatVersion.IsOlderThan("1.3") ? "(DANGEROUS! Uses unsafe format)" : "")}", loglevel));
+                this.monitor.Log($"Detected {unsafePacks.Count()} content packs with replacers:", loglevel);
+                this.monitor.Log("   These content packs can erase and replace all contents for some target(s) in the mod and/or in other content packs.", loglevel);
+                unsafePacks.ToList().ForEach(p => this.monitor.Log($"   - {p.Pack.Manifest.Name}", loglevel));
             }
-        }
-
-        /// <summary>
-        /// Check if given patches contains multiple replacers to the same target path.
-        /// If any patches contains multiple replacers to the same target, they will be disabled
-        /// to avoid dangerous behavior.
-        /// </summary>
-        /// <param name="packs"></param>
-        private void CheckForDangerousReplacers(List<ManagedContentPack> packs)
-        {
-            ExtractPacksWithReplacers(packs,
-                out IEnumerable<IGrouping<string, Tuple<LegacyChanges, IManifest>>> multipleReplacers,
-                out IEnumerable<IManifest> incompatiblePacks);
-
-            foreach (var replacerGroup in multipleReplacers)
-            {
-                this.monitor.Log($"Multiple content replacers was detected for `{replacerGroup.Key}`:", LogLevel.Error);
-                foreach (var replacer in replacerGroup)
-                {
-                    this.monitor.Log($"   - Patch `{replacer.Item1.LogName}` in content pack `{replacer.Item2.Name}`", LogLevel.Error);
-                    replacer.Item1.Disabled = true;
-                }
-                this.monitor.Log("   All affected patches was disabled and none of them will be applyied, but some problems may be caused while gameplay.", LogLevel.Error);
-            }
-
-            if (incompatiblePacks.Count() > 0)
-            {
-                this.monitor.Log($"These content packs are probably incompatible with each other:", LogLevel.Error);
-                incompatiblePacks.ToList().ForEach(p => this.monitor.Log($"   - {p.Name}", LogLevel.Error));
-                this.monitor.Log($"To resolve this problem you can remove some of them.", LogLevel.Error);
-            }
-        }
-
-        /// <summary>
-        /// Fetch and filter the patches which contains replacers 
-        /// and/or are not potentially compatible withc each other.
-        /// </summary>
-        /// <param name="packs"></param>
-        /// <param name="multipleReplacers"></param>
-        /// <param name="incompatiblePacks"></param>
-        private static void ExtractPacksWithReplacers(List<ManagedContentPack> packs,
-            out IEnumerable<IGrouping<string, Tuple<LegacyChanges, IManifest>>> multipleReplacers,
-            out IEnumerable<IManifest> incompatiblePacks)
-        {
-            var replacers = from pack in packs
-                            from change in pack.Contents.Changes
-                            where change.Action == "Replace"
-                            select Tuple.Create(change, pack.Pack.Manifest);
-            multipleReplacers = from multiple in (from replacer in replacers group replacer by replacer.Item1.Target)
-                                where multiple.Count() > 1
-                                select multiple;
-            incompatiblePacks = from groupedIncompatibles in multipleReplacers.Select(g => g.Select(r => r.Item2).Distinct())
-                                where groupedIncompatibles.Count() > 1
-                                from incompatible in groupedIncompatibles
-                                select incompatible;
         }
     }
 }

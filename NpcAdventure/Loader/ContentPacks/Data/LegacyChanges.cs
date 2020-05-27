@@ -14,6 +14,5 @@ namespace NpcAdventure.Loader.ContentPacks.Data
         public string Locale { get; set; }
         public string LogName { get; set; }
         public bool Disabled { get; internal set; }
-        public bool CanOverride { get; set; } = false;
     }
 }

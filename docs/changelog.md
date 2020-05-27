@@ -4,9 +4,7 @@
 
 - Player can gain extra friendship points every whole hour while adventuring with companions (#109)
 - Mod's translation was moved to the separated folder `/locale/<localeCode>` and not requires the suffix ~~`.<localeCode>.json`~~
-- Old format content packs trigs an "unsafe" warning when they are loaded. (yellow only for debug mode)
-- Content pack in the new format (1.3) are safer.
-- Updated content pack definition format to version 1.3
+- Introduced new simplified content pack definition format version *1.3*
 - Redone content and content pack loader
 
 ## 0.12.0 beta "Go out"

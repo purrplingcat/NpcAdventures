@@ -7,24 +7,12 @@ namespace NpcAdventure.Loader
 {
     internal static class AssetPatchHelper
     {
-        internal static IEnumerable<object> ApplyPatch<TKey, TValue>(IDictionary<TKey, TValue> target, IDictionary<TKey, TValue> source, bool allowOverrides)
+        internal static void ApplyPatch<TKey, TValue>(IDictionary<TKey, TValue> target, IDictionary<TKey, TValue> source)
         {
-            var conflicts = new List<object>();
-
             foreach (KeyValuePair<TKey, TValue> field in source)
             {
-                if (target.ContainsKey(field.Key))
-                {
-                    conflicts.Add(field.Key);
-
-                    if (!allowOverrides)
-                        continue;
-                }
-
                 target[field.Key] = field.Value;
             }
-
-            return conflicts.Distinct();
         }
 
         internal static Dictionary<TKey, TValue> ToDictionary<TKey, TValue, SKey, SValue>(Dictionary<SKey, SValue> dict)

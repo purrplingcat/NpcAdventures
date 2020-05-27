@@ -51,17 +51,6 @@ namespace NpcAdventure.Loader.ContentPacks
 
             this.Monitor.Log($"      Detected format version {this.FormatVersion}");
 
-            if (this.Contents.AllowUnsafePatches)
-            {
-                this.Monitor.Log($"      Unsafe patches for this content pack are allowed!");
-            }
-
-            if (this.FormatVersion.IsOlderThan("1.3"))
-            {
-                this.Contents.AllowUnsafePatches = true;
-                this.Monitor.Log("      Force allow unsafe patches old content pack format (format version <1.3)");
-            }
-
             this.VerifyPatches(this.FormatVersion);
         }
 
@@ -81,20 +70,11 @@ namespace NpcAdventure.Loader.ContentPacks
                 if (change.LogName == null)
                     change.LogName = $"Patch #{num}";
 
-                if (change.Action == "Replace")
-                {
-                    this.Monitor.Log($"      Detected content replacer `{change.LogName}` for `{change.Target}`");
-                }
-
-                if (change.CanOverride)
-                {
-                    this.Monitor.Log($"      Existing key overrides by `{change.LogName}` allowed for `{change.Target}`");
-                }
-
                 if (rewriteNotices.Count > 0)
                 {
                     rewriteNotices.ForEach(e => this.Monitor.Log($"      {e} in patch `{change.LogName}`"));
                 }
+
 
                 if (errors.Count > 0)
                 {
@@ -142,7 +122,11 @@ namespace NpcAdventure.Loader.ContentPacks
 
                 notices.Add($"Rewrite action `{change.Action}` -> `{replace}`");
                 change.Action = replace;
-                change.CanOverride = true;
+            }
+
+            if (change.Action == "Replace")
+            {
+                notices.Add($"Detected content replacer `{change.LogName}` for `{change.Target}`");
             }
 
             return notices;
@@ -167,10 +151,6 @@ namespace NpcAdventure.Loader.ContentPacks
                 problems.Add("Locale can't be used for `Replace` action! Use action `Patch` instead for localization patches");
             if (change.Action != null && !change.Action.Equals("Replace") && !change.Action.Equals("Patch"))
                 problems.Add($"Unknown action `{change.Action}`");
-            if (change.Action == "Replace" && !this.Contents.AllowUnsafePatches)
-                problems.Add($"Can't use action `Replace` in safe mode! Set `AllowUnsafePatches` to `true` or remove this patch.");
-            if (change.CanOverride && !this.Contents.AllowUnsafePatches)
-                problems.Add($"Can't allow key overrides by this patch in safe mode! Set `AllowUnsafePatches` to `true` or remove this patch.");
 
             return problems;
         }

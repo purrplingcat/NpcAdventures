@@ -114,13 +114,8 @@ namespace NpcAdventure.Loader
                 
             }
 
-            var covered = AssetPatchHelper.ApplyPatch(baseData, translatedData, true);
-
-            if (covered.Count() > 0)
-            {
-                var extraAdded = translatedData.Count() - covered.Count();
-                this.monitor.Log($"Applied mod's translation to `{locale}` for `{path}`, covered {covered.Count()} keys ({extraAdded} extra added)");
-            }
+            AssetPatchHelper.ApplyPatch(baseData, translatedData);
+            this.monitor.Log($"Applied mod's translation to `{locale}` for `{path}`.");
         }
 
         /// <summary>
