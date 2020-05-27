@@ -136,6 +136,7 @@ namespace NpcAdventure.StateMachine.State
         private void GameLoop_TimeChanged(object sender, TimeChangedEventArgs e) 
         { 
             this.StateMachine.Companion.clearSchedule();
+            this.UpdateFriendship(e.NewTime);
 
             if (e.NewTime >= this.TimeToBye)
             {
@@ -185,6 +186,36 @@ namespace NpcAdventure.StateMachine.State
                 while (temp.Count > 0)
                     this.StateMachine.Companion.CurrentDialogue.Push(temp.Pop());
             }
+        }
+
+        /// <summary>
+        /// Update friendship points every whole hour
+        /// </summary>
+        /// <param name="time">Current time</param>
+        private void UpdateFriendship(int time)
+        {
+            if (time % 100 != 0 || !this.StateMachine.CompanionManager.Config.AllowGainFriendship)
+            {
+                return; // It's not whole hour? Or gain friendship is disabled? Do nothing!
+            }
+
+            var farmer = this.StateMachine.CompanionManager.Farmer;
+            var npc = this.StateMachine.Companion;
+            var points = 2;
+
+            if (farmer.friendshipData.TryGetValue(npc.Name, out Friendship friendship))
+            {
+                if (friendship.IsMarried())
+                    points = 5;
+                else if (friendship.IsDating())
+                    points = 3;
+            }
+
+            if (npc.isBirthday(Game1.Date.Season, Game1.Date.DayOfMonth))
+                points *= 2; // Gain double points if companion has birthday today
+
+            farmer.changeFriendship(points, npc);
+            this.monitor.VerboseLog($"You gained {points} friendship points with {npc.Name}");
         }
 
         private void GameLoop_UpdateTicked(object sender, UpdateTickedEventArgs e)
