@@ -41,6 +41,9 @@ namespace NpcAdventure.Loader.ContentPacks
             this.VerifyContentPack();
         }
 
+        /// <summary>
+        /// Verify loaded content pack with their data definitions
+        /// </summary>
         private void VerifyContentPack()
         {
             if (!this.CheckFormatVersion(this.FormatVersion))
@@ -62,6 +65,10 @@ namespace NpcAdventure.Loader.ContentPacks
             this.VerifyPatches(this.FormatVersion);
         }
 
+        /// <summary>
+        /// Verify defined patches in the content pack
+        /// </summary>
+        /// <param name="formatVersion"></param>
         private void VerifyPatches(ISemanticVersion formatVersion)
         {
             int num = 0; // For identify patches without log name
@@ -100,6 +107,12 @@ namespace NpcAdventure.Loader.ContentPacks
             }
         }
 
+        /// <summary>
+        /// Apply rewrites for fields in patches
+        /// </summary>
+        /// <param name="change"></param>
+        /// <param name="formatVersion"></param>
+        /// <returns></returns>
         private List<string> ApplyPatchRewrites(LegacyChanges change, ISemanticVersion formatVersion)
         {
             List<string> notices = new List<string>();
@@ -135,6 +148,11 @@ namespace NpcAdventure.Loader.ContentPacks
             return notices;
         }
 
+        /// <summary>
+        /// Validate patch definitions, checks their fields
+        /// </summary>
+        /// <param name="change"></param>
+        /// <returns></returns>
         private List<string> ValidatePatchDefinition(LegacyChanges change)
         {
             List<string> problems = new List<string>();
@@ -157,6 +175,11 @@ namespace NpcAdventure.Loader.ContentPacks
             return problems;
         }
 
+        /// <summary>
+        /// Validate format version of the content pack definition
+        /// </summary>
+        /// <param name="semanticVersion"></param>
+        /// <returns></returns>
         private bool CheckFormatVersion(ISemanticVersion semanticVersion)
         {
             foreach (var compareTo in SUPPORTED_FORMATS)
@@ -168,6 +191,14 @@ namespace NpcAdventure.Loader.ContentPacks
             return false;
         }
 
+        /// <summary>
+        /// Apply content pack to given target
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="target">Target to be patched</param>
+        /// <param name="path">Which patch (asset path)</param>
+        /// <returns>True if patch to the target was applied</returns>
         public bool Apply<TKey, TValue>(Dictionary<TKey, TValue> target, string path)
         {
             return this.legacyDataProvider.Apply(target, path);

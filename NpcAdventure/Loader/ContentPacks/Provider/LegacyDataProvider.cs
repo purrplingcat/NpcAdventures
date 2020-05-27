@@ -62,9 +62,12 @@ namespace NpcAdventure.Loader.ContentPacks.Provider
                     this.Monitor.Log($"Found content data key conflicts for `{patch.Target}` by patch `{patch.LogName}` in content pack `{contentPackName}`.", loglevel);
                     this.Monitor.Log($"   Conflicted keys: {string.Join(", ", possiblyOverrided)}", loglevel);
                     this.Monitor.Log($"Affected parts of contents {(patch.CanOverride ? "ARE OVERRIDDEN!!!" : "are NOT overridden.")}", loglevel);
+
                     if (!patch.CanOverride)
+                    {
                         this.Monitor.Log(
                             $"If you want to override these keys, you can allow it by set `CanOverride: true` on this patch and allow unsafe patches for this content pack by `AllowUnsafePatches: true`", loglevel);
+                    }
                 }
             }
 

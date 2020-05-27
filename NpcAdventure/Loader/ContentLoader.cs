@@ -40,12 +40,14 @@ namespace NpcAdventure.Loader
         }
 
         /// <summary>
-        /// Load an mod content asset
+        /// Load mod's content data asset.
+        /// Applies translations and data from content packs too if it's neccessary.
         /// </summary>
-        /// <typeparam name="TModel">Type of asset to be loaded</typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
         /// <param name="path">Name of asset, like `Strings/Strings` or `Dialogue/Abigail` and etc</param>
         /// <returns>Loaded content of asset</returns>
-        public Dictionary<TKey, TValue> Load<TKey, TValue>(string path)
+        public Dictionary<TKey, TValue> LoadData<TKey, TValue>(string path)
         {
             // Try to get asset from our map cache
             if (this.assetCache.TryGetValue(path, out object asset))
@@ -69,6 +71,16 @@ namespace NpcAdventure.Loader
             return baseData;
         }
 
+        /// <summary>
+        /// If content data asset not exists in the mod's assets, 
+        /// try to load them from content packs. 
+        /// If this asset not exists in any content pack too, 
+        /// then we print error to the log and return default empty value.
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="path"></param>
+        /// <returns></returns>
         private Dictionary<TKey, TValue> FallbackLoad<TKey, TValue>(string path)
         {
             var baseData = new Dictionary<TKey, TValue>();
@@ -118,7 +130,7 @@ namespace NpcAdventure.Loader
         /// <returns>Loaded dictionary of strings</returns>
         public Dictionary<string, string> LoadStrings(string path)
         {
-            return this.Load<string, string>(path);
+            return this.LoadData<string, string>(path);
         }
 
         /// <summary>

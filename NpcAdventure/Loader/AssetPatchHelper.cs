@@ -7,22 +7,7 @@ namespace NpcAdventure.Loader
 {
     internal static class AssetPatchHelper
     {
-        internal static IEnumerable<object> ApplyPatch<TModel>(TModel target, TModel source, bool allowOverrides)
-        {
-            if (typeof(TModel).IsGenericType && typeof(TModel).GetGenericTypeDefinition() == typeof(Dictionary<,>))
-            {
-                MethodInfo method = typeof(AssetPatchHelper).GetMethod(nameof(ApplyDictionary), BindingFlags.Static | BindingFlags.NonPublic);
-
-                if (method == null)
-                    throw new InvalidOperationException($"Can't fetch the internal {nameof(ApplyDictionary)} method.");
-
-                return (IEnumerable<object>)MakeKeyValuePatcher<TModel>(method).Invoke(null, new object[] { target, source, allowOverrides });
-            }
-
-            throw new AssetPatchException(typeof(TModel));
-        }
-
-        private static IEnumerable<object> ApplyDictionary<TKey, TValue>(IDictionary<TKey, TValue> target, IDictionary<TKey, TValue> source, bool allowOverrides)
+        internal static IEnumerable<object> ApplyPatch<TKey, TValue>(IDictionary<TKey, TValue> target, IDictionary<TKey, TValue> source, bool allowOverrides)
         {
             var conflicts = new List<object>();
 
@@ -39,8 +24,7 @@ namespace NpcAdventure.Loader
                 target[field.Key] = field.Value;
             }
 
-            var r = conflicts.Distinct();
-            return r;
+            return conflicts.Distinct();
         }
 
         internal static Dictionary<TKey, TValue> ToDictionary<TKey, TValue, SKey, SValue>(Dictionary<SKey, SValue> dict)
