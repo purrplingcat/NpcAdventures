@@ -93,6 +93,8 @@ NPC Adventures tells you if you use any content pack with allowed unsafe patches
 
 **NOTE:** Don't overuse "unsafe" patches like replacers with `Replace` action or overriding existing keys in content. This can cause some problems, unexpected behavior or affect gameplay stability. Use them if you really need to replace or override something and you are know what you do.
 
+**TRANSLATION PATCHES EXCEPTION** There are exception for translation patches (Tha patches with defined key `Locale`). These patches can override any keys without any limitations. You can't use translation patches as workaround for "unsafe" patching, because these patches are applied only for specific game localization.
+
 **OLD FORMATS NOTE:** If you use content packs whis use the older definition formats (format version 1.2 and older), these content pack will be marked as they use unsafe patches and you can see them in the log in the list of packs which allows unsafe patches and with the *DANGEROUS* note. All patches with action `Load` will be rewritten as `Replace` and `Edit` actions as `Patch` with set `CanOverride` to `true` for keep the old content packs behavior. **It's highly recommended migrate them to the newest format.**
 
 ### Localized content pack patches example
