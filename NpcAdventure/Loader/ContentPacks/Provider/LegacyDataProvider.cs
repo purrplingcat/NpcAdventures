@@ -76,7 +76,7 @@ namespace NpcAdventure.Loader.ContentPacks.Provider
 
         private List<LegacyChanges> GetPatchesForAsset(string path, string action)
         {
-            var locale = this.Managed.Pack.Translation.Locale;
+            var locale = this.Managed.Pack.Translation.Locale?.ToLower();
             var patches = this.Managed.Contents.Changes
                 .Where((p) => p.Action.Equals(action) && p.Target.Equals(path) && !p.Disabled)
                 .Where((p) => string.IsNullOrEmpty(p.Locale) || p.Locale.ToLower().Equals(locale))
