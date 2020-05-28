@@ -8,6 +8,8 @@
 - Fixed companion bags on Android (#116)
 - Fixed unexpected move of recruited spouse in FarmHouse.
 - Player can gain extra friendship points every whole hour while adventuring with companions (#109)
+- Fixed walk-in-square schedule conflict with companion following.
+- Added swimsuit sprites for Alex and Haley.
 - Fixed the "Jesus" bug in the SpA bathroom. Companions can swim (#142)
 - Mod's translation was moved to the separated folder `/locale/<localeCode>` and not requires the suffix ~~`.<localeCode>.json`~~
 - Introduced new simplified content pack definition format version *1.3*
