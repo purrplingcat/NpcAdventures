@@ -220,9 +220,7 @@ namespace NpcAdventure.StateMachine.State
 
         private void GameLoop_UpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (e.IsMultipleOf(20))
-                this.FixProblemsWithNPC();
-
+            this.FixProblemsWithNPC();
             this.ai.Update(e);
         }
 
@@ -231,15 +229,28 @@ namespace NpcAdventure.StateMachine.State
         /// </summary>
         private void FixProblemsWithNPC()
         {
-            this.StateMachine.Companion.movementPause = 0;
-            this.StateMachine.Companion.followSchedule = false;
-            this.StateMachine.Companion.ignoreScheduleToday = true;
-            this.StateMachine.Companion.Schedule = null;
-            this.StateMachine.Companion.controller = null;
-            this.StateMachine.Companion.temporaryController = null;
-            this.StateMachine.Companion.eventActor = true;
-            this.StateMachine.Companion.faceTowardFarmerTimer = 0;
-            this.StateMachine.Companion.farmerPassesThrough = true;
+            var npc = this.StateMachine.Companion;
+
+            if(npc.controller != null)
+            {
+                npc.controller.endBehaviorFunction = null;
+                npc.controller.pathToEndPoint = null;
+                npc.controller = null;
+            }
+
+            if (npc.temporaryController != null)
+            {
+                npc.temporaryController.endBehaviorFunction = null;
+                npc.temporaryController.pathToEndPoint = null;
+                npc.temporaryController = null;
+            }
+
+            npc.movementPause = 0;
+            npc.followSchedule = false;
+            npc.ignoreScheduleToday = true;
+            npc.Schedule = null;
+            npc.faceTowardFarmerTimer = 0;
+            npc.farmerPassesThrough = true;
         }
 
         private void Player_Warped(object sender, WarpedEventArgs e)

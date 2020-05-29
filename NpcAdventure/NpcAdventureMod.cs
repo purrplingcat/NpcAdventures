@@ -129,6 +129,7 @@ namespace NpcAdventure
                 new Patches.GetCharacterPatch(this.CompanionManager),
                 new Patches.NpcCheckActionPatch(this.CompanionManager, this.Helper.Input, this.Config),
                 new Patches.GameLocationDrawPatch((SpecialModEvents)this.SpecialEvents)
+                // new Patches.GameLocationUpdatePatch(this.CompanionManager)
             );
 
             if (this.Config.AvoidSayHiToMonsters)
