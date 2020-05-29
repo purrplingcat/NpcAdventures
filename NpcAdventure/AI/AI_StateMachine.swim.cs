@@ -64,11 +64,11 @@ namespace NpcAdventure.AI
             if (this.swimsuit)
                 return;
 
-            var spriteDefinitions = this.Csm.ContentLoader.LoadStrings("Data/Sprites");
+            var spriteDefinitions = this.Csm.ContentLoader.LoadStrings("Data/Swimsuits");
 
             this.swimsuit = true;
 
-            if (spriteDefinitions.TryGetValue($"{this.npc.Name}_Swimsuit", out string assetName))
+            if (spriteDefinitions.TryGetValue(this.npc.Name, out string assetName))
             {
                 this.npc.Sprite.LoadTexture(this.Csm.ContentLoader.GetAssetKey(assetName));
             } 
