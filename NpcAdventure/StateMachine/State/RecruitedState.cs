@@ -367,14 +367,41 @@ namespace NpcAdventure.StateMachine.State
                 case "bag":
                     Chest bag = this.StateMachine.Bag;
                     this.StateMachine.Companion.currentLocation.playSound("openBox");
-                    Game1.activeClickableMenu = new ItemGrabMenu(
-                        bag.items, false, true, new InventoryMenu.highlightThisItem(InventoryMenu.highlightAllItems),
-                        new ItemGrabMenu.behaviorOnItemSelect(bag.grabItemFromInventory),
-                        this.StateMachine.Companion.displayName,
-                        new ItemGrabMenu.behaviorOnItemSelect(bag.grabItemFromChest), false, true, true, true, true, 1,
-                        null, -1, this.StateMachine.Companion);
+                    Game1.activeClickableMenu = this.CreateOpenBagMenu(bag);
                     break;
             }
+        }
+
+        private IClickableMenu CreateOpenBagMenu(Chest bag)
+        {
+            if (Constants.TargetPlatform == GamePlatform.Android)
+            {
+                return new ItemGrabMenu(
+                    inventory: bag.items,
+                    reverseGrab: true,
+                    showReceivingMenu: true,
+                    highlightFunction: new InventoryMenu.highlightThisItem(InventoryMenu.highlightAllItems),
+                    behaviorOnItemSelectFunction: null,
+                    message: this.StateMachine.Companion.displayName,
+                    behaviorOnItemGrab: null,
+                    canBeExitedWithKey: true,
+                    showOrganizeButton: true,
+                    source: ItemGrabMenu.source_chest,
+                    context: this.StateMachine.Companion);
+            }
+
+            return new ItemGrabMenu(
+                inventory: bag.items,
+                reverseGrab: false,
+                showReceivingMenu: true,
+                highlightFunction: new InventoryMenu.highlightThisItem(InventoryMenu.highlightAllItems),
+                behaviorOnItemSelectFunction: new ItemGrabMenu.behaviorOnItemSelect(bag.grabItemFromInventory),
+                message: this.StateMachine.Companion.displayName,
+                behaviorOnItemGrab: new ItemGrabMenu.behaviorOnItemSelect(bag.grabItemFromChest),
+                canBeExitedWithKey: true,
+                showOrganizeButton: true,
+                source: ItemGrabMenu.source_chest,
+                context: this.StateMachine.Companion);
         }
 
         /// <summary>
