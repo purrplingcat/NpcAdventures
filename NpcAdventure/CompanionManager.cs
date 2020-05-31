@@ -14,6 +14,7 @@ using NpcAdventure.Events;
 using NpcAdventure.HUD;
 using NpcAdventure.Story;
 using NpcAdventure.Story.Messaging;
+using System.Linq;
 
 namespace NpcAdventure
 {
@@ -176,6 +177,11 @@ namespace NpcAdventure
             foreach (var csm in this.PossibleCompanions)
                 if (!csm.Value.Bag.isEmpty())
                     csm.Value.DumpBagInFarmHouse();
+        }
+
+        public List<CompanionStateMachine> GetCompanions()
+        {
+            return this.PossibleCompanions.Values.ToList();
         }
 
         /// <summary>

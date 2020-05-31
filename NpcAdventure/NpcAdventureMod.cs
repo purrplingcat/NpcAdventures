@@ -9,6 +9,7 @@ using NpcAdventure.Compatibility;
 using NpcAdventure.Story;
 using NpcAdventure.Story.Scenario;
 using NpcAdventure.Internal.Patching;
+using System.Linq;
 
 namespace NpcAdventure
 {
@@ -20,6 +21,7 @@ namespace NpcAdventure
         private DialogueDriver DialogueDriver { get; set; }
         private HintDriver HintDriver { get; set; }
         private StuffDriver StuffDriver { get; set; }
+        internal EmergencySaveDriver EmergencySaveDriver { get; private set; }
         private MailDriver MailDriver { get; set; }
         internal ISpecialModEvents SpecialEvents { get; private set; }
         internal CompanionManager CompanionManager { get; private set; }
@@ -76,6 +78,11 @@ namespace NpcAdventure
         private void GameLoop_Saving(object sender, SavingEventArgs e)
         {
             this.GameMaster.SaveData();
+
+            // Emergency save companion bags only on Android (other platforms doesn't support emergency saves)
+            if (Constants.TargetPlatform == GamePlatform.Android)
+                this.EmergencySaveDriver.EmergencySaveBags(
+                    this.CompanionManager.GetCompanions());
         }
 
         private void Display_RenderingHud(object sender, RenderingHudEventArgs e)
@@ -107,6 +114,7 @@ namespace NpcAdventure
             this.DialogueDriver = new DialogueDriver(this.Helper.Events);
             this.HintDriver = new HintDriver(this.Helper.Events);
             this.StuffDriver = new StuffDriver(this.Helper.Data, this.Monitor);
+            this.EmergencySaveDriver = new EmergencySaveDriver(this.Helper.Data, this.Monitor);
             this.MailDriver = new MailDriver(this.ContentLoader, this.Monitor);
             this.GameMaster = new GameMaster(this.Helper, new StoryHelper(this.ContentLoader), this.Monitor);
             this.CompanionHud = new CompanionDisplay(this.Config, this.ContentLoader);
@@ -234,10 +242,15 @@ namespace NpcAdventure
             if (this.Config.AdventureMode)
                 this.GameMaster.Initialize();
             else
-                this.Monitor.Log("Started in non-adventure mode", LogLevel.Info);
+                this.Monitor.Log("Started in non-adventure (classic) mode", LogLevel.Info);
 
             this.CompanionManager.InitializeCompanions(this.ContentLoader, this.Helper.Events, this.SpecialEvents, this.Helper.Reflection);
             this.Patcher.CheckPatches();
+
+            // Emergency saved bags restore only on Android (other platforms doesn't support emergency saves)
+            if (Constants.TargetPlatform == GamePlatform.Android)
+                this.EmergencySaveDriver.EmergencyRestoreBags(
+                    this.CompanionManager.GetCompanions());
         }
     }
 }
