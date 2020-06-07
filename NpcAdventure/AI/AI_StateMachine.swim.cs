@@ -61,7 +61,7 @@ namespace NpcAdventure.AI
 
         public void ChangeIntoSwimsuit()
         {
-            if (this.swimsuit)
+            if (this.swimsuit || !this.Csm.CompanionManager.Config.Experimental.UseSwimsuits)
                 return;
 
             var spriteDefinitions = this.Csm.ContentLoader.LoadStrings("Data/Swimsuits");
@@ -81,7 +81,7 @@ namespace NpcAdventure.AI
 
         public void ChangeOutOfSwimsuit()
         {
-            if (!this.swimsuit)
+            if (!this.swimsuit || !this.Csm.CompanionManager.Config.Experimental.UseSwimsuits)
                 return;
 
             this.swimsuit = false;

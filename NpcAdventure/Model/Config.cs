@@ -28,6 +28,8 @@ namespace NpcAdventure.Model
             // From version 0.13.0 or 0.14.0 as stable option (enabled by default), 
             // from version 0.16.0 will be removed and enabled hard
             public bool UseCheckForEventsPatch { get; set; } = false;
+            // From version ??? as stable option (enabled by default)
+            public bool UseSwimsuits { get; set; } = false;
         }
     }
 }
