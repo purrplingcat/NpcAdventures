@@ -5,6 +5,8 @@
 - Hardcoded forage items moved to content file
 - Added debug flags for better debugging and testing while development
 - Added special farm forages which foragers can find on the Farm (based on farm type).
+- Fixed companion bags on Android (#116)
+- Fixed unexpected move of recruited spouse in FarmHouse.
 - Player can gain extra friendship points every whole hour while adventuring with companions (#109)
 - Mod's translation was moved to the separated folder `/locale/<localeCode>` and not requires the suffix ~~`.<localeCode>.json`~~
 - Introduced new simplified content pack definition format version *1.3*
