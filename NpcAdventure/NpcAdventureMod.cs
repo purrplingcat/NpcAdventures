@@ -9,6 +9,7 @@ using NpcAdventure.Compatibility;
 using NpcAdventure.Story;
 using NpcAdventure.Story.Scenario;
 using NpcAdventure.Internal.Patching;
+using System.Collections.Generic;
 
 namespace NpcAdventure
 {
@@ -29,6 +30,7 @@ namespace NpcAdventure
         internal GameMaster GameMaster { get; private set; }
         internal Config Config { get; private set; } = new Config();
         internal ContentPackManager ContentPackManager { get; private set; }
+        internal static List<string> DebugFlags { get; } = new List<string>();
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
