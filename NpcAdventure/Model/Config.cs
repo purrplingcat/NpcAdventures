@@ -20,14 +20,12 @@ namespace NpcAdventure.Model
         public SButton RequestsShiftButton { get; set; } = SButton.LeftShift;
         public ExperimentalFeatures Experimental { get; set; } = new ExperimentalFeatures();
         public bool AllowGainFriendship { get; set; } = true;
+        public bool FightThruCompanion { get; set; } = true;
+        // from version 0.16.0 will be removed and enabled hard
+        public bool UseCheckForEventsPatch { get; set; } = true;
 
         public class ExperimentalFeatures
-        {
-            // From version 0.13.0 or 0.14.0 as stable option (enabled by default)
-            public bool FightThruCompanion { get; set; } = false;
-            // From version 0.13.0 or 0.14.0 as stable option (enabled by default), 
-            // from version 0.16.0 will be removed and enabled hard
-            public bool UseCheckForEventsPatch { get; set; } = false;
+        {    
             // From version ??? as stable option (enabled by default)
             public bool UseSwimsuits { get; set; } = false;
         }

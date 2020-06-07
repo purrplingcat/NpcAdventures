@@ -68,7 +68,7 @@ namespace NpcAdventure
 
         private void Player_Warped(object sender, WarpedEventArgs e)
         {
-            if (!this.Config.Experimental.UseCheckForEventsPatch && Context.IsWorldReady && this.GameMaster.Mode != GameMasterMode.OFFLINE)
+            if (!this.Config.UseCheckForEventsPatch && Context.IsWorldReady && this.GameMaster.Mode != GameMasterMode.OFFLINE)
             {
                 // Check for NPC Adventures events in the old way by player warped event. This way will be removed in 0.16.0
                 this.GameMaster.CheckForEvents(e.NewLocation, e.Player);
@@ -140,17 +140,20 @@ namespace NpcAdventure
                 this.Patcher.Apply(new Patches.CompanionSayHiPatch(this.CompanionManager));
             }
 
-            if (this.Config.Experimental.FightThruCompanion)
+            if (this.Config.FightThruCompanion)
             {
-                // Optional experimental patch: Avoid annoying dialogue shown while use sword over companion (patch disabled by default)
+                // Optional patch: Avoid annoying dialogue shown while use sword over companion (patch enabled by default)
                 this.Patcher.Apply(new Patches.GameUseToolPatch(this.CompanionManager));
-                this.LogExperimental("FightOverCompanion");
             }
 
-            if (this.Config.Experimental.UseCheckForEventsPatch)
+            if (this.Config.UseCheckForEventsPatch)
             {
                 this.Patcher.Apply(new Patches.CheckEventPatch(this.GameMaster));
-                this.LogExperimental("NewEventChecking");
+            }
+
+            if (this.Config.Experimental.UseSwimsuits)
+            {
+                this.LogExperimental("Support swimsuits for companions");
             }
         }
 
