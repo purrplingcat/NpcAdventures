@@ -24,7 +24,8 @@ Bellow you can see a configuration schema with default values
   "AllowGainFriendship": true, // {boolean} Enable or disable friendship points gain every whole hour while adventuring with companion.
   "Experimental": { // WARNING! This section enables experimental features which can affect gameplay and cause errors or unstability.
     "FightThruCompanion": false, // {boolean} Disable showing companion dialogue while fighting (on left-click). If the player wants to show it, they must do a right-click on a companion (this feature is disabled by default)
-    "UseCheckForEventsPatch": false // {boolean} Use patched SDV method `GameLocation.checkForEvents()` for check NPC Adventures events instead of SMAPI's player warped event. (disabled by default)
+    "UseCheckForEventsPatch": false, // {boolean} Use patched SDV method `GameLocation.checkForEvents()` for check NPC Adventures events instead of SMAPI's player warped event. (disabled by default)
+    "UseSwimsuits": false // {boolean} Allow companions to change to swimsuit in bathroom (disabled by default). Not all companions has own swimsuit!
   }
 }
 ```

@@ -121,7 +121,7 @@ namespace NpcAdventure.Utils
                     }
                     if (((Monster)location.characters[j]).Health <= 0)
                     {
-                        if (!(bool)((NetFieldBase<bool, NetBool>)location.isFarm))
+                        if (!location.IsFarm)
                             leader.checkForQuestComplete((NPC)null, 1, 1, (Item)null, location.characters[j].Name, 4, -1);
                         Monster character = location.characters[j] as Monster;
                         location.monsterDrop(character, boundingBox.Center.X, boundingBox.Center.Y, leader);

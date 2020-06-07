@@ -50,8 +50,8 @@ namespace NpcAdventure.Loader
         public Dictionary<TKey, TValue> LoadData<TKey, TValue>(string path)
         {
             // Try to get asset from our map cache
-            if (this.assetCache.TryGetValue(path, out object asset))
-                return (Dictionary<TKey, TValue>)asset;
+            /*if (this.assetCache.TryGetValue(path, out object asset))
+                return (Dictionary<TKey, TValue>)asset;*/
 
             string locale = this.Assets.CurrentLocale.ToLower();
             Dictionary<TKey, TValue> baseData;
@@ -66,7 +66,7 @@ namespace NpcAdventure.Loader
 
             this.ApplyTranslation(path, locale, baseData); // Apply translations                
             this.contentPackManager.Apply(baseData, path); // Apply content packs
-            this.assetCache.Add(path, baseData); // Save to cache
+            // this.assetCache.Add(path, baseData); // Save to cache
 
             return baseData;
         }
