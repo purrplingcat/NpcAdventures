@@ -2,6 +2,8 @@
 
 ## Upcoming version
 
+- Added random chance for quality forages
+- Fixed iridium quality index (#150)
 - Hardcoded forage items moved to content file
 - Added debug flags for better debugging and testing while development
 - Added special farm forages which foragers can find on the Farm (based on farm type).
@@ -9,7 +11,7 @@
 - Fixed unexpected move of recruited spouse in FarmHouse.
 - Player can gain extra friendship points every whole hour while adventuring with companions (#109)
 - Fixed walk-in-square schedule conflict with companion following.
-- Added swimsuit sprites for Abigail, Alex, Emily and Haley (experimental feature, must be enabled in `config.json`).
+- Added swimsuit sprites for Abigail, Alex, Emily, Haley, Sam and Sebastian (experimental feature, must be enabled in `config.json`).
 - Fixed the "Jesus" bug in the SpA bathroom. Companions can swim (#142)
 - Mod's translation was moved to the separated folder `/locale/<localeCode>` and not requires the suffix ~~`.<localeCode>.json`~~
 - Introduced new simplified content pack definition format version *1.3*
