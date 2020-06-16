@@ -22,5 +22,5 @@
   "farmType_Farm_Foraging_fall": "404 406 408 410 281 420",
   "farmType_Farm_Mining": "378 380 380 2 382",
   "farmType_Farm_Combat": "766 767",
-  "__qualityCategories": "-4 -5 -6 -14 -26 -27 -74 -75 -79 -80 -81"
+  "qualityCategories": "-4 -5 -6 -14 -26 -27 -74 -75 -79 -80 -81"
 }

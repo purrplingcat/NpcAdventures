@@ -118,11 +118,11 @@ namespace NpcAdventure.AI.Controller
             int skill = this.ForagingLevel;
             int quality = 0;
 
-            if (skill >= 8)
-                quality = 3;
-            else if (skill >= 6)
+            if (skill >= 8 && this.r.NextDouble() < .05f)
+                quality = 4;
+            else if (skill >= 6 && this.r.NextDouble() < 0.2f)
                 quality = 2;
-            else if (skill >= 2)
+            else if (skill >= 2 && this.r.NextDouble() < 0.55f)
                 quality = 1;
 
             GameLocation location = this.Forager.currentLocation;
@@ -252,8 +252,6 @@ namespace NpcAdventure.AI.Controller
             if (foragedObject == null)
                 return;
 
-            Console.Write(foragedObject.Category);
-
             // See docs: https://stardewvalleywiki.com/Modding:Object_data#Categories
             
             double shareChance = 0.42 + this.Leader.getFriendshipHeartLevelForNPC(this.Forager.Name) * 0.032;
@@ -261,7 +259,7 @@ namespace NpcAdventure.AI.Controller
 
             this.Forager.doEmote(Game1.random.NextDouble() < .1f ? 20 : 16);
 
-            if (!this.forages.TryGetValue("__qualityCategories", out int[] qualityCategories) || !qualityCategories.Contains(foragedObject.Category))
+            if (!this.forages.TryGetValue("qualityCategories", out int[] qualityCategories) || !qualityCategories.Contains(foragedObject.Category))
             {
                 // Ignore quality for objects from category which is out of bounds the quality categories.
                 foragedObject.Quality = 0;
