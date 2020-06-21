@@ -40,6 +40,10 @@ You can enable swimsuit support for companions if they enter the pool with you. 
 
 You can enable this experimental feature be set `true` for `Experimental.UseSwimsuits` in `config.json`.
 
+## Upgrading to 0.13.0 and newer (from 0.12.0 and older)
+
+Before you replace your old files with files from `0.13.0` and newer, it's recommended to delete `assets` folder and all files included in this directory and then copy new files.
+
 ## Upgrading from 0.11.0 beta to 0.12.0 and newer
 
 ### Modders
