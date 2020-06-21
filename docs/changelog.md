@@ -2,6 +2,7 @@
 
 ## Upcoming version
 
+- Removed lovely glowing when farmer recruit married spouse.
 - Added random chance for quality forages
 - Fixed iridium quality index (#150)
 - Hardcoded forage items moved to content file
