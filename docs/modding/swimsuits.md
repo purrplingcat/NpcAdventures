@@ -43,3 +43,12 @@ If you want to lookup your sprite in game folder, you must to load your file in 
   "Shane": "@purrplingcat.customshanecompanion/assets/Shane_swimsuit.png" // Lookup `assets/Shane_swimsuit.png` in the 'purrplingcat.customshanecompanion' content pack folder
 }
 ```
+
+If you define you custom content pack for NPC Adventures and you want to add your custom swimsuits for your custom NPC as companion, add to `Changes` section in `content.json` inside your content pack folder.
+
+```js
+{
+  "Target": "Data/Swimsuits",
+  "FromFile": "assets/mySwimsuits.json"
+}
+```
