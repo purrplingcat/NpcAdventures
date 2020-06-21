@@ -164,7 +164,7 @@ In your file for define forages (like `assets/myForages.json`) define your custo
 }
 ```
 
-And in `content.json` in your NPC Adventures content pack to the `Changes section` add:
+And in `content.json` in your NPC Adventures content pack to the `Changes` section add:
 
 ```js
 {
