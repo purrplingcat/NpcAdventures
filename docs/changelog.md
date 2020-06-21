@@ -1,6 +1,6 @@
 # Full changelog
 
-## Upcoming version
+## 0.13.0 beta "Useless mod"
 
 - Removed lovely glowing when farmer recruit married spouse.
 - Added random chance for quality forages
