@@ -57,7 +57,7 @@ namespace NpcAdventure
         }
         public bool RecruitCompanion(Farmer who, NPC npc, GameLocation location, bool skipDialogue = false)
         {
-            if (npcAdventureMod == null || npcAdventureMod.CompanionManager == null || !npcAdventureMod.CompanionManager.CanRecruit())
+            if (!CanRecruit())
                 return false;
             if (skipDialogue)
             {
