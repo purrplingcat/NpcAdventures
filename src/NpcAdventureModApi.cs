@@ -9,7 +9,7 @@ namespace NpcAdventure
 {
     public interface INpcAdventureModApi
     {
-        bool CanRecruitNPC();
+        bool CanRecruitCompanions();
         IEnumerable<NPC> GetPossibleCompanions();
         bool IsPossibleCompanion(string npc);
         bool IsPossibleCompanion(NPC npc);
@@ -31,7 +31,7 @@ namespace NpcAdventure
         {
             this.npcAdventureMod = npcAdventureMod;
         }
-        public bool CanRecruitNPC()
+        public bool CanRecruitCompanions()
         {
             return npcAdventureMod.CompanionManager.CanRecruit();
         }
