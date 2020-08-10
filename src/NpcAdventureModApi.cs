@@ -88,7 +88,7 @@ namespace NpcAdventure
         {
             var csm = npcAdventureMod.CompanionManager.PossibleCompanions[npc.Name];
 
-            if (CanRecruitNPC() && CanAskToFollow(npc) && CanRecruit(farmer, npc))
+            if (CanRecruitCompanions() && CanAskToFollow(npc) && CanRecruit(farmer, npc))
             {
                 csm.Recruit();
                 return true;
