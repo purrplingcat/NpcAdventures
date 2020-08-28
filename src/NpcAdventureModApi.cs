@@ -97,6 +97,8 @@ namespace NpcAdventure
         }
         public string GetFriendSpecificDialogueText(Farmer farmer, NPC npc, string key)
         {
+            if (npc == null)
+                return null;
             string text = null;
             var csm = npcAdventureMod.CompanionManager.PossibleCompanions[npc.Name];
             if (csm != null)
