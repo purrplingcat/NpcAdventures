@@ -262,5 +262,9 @@ namespace NpcAdventure
             this.CompanionManager.InitializeCompanions(this.ContentLoader, this.Helper.Events, this.SpecialEvents, this.Helper.Reflection);
             this.Patcher.CheckPatches();
         }
+        public override object GetApi()
+        {
+            return new NpcAdventureModApi(this);
+        }
     }
 }

@@ -3,6 +3,8 @@
 ## Upcoming version
 
 - Fixed log name for lockedDoorWarp error case
+- Added mod-accessible api NpcAdventureModApi
+
 
 ## 0.14.1 "Major Minority"
 

@@ -55,6 +55,7 @@ Download this mod on **[Nexusmods](https://nexusmods.com/stardewvalley/mods/4582
 - [NEW] Quest Framework based
 - [NEW] Visit companion's house any time if you have recruited them
 - [NEW] New cursor for ask to follow action
+- [NEW] Mod-accessible API
 
 Next features comming soon...
 
