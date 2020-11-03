@@ -47,9 +47,14 @@ namespace NpcAdventure
             {
                 this.Monitor.Log("Android support is an experimental feature, may cause some problems. Before you report a bug please content me on my discord https://discord.gg/wnEDqKF Thank you.", LogLevel.Alert);
             }
+
+            if (this.Config.AllowLegacyContentPacks)
+            {
+                this.Monitor.Log("Loading of legacy content packs is allowed! This may cause some unexpected side-effects.", LogLevel.Alert);
+            }
             
             this.RegisterAssetEditors(helper);
-            this.ContentPackManager = new ContentPackManager(this.Monitor, this.Config.EnableDebug);
+            this.ContentPackManager = new ContentPackManager(this.Monitor, this.Config.EnableDebug, this.Config.AllowLegacyContentPacks);
             this.ContentLoader = new ContentLoader(helper, this.ContentPackManager, this.Monitor);
             this.Patcher = new GamePatcher(this.ModManifest.UniqueID, this.Monitor, this.Config.EnableDebug);
             this.RegisterEvents(helper.Events);

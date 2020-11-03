@@ -4,7 +4,7 @@
 
 - Fixed log name for lockedDoorWarp error case
 - Added mod-accessible api NpcAdventureModApi (thx aedenthorn aka iLoveLucy)
-
+- Loading of legacy content packs (format 1.2 and older) is now DISABLED by default. (User can enable support for legacy packs in config file)
 
 ## 0.14.1 "Major Minority"
 

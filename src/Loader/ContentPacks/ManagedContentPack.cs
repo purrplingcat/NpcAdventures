@@ -9,7 +9,7 @@ namespace NpcAdventure.Loader.ContentPacks
     /// <summary>Handles loading assets from content packs.</summary>
     internal class ManagedContentPack
     {
-        public static string[] SUPPORTED_FORMATS = { "1.1", "1.2", "1.3" };
+        public static readonly string[] SUPPORTED_FORMATS = { "1.1", "1.2", "1.3" };
 
         /// <summary>The managed content pack.</summary>
         public IContentPack Pack { get; }

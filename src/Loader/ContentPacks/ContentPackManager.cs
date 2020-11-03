@@ -11,16 +11,18 @@ namespace NpcAdventure.Loader
     {
         private readonly IMonitor monitor;
         private readonly bool paranoid;
+        private readonly bool allowLegacyPacks;
         private readonly List<ManagedContentPack> packs;
 
         /// <summary>
         /// Provides patches from content packs into mod's content
         /// </summary>
         /// <param name="monitor"></param>
-        public ContentPackManager(IMonitor monitor, bool paranoid = false)
+        public ContentPackManager(IMonitor monitor, bool paranoid = false, bool allowLegacyPacks = false)
         {
             this.monitor = monitor;
             this.paranoid = paranoid;
+            this.allowLegacyPacks = allowLegacyPacks;
             this.packs = new List<ManagedContentPack>();
         }
 
@@ -38,8 +40,15 @@ namespace NpcAdventure.Loader
                 try
                 {
                     var managedPack = new ManagedContentPack(pack, this.monitor, this.paranoid);
-
+                    
                     managedPack.Load();
+
+                    if (!this.allowLegacyPacks && managedPack.FormatVersion.IsOlderThan("1.3"))
+                    {
+                        this.monitor.Log($"Content pack `{pack.Manifest.Name}` (format version {managedPack.FormatVersion}) was skipped: Loading of legacy content packs (format version 1.2 and older) is disabled for security reasons. If you want load this content pack, allow legacy content packs in config file.", LogLevel.Warn);
+                        continue;
+                    }
+
                     this.packs.Add(managedPack);
                 } catch (ContentPackException e)
                 {
