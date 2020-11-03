@@ -74,7 +74,7 @@ Under key `Changes` we must define content definitions. It's a list of dicts wit
 | -------------------- | --------- | ----------------------------------------------------------------------------------------------------- |
 | `Target`             | Yes       | The NPC Adventures mod asset you want to patch. This is the file path inside mod's assets folder, without the file extension or language (like `Dialogue/Abigail` to edit `assets/Dialogue/Abigail.json`)                 |
 | `FromFile`           | Yes       | The relative path to the content file in your content pack folder to patch into the target (like assets/dialogue/abigail.json). Supports only `.json` files.                                                             |
-| `Action`             | No        | The kind of change to make: `Replace` for replace content or load new; `Patch` for patch existing content. Undefined action is implicitly `Patch`. |
+| `Action` (optional)  | No        | The kind of change to make: `Replace` for replace content or load new; `Patch` for patch existing content. Undefined action is implicitly `Patch`. |
 | `LogName` (optional) | No        | This string replaces a default entry #no description in log with custom description                   |
 | `Locale` (optional)  | No        | **Can be used in `Patch` action only!** This key defines a lang code (like `pt-br` and etc), for which this patch can be applied. Use this in pair with the existing content in mod or with existing patch (can be used in pair with action `Replace` patch too). Locale patches are applied only for active game localization for which are defined. |
 

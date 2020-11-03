@@ -223,6 +223,7 @@ namespace NpcAdventure
 
             this.GameMaster.RegisterScenario(new AdventureBegins(this.SpecialEvents, this.QuestApi.Events, this.Helper.Events, this.ContentLoader, this.Config, this.Monitor));
             this.GameMaster.RegisterScenario(new RecruitmentScenario());
+            this.GameMaster.RegisterScenario(new CompanionCutscenes(this.ContentLoader, this.CompanionManager));
         }
 
         private void GameLoop_DayStarted(object sender, DayStartedEventArgs e)
