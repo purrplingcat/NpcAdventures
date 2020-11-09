@@ -10,7 +10,7 @@ namespace NpcAdventure.Model
         {
             string[] parts = rawMetadata.Split('/');
 
-            if (parts.Length < 6)
+            if (parts.Length < 5)
             {
                 throw new ArgumentOutOfRangeException("Companion disposition metadata arguments is invalid!");
             }
@@ -20,7 +20,9 @@ namespace NpcAdventure.Model
             this.Availability = parts[2];
             this.MinimumHearts = int.Parse(parts[3]);
             this.Price = int.Parse(parts[4]);
-            this.Sword = Helper.GetSwordId(parts[5]);
+
+            if (parts.Length >= 6)
+                this.Sword = Helper.GetSwordId(parts[5]);
         }
 
         public string Recruitable { get; private set; }
@@ -28,6 +30,6 @@ namespace NpcAdventure.Model
         public string Availability { get; private set; }
         public int MinimumHearts { get; private set; }
         public int Price { get; private set; }
-        public int Sword { get; private set; }
+        public int Sword { get; private set; } = -2;
     }
 }

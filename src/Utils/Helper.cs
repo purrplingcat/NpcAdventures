@@ -231,6 +231,10 @@ namespace NpcAdventure.Utils
             if (monster.IsInvisible)
                 return false;
 
+            // Dead monsters is not needed hunt
+            if (monster.Health <= 0)
+                return false;
+
             // Only moving rock crab is valid
             if (monster is RockCrab crab)
                 return crab.isMoving();

@@ -100,9 +100,25 @@ namespace NpcAdventure.AI.Controller
 
         private int GetSwordIndex(int fallbackSword)
         {
-            Farmer farmer = this.ai.player as Farmer;
+            Farmer farmer = this.ai.player;
+            int level = farmer?.CombatLevel ?? 0;
+            var swords = this.ai.ContentLoader.LoadMergedData<int, string>(
+                $"Data/Weapons/{this.follower.Name}", 
+                "Data/Weapons");
 
-            switch (farmer?.CombatLevel)
+            if (level == 0 && fallbackSword != -2)
+            {
+                return fallbackSword;
+            }
+
+            if (swords.TryGetValue(level, out string swordName))
+            {
+                return Helper.GetSwordId(swordName);
+            }
+
+            return -1;
+
+            /*switch (farmer?.CombatLevel)
             {
                 case 0:
                     return fallbackSword;
@@ -126,14 +142,14 @@ namespace NpcAdventure.AI.Controller
                     return 8; // Obsidian edge
                 default:
                     return 4; // Galaxy sword
-            }
+            }*/
         }
 
-        private MeleeWeapon GetSword(int sword)
+        private MeleeWeapon GetSword(int fallBackSword)
         {
-            sword = this.GetSwordIndex(sword);
+            fallBackSword = this.GetSwordIndex(fallBackSword);
 
-            return sword >= 0 ? new MeleeWeapon(sword) : null;
+            return fallBackSword >= 0 ? new MeleeWeapon(fallBackSword) : null;
         }
 
         private void World_NpcListChanged(object sender, NpcListChangedEventArgs e)

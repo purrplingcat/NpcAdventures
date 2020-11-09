@@ -56,6 +56,7 @@ namespace NpcAdventure.AI
         internal IController CurrentController { get => this.controllers[this.CurrentState]; }
 
         internal CompanionStateMachine Csm { get; }
+        public IContentLoader ContentLoader => this.Csm.ContentLoader;
 
         public event EventHandler<EventArgsLocationChanged> LocationChanged;
 
