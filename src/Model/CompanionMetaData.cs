@@ -30,6 +30,8 @@ namespace NpcAdventure.Model
         public string Availability { get; private set; }
         public int MinimumHearts { get; private set; }
         public int Price { get; private set; }
+
+        [Obsolete("Deprecated. Will be removed in version 1.0")]
         public int Sword { get; private set; } = -2;
     }
 }

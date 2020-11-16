@@ -39,6 +39,7 @@ namespace NpcAdventure.AI.Controller
         private int fistCoolDown = 0;
         private bool defendFistUsed;
         private int attackSpeedPitch = 0;
+        private WeaponAttributes weaponAttrs;
 
         public int SwingThreshold {
             get {
@@ -117,32 +118,6 @@ namespace NpcAdventure.AI.Controller
             }
 
             return -1;
-
-            /*switch (farmer?.CombatLevel)
-            {
-                case 0:
-                    return fallbackSword;
-                case 1:
-                    return 11; // Steel smallsword
-                case 2:
-                    return 1; // Silver Saber
-                case 3:
-                    return 15; // Forest sword
-                case 4:
-                    return 6; // Iron Edge
-                case 5:
-                    return 49; // Rapier
-                case 6:
-                    return 10; // Claymore
-                case 7:
-                    return 14; // Neptune's Glaive
-                case 8:
-                    return 50; // Steel Falchion
-                case 9:
-                    return 8; // Obsidian edge
-                default:
-                    return 4; // Galaxy sword
-            }*/
         }
 
         private MeleeWeapon GetSword(int fallBackSword)
@@ -327,27 +302,22 @@ namespace NpcAdventure.AI.Controller
             Rectangle effectiveArea = this.follower.GetBoundingBox();
             Rectangle enemyBox = this.leader.GetBoundingBox();
             Rectangle companionBox = this.follower.GetBoundingBox();
-            WeaponAttributes attrs = new WeaponAttributes();
-
-            if (!criticalFist && this.weapon != null)
-            {
-                attrs.SetFromWeapon(this.weapon);
-            }
+            this.weaponAttrs = new WeaponAttributes(criticalFist ? null : this.weapon);
 
             if (criticalFist)
             {
-                attrs.knockBack *= 3.6f;
-                attrs.smashAround /= 2f;
+                this.weaponAttrs.knockBack *= 1.7f;
+                this.weaponAttrs.smashAround /= 2f;
                 this.fistCoolDown = 240;
             }
 
             if (this.ai.Csm.HasSkill("warrior"))
             {
                 // Enhanced skills ONLY for WARRIORS
-                attrs.minDamage += (int)Math.Round(attrs.minDamage * .03f); // 3% added min damage
-                attrs.knockBack += attrs.knockBack * (Game1.random.Next(2, 5) / 100); // 2-5% added knock back
-                attrs.addedEffectiveArea += (int)Math.Round(attrs.addedEffectiveArea * .01f); // 1% added effective area
-                attrs.critChance += Math.Max(0, (float)Game1.player.DailyLuck / 2); // added critical chance is half of daily luck. If luck is negative, no added critical chance
+                this.weaponAttrs.minDamage += (int)Math.Round(this.weaponAttrs.minDamage * .02f); // 2% added min damage
+                this.weaponAttrs.knockBack += this.weaponAttrs.knockBack * (Game1.random.Next(1, 3) / 100); // 1-3% added knock back
+                this.weaponAttrs.addedEffectiveArea += (int)Math.Round(this.weaponAttrs.addedEffectiveArea * .01f); // 1% added effective area
+                this.weaponAttrs.critChance += Math.Max(0, (float)Game1.player.DailyLuck / 2); // added critical chance is half of daily luck. If luck is negative, no added critical chance
             }
 
             if (criticalFist && this.follower.FacingDirection != 0)
@@ -356,7 +326,7 @@ namespace NpcAdventure.AI.Controller
             }
 
             companionBox.Inflate(4, 4); // Personal space
-            effectiveArea.Inflate((int)(effectiveArea.Width * attrs.smashAround + attrs.addedEffectiveArea), (int)(effectiveArea.Height * attrs.smashAround + attrs.addedEffectiveArea));
+            effectiveArea.Inflate((int)(effectiveArea.Width * this.weaponAttrs.smashAround + this.weaponAttrs.addedEffectiveArea), (int)(effectiveArea.Height * this.weaponAttrs.smashAround + this.weaponAttrs.addedEffectiveArea));
 
             if (!criticalFist && !this.defendFistUsed && this.ai.Csm.HasSkill("warrior") && companionBox.Intersects(enemyBox) && this.weaponSwingCooldown == this.CooldownTimeout && this.fistCoolDown <= 0)
             {
@@ -366,8 +336,8 @@ namespace NpcAdventure.AI.Controller
                 return;
             }
 
-            if (this.follower.currentLocation.DamageMonsterByCompanion(effectiveArea, attrs.minDamage, attrs.maxDamage,
-                attrs.knockBack, attrs.addedPrecision, attrs.critChance, attrs.critMultiplier, !criticalFist,
+            if (this.follower.currentLocation.DamageMonsterByCompanion(effectiveArea, this.weaponAttrs.minDamage, this.weaponAttrs.maxDamage,
+                this.weaponAttrs.knockBack, this.weaponAttrs.addedPrecision, this.weaponAttrs.critChance, this.weaponAttrs.critMultiplier, !criticalFist,
                 this.follower, this.realLeader as Farmer))
             {
                 if (criticalFist)
@@ -438,19 +408,22 @@ namespace NpcAdventure.AI.Controller
         private int GetAttackPitch()
         {
             Farmer farmer = this.ai.player;
+            int combatLevel = farmer.CombatLevel;
             int weaponSpeed = this.weapon?.speed.Value ?? 400;
             int swipeDelay = (400 - weaponSpeed) / 4;
-            int combatLevel = farmer.CombatLevel;
 
             if (this.ai.Csm.HasSkill("warrior"))
             {
                 // Warriors are more skilled
-                combatLevel += farmer.combatLevel.Value >= 5 ? 2 : 1;
+                combatLevel += combatLevel > 5 ? 2 : 1;
             }
 
-            double skill = combatLevel * Math.Log(Math.Pow(combatLevel, 2) + 1) + Math.Pow(combatLevel, 2) + combatLevel;
+            double skill = Math.Max(combatLevel, 8) * Math.Log(Math.Pow(combatLevel, 2) + 1) + Math.Pow(combatLevel * 0.75, 2) + Math.Max(combatLevel, 5);
 
-            return (int)Math.Round(skill) + Game1.random.Next(-10, 10) - swipeDelay + (int)Math.Round(Game1.player.DailyLuck);
+            return (int)Math.Round(skill) 
+                + Game1.random.Next(-10, 10) 
+                - swipeDelay
+                + (int)Math.Round(Game1.player.DailyLuck);
         }
 
         private void AnimateMe()
@@ -554,26 +527,38 @@ namespace NpcAdventure.AI.Controller
             this.potentialIdle = true;
         }
 
-        private class WeaponAttributes
+        private struct WeaponAttributes
         {
-            public int minDamage = 1;
-            public int maxDamage = 3;
-            public int addedPrecision = 0;
-            public float critChance = 0f;
-            public float critMultiplier = .2f;
-            public float knockBack = 1;
-            public float smashAround = 1.5f;
-            public int addedEffectiveArea = 0;
+            public int minDamage;
+            public int maxDamage;
+            public int addedPrecision;
+            public float critChance;
+            public float critMultiplier;
+            public float knockBack;
+            public float smashAround;
+            public int addedEffectiveArea;
 
-            public void SetFromWeapon(MeleeWeapon weapon)
+            public WeaponAttributes(MeleeWeapon weapon)
             {
-                this.minDamage = weapon.minDamage.Value;
-                this.maxDamage = weapon.maxDamage.Value;
-                this.knockBack = weapon.knockback.Value;
-                this.critChance = weapon.critChance.Value;
-                this.critMultiplier = weapon.critMultiplier.Value;
-                this.addedPrecision = weapon.addedPrecision.Value;
-                this.addedEffectiveArea = weapon.addedAreaOfEffect.Value;
+                this.minDamage = 1;
+                this.maxDamage = 3;
+                this.addedPrecision = 0;
+                this.critChance = 0f;
+                this.critMultiplier = .2f;
+                this.knockBack = 1;
+                this.smashAround = 1.5f;
+                this.addedEffectiveArea = 0;
+
+                if (weapon != null)
+                {
+                    this.minDamage = weapon.minDamage.Value;
+                    this.maxDamage = weapon.maxDamage.Value;
+                    this.knockBack = weapon.knockback.Value;
+                    this.critChance = weapon.critChance.Value;
+                    this.critMultiplier = weapon.critMultiplier.Value;
+                    this.addedPrecision = weapon.addedPrecision.Value;
+                    this.addedEffectiveArea = weapon.addedAreaOfEffect.Value;
+                }
             }
         }
     }
