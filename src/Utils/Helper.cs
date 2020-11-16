@@ -190,6 +190,16 @@ namespace NpcAdventure.Utils
 
         public static Monster GetNearestMonsterToCharacter(Character me, float tileDistance, Func<Monster, bool> extraCondition)
         {
+            SortedDictionary<float, Monster> nearestMonsters = GetNearestMonstersToCharacter(me, tileDistance, extraCondition);
+
+            if (nearestMonsters.Count > 0)
+                return nearestMonsters.Values.First();
+
+            return null;
+        }
+
+        public static SortedDictionary<float, Monster> GetNearestMonstersToCharacter(Character me, float tileDistance, Func<Monster, bool> extraCondition)
+        {
             float thresDistance = tileDistance * 64f;
             SortedDictionary<float, Monster> nearestMonsters = new SortedDictionary<float, Monster>();
 
@@ -206,10 +216,12 @@ namespace NpcAdventure.Utils
                 }
             }
 
-            if (nearestMonsters.Count > 0) 
-                return nearestMonsters.Values.First();
+            return nearestMonsters;
+        }
 
-            return null;
+        public static SortedDictionary<float, Monster> GetNearestMonstersToCharacter(Character me, float tileDistance)
+        {
+            return GetNearestMonstersToCharacter(me, tileDistance, (m) => true);
         }
 
         public static Monster GetNearestMonsterToCharacter(Character me, float tileDistance)

@@ -153,5 +153,9 @@ namespace NpcAdventure.AI.Controller
             this.leaderLastTileCheckPoint = this.negativeOne;
             this.joystick.Reset();
         }
+
+        public virtual void SideUpdate(UpdateTickedEventArgs e)
+        {
+        }
     }
 }

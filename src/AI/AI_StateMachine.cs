@@ -26,6 +26,7 @@ namespace NpcAdventure.AI
             FIGHT,
             IDLE,
             FORAGE,
+            SPIRITUAL
         }
 
         private const string FORAGING_COOLDOWN = "foragingCooldown";
@@ -71,6 +72,7 @@ namespace NpcAdventure.AI
                 [State.FIGHT] = new FightController(this, this.loader, this.events, this.Csm.Metadata.Sword),
                 [State.IDLE] = new IdleController(this, this.loader),
                 [State.FORAGE] = new ForageController(this, this.events),
+                [State.SPIRITUAL] = new LovePeaceController(this)
             };
 
             // By default AI following the player
@@ -170,6 +172,14 @@ namespace NpcAdventure.AI
                 this.Monitor.Log("A 50ft monster is here!");
             }
 
+            if (this.Csm.HasSkill("spiritual")
+                && !this.cooldown.IsRunning(CHANGE_STATE_COOLDOWN)
+                && this.CurrentState != State.SPIRITUAL
+                && (this.controllers[State.SPIRITUAL] as LovePeaceController).IsAngryMonstersHere)
+            {
+                this.ChangeState(State.SPIRITUAL);
+            }
+
             if (this.CurrentState != State.FOLLOW && this.CurrentController.IsIdle)
             {
                 this.cooldown.Set(CHANGE_STATE_COOLDOWN, 100);
@@ -210,6 +220,9 @@ namespace NpcAdventure.AI
 
             if (this.CurrentController != null)
                 this.CurrentController.Update(e);
+
+            foreach (var controller in this.controllers.Values)
+                controller.SideUpdate(e);
         }
 
         /// <summary>
