@@ -50,7 +50,7 @@ namespace NpcAdventure.Loader
         public Dictionary<TKey, TValue> LoadData<TKey, TValue>(string path)
         {
             if (!this.TryLoadData<TKey, TValue>(path, out var data))
-                this.monitor.Log($"Cannot load asset: path", LogLevel.Error);
+                this.monitor.Log($"Cannot load asset: {path}", LogLevel.Error);
 
             return data;
         }
@@ -88,12 +88,7 @@ namespace NpcAdventure.Loader
         {
             fallbackData = new Dictionary<TKey, TValue>();
 
-            if (!this.contentPackManager.Apply(fallbackData, path))
-                return true;
-
-            this.monitor.Log($"Cannot load asset `{path}`", LogLevel.Error);
-
-            return false;
+            return this.contentPackManager.Apply(fallbackData, path);
         }
 
         private bool HasFile(string path)
