@@ -74,7 +74,6 @@ namespace NpcAdventure
         {
             events.GameLoop.SaveLoaded += this.GameLoop_SaveLoaded;
             events.GameLoop.Saving += this.GameLoop_Saving;
-            events.Specialized.LoadStageChanged += this.Specialized_LoadStageChanged;
             events.GameLoop.ReturnedToTitle += this.GameLoop_ReturnedToTitle;
             events.GameLoop.DayEnding += this.GameLoop_DayEnding;
             events.GameLoop.DayStarted += this.GameLoop_DayStarted;
@@ -184,36 +183,6 @@ namespace NpcAdventure
         {
             this.Monitor.Log($"You are enabled experimental feature '{featureName}' in mod's config.json.", LogLevel.Warn);
             this.Monitor.Log("   This feature may affect game stability, you can disable it in config.json", LogLevel.Warn);
-        }
-
-        private void Specialized_LoadStageChanged(object sender, LoadStageChangedEventArgs e)
-        {
-            if (e.NewStage == StardewModdingAPI.Enums.LoadStage.Loaded)
-            {
-                this.PreloadAssets();
-            }
-        }
-
-        private void PreloadAssets()
-        {
-            /* Preload assets to cache */
-            this.Monitor.Log("Preloading assets...", LogLevel.Info);
-
-            var dispositions = this.ContentLoader.LoadStrings("Data/CompanionDispositions");
-
-            this.ContentLoader.LoadStrings("Data/AnimationDescriptions");
-            this.ContentLoader.LoadStrings("Data/IdleBehaviors");
-            this.ContentLoader.LoadStrings("Data/IdleNPCDefinitions");
-            this.ContentLoader.LoadStrings("Strings/Strings");
-            this.ContentLoader.LoadStrings("Strings/SpeechBubbles");
-
-            // Preload dialogues for companions
-            foreach (string npcName in dispositions.Keys)
-            {
-                this.ContentLoader.LoadStrings($"Dialogue/{npcName}");
-            }
-
-            this.Monitor.Log("Assets preloaded!", LogLevel.Info);
         }
 
         private void InitializeScenarios()
