@@ -153,7 +153,8 @@ namespace NpcAdventure
                 new Patches.GetCharacterPatch(this.CompanionManager),
                 new Patches.NpcCheckActionPatch(this.CompanionManager, this.Helper.Input, this.Config),
                 new Patches.GameLocationDrawPatch((SpecialModEvents)this.SpecialEvents),
-                new Patches.GameLocationPerformActionPatch(this.CompanionManager, this.Config.AllowEntryLockedCompanionHouse)
+                new Patches.GameLocationPerformActionPatch(this.CompanionManager, this.Config.AllowEntryLockedCompanionHouse),
+                new Patches.MonsterBehaviorPatch(this.CompanionManager)
             );
 
             if (this.Config.AvoidSayHiToMonsters)

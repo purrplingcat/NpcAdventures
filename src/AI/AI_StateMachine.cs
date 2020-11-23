@@ -34,6 +34,15 @@ namespace NpcAdventure.AI
         private const string SCARED_COOLDOWN = "scaredCooldown";
         public readonly NPC npc;
         public readonly Farmer player;
+
+        public bool IsLovedMonster(Monster monster)
+        {
+            if (!this.Csm.HasSkill("spiritual"))
+                return false;
+
+            return (this.controllers[State.SPIRITUAL] as LovePeaceController).IsLovedMonster(monster);
+        }
+
         private readonly CompanionDisplay hud;
         private readonly IModEvents events;
         internal IMonitor Monitor { get; private set; }
@@ -307,6 +316,11 @@ namespace NpcAdventure.AI
             if (Context.IsWorldReady && this.CurrentController is IDrawable drawableController)
             {
                 drawableController.Draw(spriteBatch);
+            }
+
+            if (Context.IsWorldReady && this.Csm.HasSkill("spiritual"))
+            {
+                (this.controllers[State.SPIRITUAL] as LovePeaceController).DrawLove(spriteBatch);
             }
         }
     }

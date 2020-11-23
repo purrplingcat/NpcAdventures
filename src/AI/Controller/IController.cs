@@ -1,5 +1,6 @@
 ﻿using PurrplingCore.Internal;
 using StardewModdingAPI.Events;
+using StardewValley.Monsters;
 
 namespace NpcAdventure.AI.Controller
 {

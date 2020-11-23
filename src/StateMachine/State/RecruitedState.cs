@@ -29,6 +29,12 @@ namespace NpcAdventure.StateMachine.State
         public bool CanPerformAction { get; private set; }
         private BuffManager BuffManager { get; set; }
         public ISpecialModEvents SpecialEvents { get; }
+
+        public AI_StateMachine GetAI()
+        {
+            return this.ai;
+        }
+
         public int TimeToBye { get; private set; }
 
         public RecruitedState(CompanionStateMachine stateMachine, IModEvents events, ISpecialModEvents specialEvents, IMonitor monitor) : base(stateMachine, events, monitor)

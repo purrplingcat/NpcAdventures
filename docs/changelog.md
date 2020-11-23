@@ -9,6 +9,8 @@
 - Added support for custom weapons for all combat levels (supports JSON assets weapons)
 - Redefined swords for (almost) each companion
 - Tuned fighting behavior
+- Added new companion skill: spiritual - sends love&peace to monsters and they don't attack on farmer
+- Reassigned companion skill: Emily is now spiritual and do not fight with monsters
 
 ## 0.14.1 "Major Minority"
 

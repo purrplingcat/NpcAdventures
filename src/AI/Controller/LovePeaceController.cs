@@ -1,7 +1,10 @@
-﻿using NpcAdventure.Utils;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using NpcAdventure.Utils;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Monsters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,10 +15,12 @@ namespace NpcAdventure.AI.Controller
         public const float DEFEND_TILE_RADIUS = 3f;
 
         private readonly List<LovedMonster> lovedMonsters;
+        private readonly Texture2D loveTexture;
 
         public LovePeaceController(AI_StateMachine ai) : base(ai)
         {
             this.lovedMonsters = new List<LovedMonster>();
+            this.loveTexture = Game1.content.Load<Texture2D>(ai.ContentLoader.GetAssetKey("~/Sprites/love.png"));
         }
 
         public bool IsAngryMonstersHere => this.FindAngryMonsters().Count() > 0;
@@ -31,13 +36,18 @@ namespace NpcAdventure.AI.Controller
                         continue;
 
                     this.lovedMonsters.Add(new LovedMonster(monster, 10000, 1200));
-                    monster.showTextAboveHead("<");
+                    monster.doEmote(20);
                 }
 
                 this.follower.doEmote(20);
             }
             
             base.Update(e);
+        }
+
+        public bool IsLovedMonster(Monster monster)
+        {
+            return this.lovedMonsters.Any(lm => lm.Monster == monster && lm.TTL > 0);
         }
 
         public override void SideUpdate(UpdateTickedEventArgs e)
@@ -91,14 +101,30 @@ namespace NpcAdventure.AI.Controller
                 .Where(m => Helper.IsValidMonster(m) && !this.lovedMonsters.Any(lm => lm.Monster == m));
         }
 
+        public void DrawLove(SpriteBatch spriteBatch)
+        {
+            Vector2 lovePosition;
+
+            foreach (var lovedMonster in this.lovedMonsters.Where(lm => lm.TTL > 0))
+            {
+                lovePosition = lovedMonster.Monster.getLocalPosition(Game1.viewport);
+                lovePosition.X += lovedMonster.Monster.Sprite.SpriteWidth / 2 + this.loveTexture.Width;
+                lovePosition.Y -= 24f;
+
+                spriteBatch.Draw(this.loveTexture, lovePosition, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+            }
+        }
+
         private class LovedMonster
         {
             public Monster Monster { get; }
             public int OriginalDamage { get; }
             public int OriginalThreshold { get; }
             public int TTL { get; private set; }
-            public int LoveInvicibility { get; }
+            public int LoveInvicibility { get; private set; }
             public int LastHealth { get; private set; }
+            public Vector2 LastVelocity { get; private set; }
+            public bool LastCharging { get; private set; }
 
             public LovedMonster(Monster monster, int ttl, int loveInvicibility)
             {
@@ -107,6 +133,8 @@ namespace NpcAdventure.AI.Controller
                 this.OriginalThreshold = monster.moveTowardPlayerThreshold.Value;
                 this.LoveInvicibility = loveInvicibility;
                 this.LastHealth = this.Monster.Health;
+                this.LastVelocity = new Vector2(monster.xVelocity, monster.yVelocity);
+                this.LastCharging = monster.isCharging;
                 this.TTL = ttl;
             }
 
@@ -119,6 +147,24 @@ namespace NpcAdventure.AI.Controller
                 this.Monster.farmerPassesThrough = true;
                 this.LastHealth = this.Monster.Health;
                 this.TTL -= Game1.currentGameTime.ElapsedGameTime.Milliseconds;
+
+                if (this.Monster is Fly fly)
+                {
+                    fly.xVelocity = this.LastVelocity.X;
+                    fly.yVelocity = this.LastVelocity.Y;
+                }
+
+                if (this.Monster is Bug bug)
+                {
+                    bug.setMovingInFacingDirection();
+                }
+
+                if ((double)this.Monster.Position.X < 0.0 || (double)this.Monster.Position.X > (double)(this.Monster.currentLocation.map.GetLayer("Back").LayerWidth * 64) || ((double)this.Monster.Position.Y < 0.0 || (double)this.Monster.Position.Y > (double)(this.Monster.currentLocation.map.GetLayer("Back").LayerHeight * 64)))
+                {
+                    this.TTL = 0;
+                    this.LoveInvicibility = 0;
+                    this.Monster.currentLocation.characters.Remove(this.Monster);
+                }
             }
 
             public void RevokeLove()
@@ -126,6 +172,7 @@ namespace NpcAdventure.AI.Controller
                 this.Monster.DamageToFarmer = this.OriginalDamage;
                 this.Monster.moveTowardPlayerThreshold.Value = this.OriginalThreshold;
                 this.LastHealth = this.Monster.Health;
+                this.Monster.isCharging = this.LastCharging;
                 this.TTL -= Game1.currentGameTime.ElapsedGameTime.Milliseconds;
             }
         }
