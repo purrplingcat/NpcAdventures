@@ -13,6 +13,6 @@ namespace NpcAdventure.Loader.ContentPacks.Data
         public List<Dialogues> Dialogues { get; set; }
 
         // Legacy field (formats 1.1 - 1.3)
-        public List<LegacyChanges> Changes { get; set; }
+        public List<ContentChange> Changes { get; set; }
     }
 }

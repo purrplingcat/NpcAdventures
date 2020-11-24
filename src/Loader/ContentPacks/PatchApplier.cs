@@ -45,7 +45,7 @@ namespace NpcAdventure.Loader.ContentPacks
                 var patchData = patch.LoadData<TKey, TValue>();
 
                 AssetPatchHelper.ApplyPatch(target, patchData);
-                this.Monitor.Log($"Content pack `{contentPackName}` applied{(isLocalized ? $" `{patch.Change.Locale}` translation" : "")} patch `{patch.Change.LogName}` for `{targetName}`");
+                this.Monitor.Log($"Content pack `{contentPackName}` applied{(isLocalized ? $" `{patch.Change.Locale}` translation" : "")} patch `{patch.Change.LogName}` ({patch.Change.Action} type) for `{targetName}`");
             }
 
             return true;

@@ -45,9 +45,9 @@ namespace NpcAdventure.Loader
                     
                     managedPack.Load();
 
-                    if (!this.allowLegacyPacks && managedPack.FormatVersion.IsOlderThan("1.3"))
+                    if (!this.allowLegacyPacks && managedPack.IsLegacy())
                     {
-                        this.monitor.Log($"Content pack `{pack.Manifest.Name}` (format version {managedPack.FormatVersion}) was skipped: Loading of legacy content packs (format version 1.2 and older) is disabled for security reasons. If you want load this content pack, allow legacy content packs in config file.", LogLevel.Warn);
+                        this.monitor.Log($"Content pack `{pack.Manifest.Name}` (format version {managedPack.FormatVersion}) was skipped: Loading of legacy content packs (format version 1.2 and older) is disabled for security reasons. If you want load this content pack, allow legacy content packs in config file.", LogLevel.Error);
                         continue;
                     }
 
@@ -77,6 +77,7 @@ namespace NpcAdventure.Loader
         {
             var patches = from pack in this.packs
                           from patch in pack.GetPatchesForTarget(path)
+                          orderby patch.Priority ascending
                           select patch;
 
             return this.applier.Apply(target, patches, path);
@@ -89,9 +90,11 @@ namespace NpcAdventure.Loader
         /// <param name="packs"></param>
         private void CheckCurrentFormat(List<ManagedContentPack> packs)
         {
-            var currentFormatVersion = ManagedContentPack.SUPPORTED_FORMATS[ManagedContentPack.SUPPORTED_FORMATS.Length - 1];
+            var currentFormatVersionMax = ManagedContentPack.SUPPORTED_FORMATS[ManagedContentPack.SUPPORTED_FORMATS.Length - 1];
+            var currentFormatVersionMin = ManagedContentPack.SUPPORTED_FORMATS[ManagedContentPack.SUPPORTED_FORMATS.Length - 2];
+
             var usesOldFormat = from pack in packs
-                                where pack.FormatVersion.IsOlderThan(currentFormatVersion)
+                                where !pack.FormatVersion.IsBetween(currentFormatVersionMin, currentFormatVersionMax)
                                 select pack;
 
             if (usesOldFormat.Count() > 0)

@@ -10,7 +10,7 @@ namespace NpcAdventure.Loader.ContentPacks
     /// <summary>Handles loading assets from content packs.</summary>
     internal class ManagedContentPack
     {
-        public static readonly string[] SUPPORTED_FORMATS = { "1.1", "1.2", "1.3" };
+        public static readonly string[] SUPPORTED_FORMATS = { "1.1", "1.2", "1.3", "1.4" };
 
         /// <summary>The managed content pack.</summary>
         public IContentPack Pack { get; }
@@ -40,7 +40,15 @@ namespace NpcAdventure.Loader.ContentPacks
             this.MapPatches(contents.Changes);
         }
 
-        private void MapPatches(List<LegacyChanges> changes)
+        public bool IsLegacy()
+        {
+            if (this.FormatVersion == null)
+                throw new ContentPackException($"Content pack {this.UniqueId} is not loaded yet!");
+
+            return this.FormatVersion.IsOlderThan("1.3");
+        }
+
+        private void MapPatches(List<ContentChange> changes)
         {
             this.Patches = from change in changes select new ManagedPatch(change, this);
         }
@@ -53,6 +61,9 @@ namespace NpcAdventure.Loader.ContentPacks
             if (!this.CheckFormatVersion(this.FormatVersion))
                 throw new ContentPackException($"Unsupported format `{contents.Format}`");
 
+            if (contents.Changes == null)
+                throw new ContentPackException($"Mandatory field `Changes` is not defined in pack {this.UniqueId}");
+
             this.Monitor.Log($"      Detected format version {this.FormatVersion}");
 
             this.VerifyPatches(contents.Changes, this.FormatVersion);
@@ -62,7 +73,7 @@ namespace NpcAdventure.Loader.ContentPacks
         /// Verify defined patches in the content pack
         /// </summary>
         /// <param name="formatVersion"></param>
-        private void VerifyPatches(List<LegacyChanges> changes, ISemanticVersion formatVersion)
+        private void VerifyPatches(List<ContentChange> changes, ISemanticVersion formatVersion)
         {
             int num = 0; // For identify patches without log name
             for (int i = 0; i < changes.Count; i++)
@@ -97,7 +108,7 @@ namespace NpcAdventure.Loader.ContentPacks
         /// <param name="change"></param>
         /// <param name="formatVersion"></param>
         /// <returns></returns>
-        private List<string> ApplyPatchRewrites(LegacyChanges change, ISemanticVersion formatVersion)
+        private List<string> ApplyPatchRewrites(ContentChange change, ISemanticVersion formatVersion)
         {
             List<string> notices = new List<string>();
 
@@ -110,7 +121,6 @@ namespace NpcAdventure.Loader.ContentPacks
 
             if (formatVersion.IsOlderThan("1.2") && !string.IsNullOrEmpty(change.LogName))
             {
-                // Locales exists in format version 1.2 and newer. For older formats is locale undefined
                 change.LogName = null;
                 notices.Add($"Ignore field `LogName` in format version `{formatVersion}`");
             }
@@ -133,6 +143,12 @@ namespace NpcAdventure.Loader.ContentPacks
                 notices.Add($"Detected content replacer `{change.LogName}` for `{change.Target}`");
             }
 
+            if (formatVersion.IsOlderThan("1.4") && change.Priority != 0)
+            {
+                change.Priority = 0;
+                notices.Add($"Discard value for field `Priority` in format version `{formatVersion}` (unsupported field)");
+            }
+
             return notices;
         }
 
@@ -141,7 +157,7 @@ namespace NpcAdventure.Loader.ContentPacks
         /// </summary>
         /// <param name="change"></param>
         /// <returns></returns>
-        private List<string> ValidatePatchDefinition(LegacyChanges change)
+        private List<string> ValidatePatchDefinition(ContentChange change)
         {
             List<string> problems = new List<string>();
 
@@ -193,6 +209,9 @@ namespace NpcAdventure.Loader.ContentPacks
 
         public IEnumerable<ManagedPatch> GetPatchesForTarget(string targetPath)
         {
+            if (this.Patches == null)
+                throw new ContentPackException($"Content pack {this.UniqueId} is not loaded yet!");
+
             var patches = new List<ManagedPatch>();
 
             patches.AddRange(this.GetPatchesForAsset(targetPath, "Replace"));
