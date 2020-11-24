@@ -13,6 +13,7 @@ namespace NpcAdventure.Loader
         private readonly bool paranoid;
         private readonly bool allowLegacyPacks;
         private readonly List<ManagedContentPack> packs;
+        private readonly PatchApplier applier;
 
         /// <summary>
         /// Provides patches from content packs into mod's content
@@ -24,6 +25,7 @@ namespace NpcAdventure.Loader
             this.paranoid = paranoid;
             this.allowLegacyPacks = allowLegacyPacks;
             this.packs = new List<ManagedContentPack>();
+            this.applier = new PatchApplier(monitor, paranoid);
         }
 
         /// <summary>
@@ -39,7 +41,7 @@ namespace NpcAdventure.Loader
             {
                 try
                 {
-                    var managedPack = new ManagedContentPack(pack, this.monitor, this.paranoid);
+                    var managedPack = new ManagedContentPack(pack, this.monitor);
                     
                     managedPack.Load();
 
@@ -73,14 +75,11 @@ namespace NpcAdventure.Loader
         /// <returns>True if any patch was applied on the target</returns>
         public bool Apply<TKey, TValue>(Dictionary<TKey, TValue> target, string path)
         {
-            bool applied = false;
+            var patches = from pack in this.packs
+                          from patch in pack.GetPatchesForTarget(path)
+                          select patch;
 
-            foreach (var pack in this.packs)
-            {
-                applied |= pack.Apply(target, path);
-            }
-
-            return applied;
+            return this.applier.Apply(target, patches, path);
         }
 
         /// <summary>
@@ -111,8 +110,8 @@ namespace NpcAdventure.Loader
         private void CheckForUsingReplacers(List<ManagedContentPack> packs)
         {
             var unsafePacks = (from pack in packs
-                              from patch in pack.Contents.Changes
-                              where patch.Action == "Replace"
+                              from patch in pack.Patches
+                              where patch.Change.Action == "Replace"
                               select pack).Distinct();
 
             if (unsafePacks.Count() > 0)

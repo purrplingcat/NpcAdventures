@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NpcAdventure.Loader.ContentPacks.Data;
 using NpcAdventure.Loader.ContentPacks.Provider;
 using NpcAdventure.Utils;
@@ -14,19 +15,16 @@ namespace NpcAdventure.Loader.ContentPacks
         /// <summary>The managed content pack.</summary>
         public IContentPack Pack { get; }
         public IMonitor Monitor { get; }
-
-        private readonly LegacyDataProvider legacyDataProvider;
-
-        public Contents Contents { get; private set; }
-        public ISemanticVersion FormatVersion { get; internal set; }
+        public ISemanticVersion FormatVersion { get; private set; }
+        public IEnumerable<ManagedPatch> Patches { get; private set; }
+        public string UniqueId { get => this.Pack.Manifest.UniqueID; }
 
         /// <summary>Construct an instance.</summary>
         /// <param name="pack">The content pack to manage.</param>
-        public ManagedContentPack(IContentPack pack, IMonitor monitor, bool paranoid = false)
+        public ManagedContentPack(IContentPack pack, IMonitor monitor)
         {
-            this.Pack = pack;
-            this.Monitor = monitor;
-            this.legacyDataProvider = new LegacyDataProvider(this, paranoid);
+            this.Pack = pack ?? throw new System.ArgumentNullException(nameof(pack));
+            this.Monitor = monitor ?? throw new System.ArgumentNullException(nameof(monitor));
         }
 
         public void Load()
@@ -36,34 +34,40 @@ namespace NpcAdventure.Loader.ContentPacks
             if (!this.Pack.HasFile("content.json"))
                 throw new ContentPackException("Declaration file `content.json` not found!");
 
-            this.Contents = this.Pack.ReadJsonFile<Contents>("content.json");
-            this.FormatVersion = new SemanticVersion(this.Contents.Format);
-            this.VerifyContentPack();
+            var contents = this.Pack.ReadJsonFile<Contents>("content.json");
+            this.FormatVersion = new SemanticVersion(contents.Format);
+            this.VerifyContentPack(contents);
+            this.MapPatches(contents.Changes);
+        }
+
+        private void MapPatches(List<LegacyChanges> changes)
+        {
+            this.Patches = from change in changes select new ManagedPatch(change, this);
         }
 
         /// <summary>
         /// Verify loaded content pack with their data definitions
         /// </summary>
-        private void VerifyContentPack()
+        private void VerifyContentPack(Contents contents)
         {
             if (!this.CheckFormatVersion(this.FormatVersion))
-                throw new ContentPackException($"Unsupported format `{this.Contents.Format}`");
+                throw new ContentPackException($"Unsupported format `{contents.Format}`");
 
             this.Monitor.Log($"      Detected format version {this.FormatVersion}");
 
-            this.VerifyPatches(this.FormatVersion);
+            this.VerifyPatches(contents.Changes, this.FormatVersion);
         }
 
         /// <summary>
         /// Verify defined patches in the content pack
         /// </summary>
         /// <param name="formatVersion"></param>
-        private void VerifyPatches(ISemanticVersion formatVersion)
+        private void VerifyPatches(List<LegacyChanges> changes, ISemanticVersion formatVersion)
         {
             int num = 0; // For identify patches without log name
-            for (int i = 0; i < this.Contents.Changes.Count; i++)
+            for (int i = 0; i < changes.Count; i++)
             {
-                var change = this.Contents.Changes[i];
+                var change = changes[i];
                 var rewriteNotices = this.ApplyPatchRewrites(change, formatVersion);
                 var errors = this.ValidatePatchDefinition(change);
 
@@ -80,7 +84,7 @@ namespace NpcAdventure.Loader.ContentPacks
                 {
                     this.Monitor.Log($"Skipped content pack `{this.Pack.Manifest.Name}` patch `{change.LogName}` due to errors:", LogLevel.Error);
                     errors.ForEach(e => this.Monitor.Log($"   - {e}", LogLevel.Error));
-                    this.Contents.Changes.RemoveAt(i--);
+                    changes.RemoveAt(i--);
                 }
 
                 num++;
@@ -171,17 +175,31 @@ namespace NpcAdventure.Loader.ContentPacks
             return false;
         }
 
-        /// <summary>
-        /// Apply content pack to given target
-        /// </summary>
-        /// <typeparam name="TKey"></typeparam>
-        /// <typeparam name="TValue"></typeparam>
-        /// <param name="target">Target to be patched</param>
-        /// <param name="path">Which patch (asset path)</param>
-        /// <returns>True if patch to the target was applied</returns>
-        public bool Apply<TKey, TValue>(Dictionary<TKey, TValue> target, string path)
+        private List<ManagedPatch> GetPatchesForAsset(string path, string action)
         {
-            return this.legacyDataProvider.Apply(target, path);
+            return this.Patches
+                .Where((p) => p.Change.Action.Equals(action) && p.Change.Target.Equals(path) && !p.Disabled)
+                .Where((p) => string.IsNullOrEmpty(p.Change.Locale))
+                .ToList();
+        }
+
+        private List<ManagedPatch> GetTranslationPatches(string path, string locale)
+        {
+            return this.Patches
+                .Where((p) => p.Change.Action.Equals("Patch") && p.Change.Target.Equals(path) && !p.Disabled)
+                .Where((p) => !string.IsNullOrEmpty(p.Change.Locale) && p.Change.Locale.ToLower().Equals(locale))
+                .ToList();
+        }
+
+        public IEnumerable<ManagedPatch> GetPatchesForTarget(string targetPath)
+        {
+            var patches = new List<ManagedPatch>();
+
+            patches.AddRange(this.GetPatchesForAsset(targetPath, "Replace"));
+            patches.AddRange(this.GetPatchesForAsset(targetPath, "Patch"));
+            patches.AddRange(this.GetTranslationPatches(targetPath, this.Pack.Translation.Locale?.ToLower()));
+
+            return patches;
         }
     }
 }
