@@ -1,0 +1,18 @@
+{
+  "Name": "NPC Adventures PacifistValley",
+  "Author": "PurrplingCat",
+  "Version": "1.0.0",
+  "Description": "Makes NPC Adventures better compatible with PacifistValley",
+  "UniqueID": "purrplingcat.npcadventure.pacifistvalley",
+  "MinimumApiVersion": "3.1.0",
+  "UpdateKeys": ["Nexus:4582"],
+  "ContentPackFor": {
+    "UniqueID": "purrplingcat.npcadventure",
+    "MinimumVersion": "0.15.0-alpha"
+  },
+  "Dependencies": [
+    {
+      "UniqueID": "Aedenthorn.PacifistValley"
+    }
+  ]
+}

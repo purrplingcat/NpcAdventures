@@ -11,6 +11,7 @@
 - Tuned fighting behavior
 - Added new companion skill: spiritual - sends love&peace to monsters and they don't attack on farmer
 - Reassigned companion skill: Emily is now spiritual and do not fight with monsters
+- Added compatibility with PacifistValley mod (needs install compatibility content pack too)
 
 ## 0.14.1 "Major Minority"
 

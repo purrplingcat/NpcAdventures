@@ -129,7 +129,7 @@ namespace NpcAdventure.AI.Controller
             return 0;
         }
 
-        public void DriveSpeed()
+        public virtual void DriveSpeed()
         {
             Point fp = this.follower.GetBoundingBox().Center;
             Point lp = this.leader.GetBoundingBox().Center;

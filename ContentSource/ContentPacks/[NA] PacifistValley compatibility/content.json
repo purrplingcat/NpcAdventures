@@ -1,0 +1,75 @@
+{
+  "Format": "1.3",
+  "Changes": [
+    {
+      "LogName": "Change spirituals to lovers (fighters)",
+      "Target": "Data/CompanionDispositions",
+      "FromFile": "assets/companions.json"
+    },
+    {
+      "LogName": "Totally not weapons",
+      "Target": "Data/Weapons",
+      "FromFile": "assets/not-weapons.json"
+    },
+    {
+      "LogName": "Abigail's love stuff",
+      "Target": "Data/Weapons/Abigail",
+      "FromFile": "assets/not-weapons.json"
+    },
+    {
+      "LogName": "Alex's love stuff",
+      "Target": "Data/Weapons/Alex",
+      "FromFile": "assets/not-weapons.json"
+    },
+    {
+      "LogName": "Elliott's love stuff",
+      "Target": "Data/Weapons/Elliott",
+      "FromFile": "assets/not-weapons.json"
+    },
+    {
+      "LogName": "Haley's love stuff",
+      "Target": "Data/Weapons/Haley",
+      "FromFile": "assets/not-weapons.json"
+    },
+    {
+      "LogName": "Harvey's love stuff",
+      "Target": "Data/Weapons/Harvey",
+      "FromFile": "assets/not-weapons.json"
+    },
+    {
+      "LogName": "Leah's love stuff",
+      "Target": "Data/Weapons/Leah",
+      "FromFile": "assets/not-weapons.json"
+    },
+    {
+      "LogName": "Maru's love stuff",
+      "Target": "Data/Weapons/Maru",
+      "FromFile": "assets/not-weapons.json"
+    },
+    {
+      "LogName": "Penny's love stuff",
+      "Target": "Data/Weapons/Penny",
+      "FromFile": "assets/not-weapons.json"
+    },
+    {
+      "LogName": "Sam's love stuff",
+      "Target": "Data/Weapons/Sam",
+      "FromFile": "assets/not-weapons.json"
+    },
+    {
+      "LogName": "Sebastian's love stuff",
+      "Target": "Data/Weapons/Sebastian",
+      "FromFile": "assets/not-weapons.json"
+    },
+    {
+      "LogName": "Shane's love stuff",
+      "Target": "Data/Weapons/Shane",
+      "FromFile": "assets/not-weapons.json"
+    },
+    {
+      "LogName": "Kiss frames",
+      "Target": "Data/FightFrames",
+      "FromFile": "assets/kissframes.json"
+    }
+  ]
+}

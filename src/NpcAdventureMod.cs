@@ -35,12 +35,14 @@ namespace NpcAdventure
         internal ContentPackManager ContentPackManager { get; private set; }
         internal static List<string> DebugFlags { get; } = new List<string>();
         internal static IManifest Manifest { get; private set; }
+        internal static IReflectionHelper Reflection { get; private set; }
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
             Manifest = this.ModManifest;
+            Reflection = helper.Reflection;
             this.Config = helper.ReadConfig<Config>();
 
             if (Constants.TargetPlatform == GamePlatform.Android)
@@ -119,7 +121,7 @@ namespace NpcAdventure
         private void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)
         {
             // Setup third party mod compatibility bridge
-            TPMC.Setup(this.Helper.ModRegistry, this.Monitor);
+            Compat.Setup(this.Helper.ModRegistry, this.Monitor);
             IQuestApi questApi = this.Helper.ModRegistry.GetApi<IQuestApi>("purrplingcat.questframework");
             var storyHelper = new StoryHelper(this.ContentLoader, questApi.GetManagedApi(this.ModManifest));
 

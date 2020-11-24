@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NpcAdventure.Compatibility;
 using NpcAdventure.Dialogues;
 using NpcAdventure.Loader;
 using NpcAdventure.Utils;
@@ -40,6 +41,7 @@ namespace NpcAdventure.AI.Controller
         private bool defendFistUsed;
         private int attackSpeedPitch = 0;
         private WeaponAttributes weaponAttrs;
+        private Dictionary<string, string> kissFrames;
 
         public int SwingThreshold {
             get {
@@ -73,6 +75,11 @@ namespace NpcAdventure.AI.Controller
             this.weapon = this.GetSword(sword);
             this.bubbles = content.LoadStrings("Strings/SpeechBubbles");
             this.fightSpeechTriggerThres = ai.Csm.HasSkill("warrior") ? 0.25 : 0.7;
+
+            if (Compat.IsModLoaded(ModUids.PACIFISTMOD_UID))
+            {
+                this.kissFrames = this.ai.ContentLoader.LoadData<string, string>("Data/FightFrames");
+            }
 
             this.attackAnimation = new List<FarmerSprite.AnimationFrame>[4]
             {
@@ -114,7 +121,12 @@ namespace NpcAdventure.AI.Controller
 
             if (swords.TryGetValue(level, out string swordName))
             {
-                return Helper.GetSwordId(swordName);
+                int swordId = Helper.GetSwordId(swordName);
+
+                if (swordId < 0 && swordName != "-1")
+                    this.ai.Monitor.Log($"Unknown sword: {swordName}", LogLevel.Error);
+
+                return swordId;
             }
 
             return -1;
@@ -223,12 +235,18 @@ namespace NpcAdventure.AI.Controller
             }
             else if (this.ai.Csm.HasSkill("warrior") && Game1.random.NextDouble() < this.fightSpeechTriggerThres / 2)
             {
+                if (Compat.IsModLoaded(ModUids.PACIFISTMOD_UID))
+                    return;
+
                 this.follower.clearTextAboveHead();
                 this.follower.doEmote(12);
                 this.fightBubbleCooldown = 550;
             }
             else if (Game1.random.NextDouble() > (this.fightSpeechTriggerThres + this.fightSpeechTriggerThres * .33f))
             {
+                if (Compat.IsModLoaded(ModUids.PACIFISTMOD_UID))
+                    return;
+
                 this.follower.clearTextAboveHead();
                 this.follower.doEmote(16);
                 this.fightBubbleCooldown = 500;
@@ -322,11 +340,36 @@ namespace NpcAdventure.AI.Controller
 
             if (criticalFist && this.follower.FacingDirection != 0)
             {
-                this.follower.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite("TileSheets\\animations", new Rectangle(0, 960, 128, 128), 60f, 4, 0, this.follower.Position, false, this.follower.FacingDirection == 3, 1f, 0.0f, Color.White, .5f, 0.0f, 0.0f, 0.0f, false));
+                if (!Compat.IsModLoaded(ModUids.PACIFISTMOD_UID))
+                {
+                    this.follower.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite("TileSheets\\animations", new Rectangle(0, 960, 128, 128), 60f, 4, 0, this.follower.Position, false, this.follower.FacingDirection == 3, 1f, 0.0f, Color.White, .5f, 0.0f, 0.0f, 0.0f, false));
+                }
+                else
+                {
+                    this.follower.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite("LooseSprites\\Cursors", new Rectangle(211, 428, 7, 6), 2000f, 1, 0, new Vector2((float)this.follower.getTileX(), (float)this.follower.getTileY()) * 64f + new Vector2(16f, -64f), false, false, 1f, 0.0f, Color.White, 4f, 0.0f, 0.0f, 0.0f, false)
+                    {
+                        motion = new Vector2(0.0f, -0.5f),
+                        alphaFade = 0.01f
+                    });
+                }
             }
 
             companionBox.Inflate(4, 4); // Personal space
             effectiveArea.Inflate((int)(effectiveArea.Width * this.weaponAttrs.smashAround + this.weaponAttrs.addedEffectiveArea), (int)(effectiveArea.Height * this.weaponAttrs.smashAround + this.weaponAttrs.addedEffectiveArea));
+
+            if (Compat.IsModLoaded(ModUids.PACIFISTMOD_UID))
+            {
+                int frame = -1;
+                bool flip = false;
+
+                if (this.kissFrames.ContainsKey(this.follower.Name))
+                {
+                    frame = int.Parse(this.kissFrames[this.follower.Name].Split(' ')[0]);
+                    flip = this.kissFrames[this.follower.Name].Split(' ')[1] == "true";
+                }
+
+                this.follower.doEmote(20);
+            }
 
             if (!criticalFist && !this.defendFistUsed && this.ai.Csm.HasSkill("warrior") && companionBox.Intersects(enemyBox) && this.weaponSwingCooldown == this.CooldownTimeout && this.fistCoolDown <= 0)
             {
@@ -342,7 +385,7 @@ namespace NpcAdventure.AI.Controller
             {
                 if (criticalFist)
                 {
-                    this.follower.currentLocation.playSound("clubSmash");
+                    this.follower.currentLocation.playSound(Compat.IsModLoaded(ModUids.PACIFISTMOD_UID) ? "dwop" : "clubSmash");
                     this.ai.Csm.CompanionManager.Hud.GlowSkill("warrior", Color.Red, 1);
                     this.fistCoolDown = 1200;
                 }
@@ -364,7 +407,12 @@ namespace NpcAdventure.AI.Controller
         {
             this.WeaponUpdate(facingDirection, 0, c);
 
-            switch(type)
+            if (Compat.IsModLoaded(ModUids.PACIFISTMOD_UID)) {
+                c.currentLocation.localSound("dwop");
+                return;
+            }
+
+            switch (type)
             {
                 case 0:
                 case 1:
@@ -508,6 +556,9 @@ namespace NpcAdventure.AI.Controller
                 int duration = this.CooldownTimeout - this.SwingThreshold;
                 int tick = Math.Abs(this.weaponSwingCooldown - this.CooldownTimeout);
                 int currentFrame = this.CurrentFrame(tick, duration, frames);
+
+                if (Compat.IsModLoaded(ModUids.PACIFISTMOD_UID))
+                    currentFrame = 1;
 
                 Helper.DrawDuringUse(currentFrame, this.follower.FacingDirection, spriteBatch, this.follower.getLocalPosition(Game1.viewport), this.follower, MeleeWeapon.getSourceRect(this.weapon.InitialParentTileIndex), this.weapon.type.Value, this.weapon.isOnSpecial);
             }

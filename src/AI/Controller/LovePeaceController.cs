@@ -1,8 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NpcAdventure.Compatibility;
+using NpcAdventure.Dialogues;
 using NpcAdventure.Utils;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Locations;
 using StardewValley.Monsters;
 using System;
 using System.Collections.Generic;
@@ -12,15 +15,17 @@ namespace NpcAdventure.AI.Controller
 {
     internal class LovePeaceController : FollowController
     {
-        public const float DEFEND_TILE_RADIUS = 3f;
+        public const float DEFEND_TILE_RADIUS = 4f;
 
         private readonly List<LovedMonster> lovedMonsters;
         private readonly Texture2D loveTexture;
+        private readonly Dictionary<string, string> bubbles;
 
         public LovePeaceController(AI_StateMachine ai) : base(ai)
         {
             this.lovedMonsters = new List<LovedMonster>();
             this.loveTexture = Game1.content.Load<Texture2D>(ai.ContentLoader.GetAssetKey("~/Sprites/love.png"));
+            this.bubbles = this.ai.ContentLoader.LoadStrings("Strings/SpeechBubbles");
         }
 
         public bool IsAngryMonstersHere => this.FindAngryMonsters().Count() > 0;
@@ -35,14 +40,24 @@ namespace NpcAdventure.AI.Controller
                     if (this.lovedMonsters.Any(lm => lm.Monster == monster))
                         continue;
 
-                    this.lovedMonsters.Add(new LovedMonster(monster, 10000, 1200));
+                    this.lovedMonsters.Add(
+                        new LovedMonster(
+                            monster: monster,
+                            ttl: Game1.random.Next(5000, 30000),
+                            loveInvicibility: Game1.random.Next(1000, 10000)
+                        )
+                    );
                     monster.doEmote(20);
+                    this.follower.doEmote(20);
                 }
-
-                this.follower.doEmote(20);
             }
             
             base.Update(e);
+        }
+
+        public override void DriveSpeed()
+        {
+            this.joystick.Speed = 5f;
         }
 
         public bool IsLovedMonster(Monster monster)
@@ -70,7 +85,7 @@ namespace NpcAdventure.AI.Controller
                     continue;
                 }
 
-                if (this.lovedMonsters[i].LastHealth != this.lovedMonsters[i].Monster.Health)
+                if (!Compat.IsModLoaded(ModUids.PACIFISTMOD_UID) && this.lovedMonsters[i].LastHealth != this.lovedMonsters[i].Monster.Health)
                 {
                     int lostPoints = 10;
 
@@ -79,7 +94,11 @@ namespace NpcAdventure.AI.Controller
                     if (this.lovedMonsters[i].Monster.Health <= 0)
                     {
                         lostPoints = 75;
-                        this.follower.showTextAboveHead($"Why did you kill {(this.lovedMonsters[i].Monster.Gender == 1 ? "her" : "him")}?");
+
+                        if (DialogueProvider.GetBubbleString(this.bubbles, this.follower, "spiritualKilledMonster", out string bubble))
+                        {
+                            this.follower.showTextAboveHead(bubble);
+                        }
                     }
 
                     if (this.leader is Farmer farmer)
@@ -105,13 +124,13 @@ namespace NpcAdventure.AI.Controller
         {
             Vector2 lovePosition;
 
-            foreach (var lovedMonster in this.lovedMonsters.Where(lm => lm.TTL > 0))
+            foreach (var lovedMonster in this.lovedMonsters.Where(lm => lm.TTL > 0 && lm.Monster.Health > 0))
             {
                 lovePosition = lovedMonster.Monster.getLocalPosition(Game1.viewport);
                 lovePosition.X += lovedMonster.Monster.Sprite.SpriteWidth / 2 + this.loveTexture.Width;
                 lovePosition.Y -= 24f;
 
-                spriteBatch.Draw(this.loveTexture, lovePosition, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+                spriteBatch.Draw(this.loveTexture, lovePosition, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 1f);
             }
         }
 
@@ -148,10 +167,17 @@ namespace NpcAdventure.AI.Controller
                 this.LastHealth = this.Monster.Health;
                 this.TTL -= Game1.currentGameTime.ElapsedGameTime.Milliseconds;
 
-                if (this.Monster is Fly fly)
+                // There are some fixing behaviors for loved monsters. 
+                // Other more specialized loved behaviors you can found in MonsterBehaviorPatch.
+                if (this.Monster is GreenSlime slime)
                 {
-                    fly.xVelocity = this.LastVelocity.X;
-                    fly.yVelocity = this.LastVelocity.Y;
+                    NpcAdventureMod.Reflection.GetField<int>(slime, "readyToJump").SetValue(-1);
+                }
+
+                if (this.Monster is Fly || this.Monster is Bat)
+                {
+                    this.Monster.xVelocity = this.LastVelocity.X;
+                    this.Monster.yVelocity = this.LastVelocity.Y;
                 }
 
                 if (this.Monster is Bug bug)
