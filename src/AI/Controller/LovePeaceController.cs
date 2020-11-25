@@ -13,19 +13,28 @@ using System.Linq;
 
 namespace NpcAdventure.AI.Controller
 {
-    internal class LovePeaceController : FollowController
+    internal class LovePeaceController : FollowController, IDisposable
     {
         public const float DEFEND_TILE_RADIUS = 4f;
 
         private readonly List<LovedMonster> lovedMonsters;
         private readonly Texture2D loveTexture;
         private readonly Dictionary<string, string> bubbles;
+        private readonly IModEvents events;
 
-        public LovePeaceController(AI_StateMachine ai) : base(ai)
+        public LovePeaceController(AI_StateMachine ai, IModEvents events) : base(ai)
         {
             this.lovedMonsters = new List<LovedMonster>();
             this.loveTexture = Game1.content.Load<Texture2D>(ai.ContentLoader.GetAssetKey("~/Sprites/love.png"));
             this.bubbles = this.ai.ContentLoader.LoadStrings("Strings/SpeechBubbles");
+            this.events = events;
+
+            events.Player.Warped += this.Player_Warped;
+        }
+
+        private void Player_Warped(object sender, WarpedEventArgs e)
+        {
+            this.lovedMonsters.Clear();
         }
 
         public bool IsAngryMonstersHere => this.FindAngryMonsters().Count() > 0;
@@ -38,6 +47,9 @@ namespace NpcAdventure.AI.Controller
                 foreach (var monster in this.FindAngryMonsters())
                 {
                     if (this.lovedMonsters.Any(lm => lm.Monster == monster))
+                        continue;
+
+                    if (Game1.random.NextDouble() < 0.1 - Game1.player.DailyLuck * 2 - Game1.player.LuckLevel * 0.001)
                         continue;
 
                     this.lovedMonsters.Add(
@@ -117,7 +129,7 @@ namespace NpcAdventure.AI.Controller
         {
             return Helper.GetNearestMonstersToCharacter(this.follower, DEFEND_TILE_RADIUS)
                 .Select(mKv => mKv.Value)
-                .Where(m => Helper.IsValidMonster(m) && !this.lovedMonsters.Any(lm => lm.Monster == m));
+                .Where(m => Helper.IsValidMonster(m) && !this.lovedMonsters.Any(lm => lm.Monster == m && lm.TTL > 0));
         }
 
         public void DrawLove(SpriteBatch spriteBatch)
@@ -132,6 +144,11 @@ namespace NpcAdventure.AI.Controller
 
                 spriteBatch.Draw(this.loveTexture, lovePosition, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 1f);
             }
+        }
+
+        public void Dispose()
+        {
+            this.events.Player.Warped -= this.Player_Warped;
         }
 
         private class LovedMonster
@@ -174,10 +191,22 @@ namespace NpcAdventure.AI.Controller
                     NpcAdventureMod.Reflection.GetField<int>(slime, "readyToJump").SetValue(-1);
                 }
 
-                if (this.Monster is Fly || this.Monster is Bat)
+                if (this.Monster is Fly fly)
                 {
-                    this.Monster.xVelocity = this.LastVelocity.X;
-                    this.Monster.yVelocity = this.LastVelocity.Y;
+                    fly.xVelocity = this.LastVelocity.X;
+                    fly.yVelocity = this.LastVelocity.Y;
+                }
+
+                if (this.Monster is Bat bat)
+                {
+                    bat.xVelocity = this.LastVelocity.X;
+                    bat.yVelocity = this.LastVelocity.Y;
+                }
+
+                if (this.Monster is Serpent serpent)
+                {
+                    serpent.xVelocity = this.LastVelocity.X;
+                    serpent.yVelocity = this.LastVelocity.Y;
                 }
 
                 if (this.Monster is Bug bug)
@@ -185,7 +214,7 @@ namespace NpcAdventure.AI.Controller
                     bug.setMovingInFacingDirection();
                 }
 
-                if ((double)this.Monster.Position.X < 0.0 || (double)this.Monster.Position.X > (double)(this.Monster.currentLocation.map.GetLayer("Back").LayerWidth * 64) || ((double)this.Monster.Position.Y < 0.0 || (double)this.Monster.Position.Y > (double)(this.Monster.currentLocation.map.GetLayer("Back").LayerHeight * 64)))
+                if (this.Monster.Position.X < 0.0 || this.Monster.Position.X > (this.Monster.currentLocation.map.GetLayer("Back").LayerWidth * 64) || (this.Monster.Position.Y < 0.0 || this.Monster.Position.Y > (this.Monster.currentLocation.map.GetLayer("Back").LayerHeight * 64)))
                 {
                     this.TTL = 0;
                     this.LoveInvicibility = 0;

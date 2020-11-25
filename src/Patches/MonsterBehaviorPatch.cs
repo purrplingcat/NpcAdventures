@@ -84,9 +84,9 @@ namespace NpcAdventure.Patches
 			return true;
 		}
 
-		private static bool Before_Ghost_updateMovement(Ghost __instance, GameTime time)
+		private static bool Before_Ghost_updateMovement(Monster __instance, GameTime time)
 		{
-			if (IsLovedMonster(__instance))
+			if (__instance is Ghost && IsLovedMonster(__instance))
 			{
 				__instance.defaultMovementBehavior(time);
 

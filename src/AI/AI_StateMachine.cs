@@ -12,6 +12,7 @@ using StardewValley;
 using StardewValley.Monsters;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NpcAdventure.AI
 {
@@ -81,7 +82,7 @@ namespace NpcAdventure.AI
                 [State.FIGHT] = new FightController(this, this.loader, this.events, this.Csm.Metadata.Sword),
                 [State.IDLE] = new IdleController(this, this.loader),
                 [State.FORAGE] = new ForageController(this, this.events),
-                [State.SPIRITUAL] = new LovePeaceController(this)
+                [State.SPIRITUAL] = new LovePeaceController(this, this.events)
             };
 
             // By default AI following the player
@@ -307,6 +308,10 @@ namespace NpcAdventure.AI
         {
             this.events.GameLoop.TimeChanged -= this.GameLoop_TimeChanged;
             this.CurrentController.Deactivate();
+
+            foreach (var controller in this.controllers.OfType<IDisposable>())
+                controller.Dispose();
+
             this.controllers.Clear();
             this.controllers = null;
         }

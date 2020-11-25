@@ -7,69 +7,85 @@
       "FromFile": "assets/companions.json"
     },
     {
-      "LogName": "Totally not weapons",
+      "LogName": "Common lovestuff",
       "Target": "Data/Weapons",
       "FromFile": "assets/not-weapons.json"
     },
     {
       "LogName": "Abigail's love stuff",
       "Target": "Data/Weapons/Abigail",
-      "FromFile": "assets/not-weapons.json"
+      "FromFile": "assets/abigail-lovestuff.json"
     },
     {
       "LogName": "Alex's love stuff",
       "Target": "Data/Weapons/Alex",
-      "FromFile": "assets/not-weapons.json"
+      "FromFile": "assets/alex-lovestuff.json"
     },
     {
       "LogName": "Elliott's love stuff",
       "Target": "Data/Weapons/Elliott",
-      "FromFile": "assets/not-weapons.json"
+      "FromFile": "assets/elliott-lovestuff.json"
     },
     {
       "LogName": "Haley's love stuff",
       "Target": "Data/Weapons/Haley",
-      "FromFile": "assets/not-weapons.json"
+      "FromFile": "assets/haley-lovestuff.json"
     },
     {
       "LogName": "Harvey's love stuff",
       "Target": "Data/Weapons/Harvey",
-      "FromFile": "assets/not-weapons.json"
+      "FromFile": "assets/harvey-lovestuff.json"
     },
     {
       "LogName": "Leah's love stuff",
       "Target": "Data/Weapons/Leah",
-      "FromFile": "assets/not-weapons.json"
+      "FromFile": "assets/leah-lovestuff.json"
     },
     {
       "LogName": "Maru's love stuff",
       "Target": "Data/Weapons/Maru",
-      "FromFile": "assets/not-weapons.json"
+      "FromFile": "assets/maru-lovestuff.json"
     },
     {
       "LogName": "Penny's love stuff",
       "Target": "Data/Weapons/Penny",
-      "FromFile": "assets/not-weapons.json"
+      "FromFile": "assets/penny-lovestuff.json"
     },
     {
       "LogName": "Sam's love stuff",
       "Target": "Data/Weapons/Sam",
-      "FromFile": "assets/not-weapons.json"
+      "FromFile": "assets/sam-lovestuff.json"
     },
     {
       "LogName": "Sebastian's love stuff",
       "Target": "Data/Weapons/Sebastian",
-      "FromFile": "assets/not-weapons.json"
+      "FromFile": "assets/sebastian-lovestuff.json"
     },
     {
       "LogName": "Shane's love stuff",
       "Target": "Data/Weapons/Shane",
-      "FromFile": "assets/not-weapons.json"
+      "FromFile": "assets/shane-lovestuff.json"
     },
     {
       "LogName": "Kiss frames",
       "Target": "Data/FightFrames",
       "FromFile": "assets/kissframes.json"
+    },
+    {
+      "LogName": "Speech bubbles",
+      "Target": "Strings/SpeechBubbles",
+      "FromFile": "assets/bubbles.json",
+      "Action": "Replace"
+    },
+    {
+      "LogName": "Common strings",
+      "Target": "Strings/Strings",
+      "FromFile": "assets/strings.json"
+    },
+    {
+      "LogName": "Buffs description",
+      "Target": "Strings/Buffs",
+      "FromFile": "assets/buff-desc.json"
     }
   ]
 }
