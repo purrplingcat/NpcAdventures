@@ -151,7 +151,7 @@ More features comming soon...
 
 ## Contributors
 
-- [purrplingcat](https://www.nexusmods.com/users/68185132) - main developer and producer
+- [PurrplingCat](https://www.nexusmods.com/users/68185132) - main developer and producer
 - [RememberEmber](https://www.nexusmods.com/users/11961608) - author of dialogues and texts
 - [andril11](https://www.nexusmods.com/users/68848663) - Portuguese translation
 - [mardrest](https://www.nexusmods.com/stardewvalley/users/74323508) - Spanish translation
