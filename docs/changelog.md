@@ -12,6 +12,7 @@
 - Added new companion skill: spiritual - sends love&peace to monsters and they don't attack on farmer
 - Reassigned companion skill: Emily is now spiritual and do not fight with monsters
 - Added compatibility with PacifistValley mod (needs install compatibility content pack too)
+- Added priority field for patches in content packs (format 1.4)
 
 ## 0.14.1 "Major Minority"
 
