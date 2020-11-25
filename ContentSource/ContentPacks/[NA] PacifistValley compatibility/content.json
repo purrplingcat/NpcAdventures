@@ -1,5 +1,5 @@
 {
-  "Format": "1.3",
+  "Format": "1.4",
   "Changes": [
     {
       "LogName": "Change spirituals to lovers (fighters)",
@@ -75,7 +75,8 @@
       "LogName": "Speech bubbles",
       "Target": "Strings/SpeechBubbles",
       "FromFile": "assets/bubbles.json",
-      "Action": "Replace"
+      "Action": "Replace",
+      "Priority": -1000
     },
     {
       "LogName": "Common strings",
