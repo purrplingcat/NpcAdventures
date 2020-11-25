@@ -9,6 +9,7 @@
 - Added support for custom weapons for all combat levels (supports JSON assets weapons)
 - Redefined swords for (almost) each companion
 - Tuned fighting behavior
+- Added priority field for patches in content packs (format 1.4)
 
 ## 0.14.1 "Major Minority"
 

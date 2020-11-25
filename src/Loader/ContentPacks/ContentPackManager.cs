@@ -13,6 +13,7 @@ namespace NpcAdventure.Loader
         private readonly bool paranoid;
         private readonly bool allowLegacyPacks;
         private readonly List<ManagedContentPack> packs;
+        private readonly PatchApplier applier;
 
         /// <summary>
         /// Provides patches from content packs into mod's content
@@ -24,6 +25,7 @@ namespace NpcAdventure.Loader
             this.paranoid = paranoid;
             this.allowLegacyPacks = allowLegacyPacks;
             this.packs = new List<ManagedContentPack>();
+            this.applier = new PatchApplier(monitor, paranoid);
         }
 
         /// <summary>
@@ -39,13 +41,13 @@ namespace NpcAdventure.Loader
             {
                 try
                 {
-                    var managedPack = new ManagedContentPack(pack, this.monitor, this.paranoid);
+                    var managedPack = new ManagedContentPack(pack, this.monitor);
                     
                     managedPack.Load();
 
-                    if (!this.allowLegacyPacks && managedPack.FormatVersion.IsOlderThan("1.3"))
+                    if (!this.allowLegacyPacks && managedPack.IsLegacy())
                     {
-                        this.monitor.Log($"Content pack `{pack.Manifest.Name}` (format version {managedPack.FormatVersion}) was skipped: Loading of legacy content packs (format version 1.2 and older) is disabled for security reasons. If you want load this content pack, allow legacy content packs in config file.", LogLevel.Warn);
+                        this.monitor.Log($"Content pack `{pack.Manifest.Name}` (format version {managedPack.FormatVersion}) was skipped: Loading of legacy content packs (format version 1.2 and older) is disabled for security reasons. If you want load this content pack, allow legacy content packs in config file.", LogLevel.Error);
                         continue;
                     }
 
@@ -73,14 +75,12 @@ namespace NpcAdventure.Loader
         /// <returns>True if any patch was applied on the target</returns>
         public bool Apply<TKey, TValue>(Dictionary<TKey, TValue> target, string path)
         {
-            bool applied = false;
+            var patches = from pack in this.packs
+                          from patch in pack.GetPatchesForTarget(path)
+                          orderby patch.Priority ascending
+                          select patch;
 
-            foreach (var pack in this.packs)
-            {
-                applied |= pack.Apply(target, path);
-            }
-
-            return applied;
+            return this.applier.Apply(target, patches, path);
         }
 
         /// <summary>
@@ -90,9 +90,11 @@ namespace NpcAdventure.Loader
         /// <param name="packs"></param>
         private void CheckCurrentFormat(List<ManagedContentPack> packs)
         {
-            var currentFormatVersion = ManagedContentPack.SUPPORTED_FORMATS[ManagedContentPack.SUPPORTED_FORMATS.Length - 1];
+            var currentFormatVersionMax = ManagedContentPack.SUPPORTED_FORMATS[ManagedContentPack.SUPPORTED_FORMATS.Length - 1];
+            var currentFormatVersionMin = ManagedContentPack.SUPPORTED_FORMATS[ManagedContentPack.SUPPORTED_FORMATS.Length - 2];
+
             var usesOldFormat = from pack in packs
-                                where pack.FormatVersion.IsOlderThan(currentFormatVersion)
+                                where !pack.FormatVersion.IsBetween(currentFormatVersionMin, currentFormatVersionMax)
                                 select pack;
 
             if (usesOldFormat.Count() > 0)
@@ -111,8 +113,8 @@ namespace NpcAdventure.Loader
         private void CheckForUsingReplacers(List<ManagedContentPack> packs)
         {
             var unsafePacks = (from pack in packs
-                              from patch in pack.Contents.Changes
-                              where patch.Action == "Replace"
+                              from patch in pack.Patches
+                              where patch.Change.Action == "Replace"
                               select pack).Distinct();
 
             if (unsafePacks.Count() > 0)
