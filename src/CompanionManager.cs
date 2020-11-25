@@ -14,6 +14,7 @@ using NpcAdventure.Events;
 using NpcAdventure.HUD;
 using NpcAdventure.Story;
 using NpcAdventure.Story.Messaging;
+using System.Linq;
 
 namespace NpcAdventure
 {
@@ -25,6 +26,17 @@ namespace NpcAdventure
 
         public Dictionary<string, CompanionStateMachine> PossibleCompanions { get; }
         public IGameMaster GameMaster { get; }
+
+        public CompanionStateMachine GetRecruitedCompanion()
+        {
+            return this.PossibleCompanions.Values.Single(csm => csm.CurrentStateFlag == StateFlag.RECRUITED);
+        }
+
+        public bool IsRecruitedAnyone()
+        {
+            return this.PossibleCompanions.Values.Count(csm => csm.CurrentStateFlag == StateFlag.RECRUITED) > 0;
+        }
+
         public CompanionDisplay Hud { get; }
         public Config Config { get; }
 

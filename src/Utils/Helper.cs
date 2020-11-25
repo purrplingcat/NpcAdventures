@@ -47,7 +47,7 @@ namespace NpcAdventure.Utils
             // Can't request dialogue if giftable object is in farmer's hands or npc has current dialogues
             bool forbidden = (farmer.ActiveObject != null && farmer.ActiveObject.canBeGivenAsGift()) || npc.CurrentDialogue.Count > 0;
             bool isMarried = IsSpouseMarriedToFarmer(npc, farmer);
-            bool canKiss = isMarried || ((bool)TPMC.Instance?.CustomKissing.CanKissNpc(farmer, npc) && (bool)TPMC.Instance?.CustomKissing.HasRequiredFriendshipToKiss(farmer, npc));
+            bool canKiss = isMarried || ((bool)Compat.Instance?.CustomKissing.CanKissNpc(farmer, npc) && (bool)Compat.Instance?.CustomKissing.HasRequiredFriendshipToKiss(farmer, npc));
 
             // Kiss spouse first if she/he facing kissable                     
             forbidden |= canKiss && !SpouseHasBeenKissedToday(npc) && (npc.FacingDirection == 3 || npc.FacingDirection == 1) && !overrideKissCheck;
@@ -190,6 +190,16 @@ namespace NpcAdventure.Utils
 
         public static Monster GetNearestMonsterToCharacter(Character me, float tileDistance, Func<Monster, bool> extraCondition)
         {
+            SortedDictionary<float, Monster> nearestMonsters = GetNearestMonstersToCharacter(me, tileDistance, extraCondition);
+
+            if (nearestMonsters.Count > 0)
+                return nearestMonsters.Values.First();
+
+            return null;
+        }
+
+        public static SortedDictionary<float, Monster> GetNearestMonstersToCharacter(Character me, float tileDistance, Func<Monster, bool> extraCondition)
+        {
             float thresDistance = tileDistance * 64f;
             SortedDictionary<float, Monster> nearestMonsters = new SortedDictionary<float, Monster>();
 
@@ -206,10 +216,12 @@ namespace NpcAdventure.Utils
                 }
             }
 
-            if (nearestMonsters.Count > 0) 
-                return nearestMonsters.Values.First();
+            return nearestMonsters;
+        }
 
-            return null;
+        public static SortedDictionary<float, Monster> GetNearestMonstersToCharacter(Character me, float tileDistance)
+        {
+            return GetNearestMonstersToCharacter(me, tileDistance, (m) => true);
         }
 
         public static Monster GetNearestMonsterToCharacter(Character me, float tileDistance)

@@ -129,7 +129,7 @@ namespace NpcAdventure.AI.Controller
             return 0;
         }
 
-        public void DriveSpeed()
+        public virtual void DriveSpeed()
         {
             Point fp = this.follower.GetBoundingBox().Center;
             Point lp = this.leader.GetBoundingBox().Center;
@@ -152,6 +152,10 @@ namespace NpcAdventure.AI.Controller
             this.idleTimer = 0;
             this.leaderLastTileCheckPoint = this.negativeOne;
             this.joystick.Reset();
+        }
+
+        public virtual void SideUpdate(UpdateTickedEventArgs e)
+        {
         }
     }
 }
