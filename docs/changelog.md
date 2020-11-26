@@ -1,6 +1,8 @@
 # Full changelog
 
-## Upcoming version
+## 0.15.0 "Tasty Kimchi"
+
+Released 26th November 2020
 
 - Fixed log name for `lockedDoorWarp` error case
 - Added mod-accessible api NpcAdventureModApi (thx aedenthorn aka iLoveLucy)
