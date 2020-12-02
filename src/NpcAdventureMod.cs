@@ -12,6 +12,7 @@ using NpcAdventure.Story.Scenario;
 using NpcAdventure.Internal.Assets;
 using PurrplingCore.Patching;
 using QuestFramework.Api;
+using ExpandedPreconditionsUtility;
 
 namespace NpcAdventure
 {
@@ -24,7 +25,8 @@ namespace NpcAdventure
         private HintDriver HintDriver { get; set; }
         private StuffDriver StuffDriver { get; set; }
         private MailDriver MailDriver { get; set; }
-        public IQuestApi QuestApi { get; private set; }
+        internal IQuestApi QuestApi { get; private set; }
+        internal IConditionsChecker Epu { get; private set; }
         internal ISpecialModEvents SpecialEvents { get; private set; }
         internal CompanionManager CompanionManager { get; private set; }
         internal CompanionDisplay CompanionHud { get; private set; }
@@ -123,13 +125,16 @@ namespace NpcAdventure
             // Setup third party mod compatibility bridge
             Compat.Setup(this.Helper.ModRegistry, this.Monitor);
             IQuestApi questApi = this.Helper.ModRegistry.GetApi<IQuestApi>("purrplingcat.questframework");
+            IConditionsChecker epu = this.Helper.ModRegistry.GetApi<IConditionsChecker>("Cherry.ExpandedPreconditionsUtility");
             var storyHelper = new StoryHelper(this.ContentLoader, questApi.GetManagedApi(this.ModManifest));
 
             questApi.Events.GettingReady += (_, args) => storyHelper.LoadQuests(this.GameMaster);
             questApi.Events.Ready += (_, args) => storyHelper.SanitizeOldAdventureQuestsInLog();
+            epu.Initialize(this.Config.EnableDebug, this.ModManifest.UniqueID);
 
             // Mod's services and drivers
             this.QuestApi = questApi;
+            this.Epu = epu;
             this.SpecialEvents = new SpecialModEvents();
             this.DialogueDriver = new DialogueDriver(this.Helper.Events);
             this.HintDriver = new HintDriver(this.Helper.Events);
@@ -195,7 +200,7 @@ namespace NpcAdventure
 
             this.GameMaster.RegisterScenario(new AdventureBegins(this.SpecialEvents, this.QuestApi.Events, this.Helper.Events, this.ContentLoader, this.Config, this.Monitor));
             this.GameMaster.RegisterScenario(new RecruitmentScenario());
-            this.GameMaster.RegisterScenario(new CompanionCutscenes(this.ContentLoader, this.CompanionManager));
+            this.GameMaster.RegisterScenario(new CompanionCutscenes(this.ContentLoader, this.CompanionManager, this.Epu));
         }
 
         private void GameLoop_DayStarted(object sender, DayStartedEventArgs e)

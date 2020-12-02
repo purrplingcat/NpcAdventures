@@ -14,6 +14,10 @@
       "IsRequired": true
     },
     {
+      "UniqueID": "Cherry.ExpandedPreconditionsUtility",
+      "IsRequired": true
+    },
+    {
       "UniqueID": "Digus.CustomKissingMod",
       "MinimumVersion": "1.2.0",
       "IsRequired": false

@@ -1,4 +1,5 @@
-﻿using NpcAdventure.Loader;
+﻿using ExpandedPreconditionsUtility;
+using NpcAdventure.Loader;
 using StardewValley;
 using System;
 using System.Collections.Generic;
@@ -12,11 +13,13 @@ namespace NpcAdventure.Story.Scenario
     {
         private readonly IContentLoader contentLoader;
         private readonly CompanionManager companionManager;
+        private readonly IConditionsChecker epu;
 
-        public CompanionCutscenes(IContentLoader contentLoader, CompanionManager companionManager)
+        public CompanionCutscenes(IContentLoader contentLoader, CompanionManager companionManager, IConditionsChecker epu)
         {
             this.contentLoader = contentLoader;
             this.companionManager = companionManager;
+            this.epu = epu;
         }
 
         public override void Dispose()
@@ -50,8 +53,9 @@ namespace NpcAdventure.Story.Scenario
                 if (tokens.Length >= 4 && tokens[0] == "companion" && recruitedCsm.Name == tokens[2] && e.Location.Name == tokens[3])
                 {
                     int eventId = int.Parse(tokens[1]);
+                    bool canPlay = tokens.Length == 4 || this.epu.CheckConditions(string.Join("/", tokens.Skip(4).ToArray()));
 
-                    if (!Game1.player.eventsSeen.Contains(eventId))
+                    if (!Game1.player.eventsSeen.Contains(eventId) && canPlay)
                     {
                         e.Location.startEvent(new Event(events[key], eventId));
                         break;

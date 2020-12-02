@@ -8,7 +8,7 @@ Currently there are only one adventuring story event. It's Marlon's invitation e
 
 ## Companion cutscenes
 
-Companion cutscenes are events which are played when you are entered to a location with recruited companion. The key of these kind of events ere more complex, the template is: `companion/<int:eventId>/<string:npcName>/<string:location>`
+Companion cutscenes are events which are played when you are entered to a location with recruited companion. The key of these kind of events ere more complex, the template is: `companion/<int:eventId>/<string:npcName>/<string:location>[/<epu_conditions> ...]`
 
 The key always starts with `companion/` and follow these parameters:
 
@@ -17,6 +17,7 @@ The key always starts with `companion/` and follow these parameters:
 | 1 | eventId | int | SDV event id. Avoid conflict with another event ids. It's recommended prefix id with yout nexusmods mod id |
 | 2 | npcName | string | An NPC name of recruited companion. Player must have recruited this companion to play this event |
 | 3 | location | string | A location name for this event. Player must enter this location with recruited companion (defined in previous parameter) to play this event |
+| 4 | epu_conditions | array of string splited by `/` | (optional) [Extended precondition utility](https://github.com/ChroniclerCherry/stardew-valley-mods/blob/master/ExpandedPreconditionsUtility/README.md) condition like `f Linus 1000/w rainy/z spring`
 
 ### Example
 
@@ -26,6 +27,7 @@ An example of content pack which adds/edits an companion cutscene.
 // File assets/data/my-events.json
 {
   "companion/4582000/Emily/SandyHouse": "none/6 18/farmer 4 9 0 Emily 4 8 0 Sandy 2 5 2 Bouncer 17 3 2/pause 1000/skippable/pause 200" // prefix 4582 is NPC Adventures nexusmods mod id. Dont' use this prefix, use another one in your content pack
+  "companion/4582001/Emily/SandyHouse/t 900 1000/f Emily 1500": "none/6 18/farmer 4 9 0 Emily 4 8 0 Sandy 2 5 2 Bouncer 17 3 2/pause 1000/skippable/pause 200"
 }
 ```
 
