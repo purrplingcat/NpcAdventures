@@ -68,7 +68,7 @@ namespace NpcAdventure.AI.Controller
         {
             this.attackRadius = 1.25f * Game1.tileSize;
             this.backupRadius = 0.9f * Game1.tileSize;
-            this.realLeader = ai.player;
+            this.realLeader = ai.farmer;
             this.leader = null;
             this.pathFinder.GoalCharacter = null;
             this.events = events;
@@ -108,7 +108,7 @@ namespace NpcAdventure.AI.Controller
 
         private int GetSwordIndex(int fallbackSword)
         {
-            Farmer farmer = this.ai.player;
+            Farmer farmer = this.ai.farmer;
             int level = farmer?.CombatLevel ?? 0;
             var swords = this.ai.ContentLoader.LoadMergedData<int, string>(
                 $"Data/Weapons/{this.follower.Name}", 
@@ -455,7 +455,7 @@ namespace NpcAdventure.AI.Controller
 
         private int GetAttackPitch()
         {
-            Farmer farmer = this.ai.player;
+            Farmer farmer = this.ai.farmer;
             int combatLevel = farmer.CombatLevel;
             int weaponSpeed = this.weapon?.speed.Value ?? 400;
             int swipeDelay = (400 - weaponSpeed) / 4;
