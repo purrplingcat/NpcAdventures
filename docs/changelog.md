@@ -1,5 +1,9 @@
 # Full changelog
 
+## Upcoming version
+
+- Added support for EPU conditions in companion event cutscenes
+
 ## 0.15.0 "Tasty Kimchi"
 
 Released 26th November 2020
