@@ -13,6 +13,7 @@ using NpcAdventure.Internal.Assets;
 using PurrplingCore.Patching;
 using QuestFramework.Api;
 using ExpandedPreconditionsUtility;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace NpcAdventure
 {
@@ -149,6 +150,7 @@ namespace NpcAdventure
 
             this.ApplyPatches(); // Apply harmony patches
             this.InitializeScenarios();
+            Compat.Instance.MobilePhone.Setup(this.GameMaster, this.Helper.Events, this.Helper.Input, this.Helper.Content.Load<Texture2D>("assets/Sprites/appicon.png"));
         }
 
         private void ApplyPatches()

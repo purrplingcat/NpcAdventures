@@ -21,6 +21,10 @@
       "UniqueID": "Digus.CustomKissingMod",
       "MinimumVersion": "1.2.0",
       "IsRequired": false
+    },
+    {
+      "UniqueID": "aedenthorn.MobilePhone",
+      "IsRequired": false
     }
   ]
 }

@@ -26,7 +26,7 @@ namespace NpcAdventure.Compatibility
                 monitor.Log($"Couldn't work correctly with Custom Kissing Mod version {modInfo.Manifest.Version} (requires >= {MINIMUM_VERSION}). Don't worry, this issue doesn't affect stability, but update is recommended :)", LogLevel.Warn);
             }
 
-            this.api = registry.GetApi<ICustomKissingModApi>("Digus.CustomKissingMod");
+            this.api = registry.GetApi<ICustomKissingModApi>(ModUids.KISSINGMOD_UID);
         }
         public bool CanKissNpc(Farmer who, NPC npc)
         {

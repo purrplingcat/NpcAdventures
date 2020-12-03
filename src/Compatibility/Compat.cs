@@ -12,12 +12,14 @@ namespace NpcAdventure.Compatibility
         public static Compat Instance { get => instance.Value; private set => instance.Value = value; }
 
         public ICustomKissingModApi CustomKissing { get; }
+        public MobilePhoneAppProvider MobilePhone { get; }
 
         private readonly IModRegistry registry;
 
         private Compat(IModRegistry registry, IMonitor monitor)
         {
             this.CustomKissing = new CustomKissingModProxy(registry, monitor);
+            this.MobilePhone = new MobilePhoneAppProvider(registry, monitor);
             this.registry = registry;
         }
 
@@ -39,5 +41,6 @@ namespace NpcAdventure.Compatibility
     {
         public const string PACIFISTMOD_UID = "Aedenthorn.PacifistValley";
         public const string KISSINGMOD_UID = "Digus.CustomKissingMod";
+        public const string MOBILE_PHONEMOD_UID = "aedenthorn.MobilePhone";
     }
 }
