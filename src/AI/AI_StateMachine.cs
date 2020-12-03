@@ -232,8 +232,6 @@ namespace NpcAdventure.AI
 
         private bool CanFish()
         {
-            Console.Write(this.farmer.isMoving());
-
             bool isFarmerFishing = this.farmer.UsingTool && this.farmer.CurrentTool is FishingRod;
             return this.IsFarmerNear()
                 && this.CurrentState != State.FISH

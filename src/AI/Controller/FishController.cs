@@ -73,7 +73,7 @@ namespace NpcAdventure.AI.Controller
             if (!this.IsFishing)
                 return;
 
-            if (Game1.random.Next(4) == 1)
+            if (Game1.random.Next(3) == 1)
             {
                 SObject fish = this.fisher.currentLocation.getFish(200, 1, this.farmer.FishingLevel / 2, this.farmer, 4.5d, Vector2.Zero);
                 if (fish == null || fish.ParentSheetIndex <= 0)
@@ -89,6 +89,14 @@ namespace NpcAdventure.AI.Controller
                     int skill = this.farmer.FishingLevel;
                     int quality = 0;
 
+                    if (Game1.random.NextDouble() < 0.2f - Math.Min(skill * 0.01 - this.farmer.DailyLuck * 2, 0.18f))
+                    {
+                        var bbox = this.fisher.GetBoundingBox();
+                        this.Invicibility += 1000;
+                        this.fisher.currentLocation.debris.Add(new Debris("Miss", 1, new Vector2((float)bbox.Center.X, (float)bbox.Center.Y), Color.Yellow, 1f, 0f));
+                        return;
+                    }
+
                     if (skill >= 8 && Game1.random.NextDouble() < .05f)
                         quality = 4;
                     else if (skill >= 6 && Game1.random.NextDouble() < 0.2f)
@@ -97,6 +105,7 @@ namespace NpcAdventure.AI.Controller
                         quality = 1;
 
                     fish.Quality = quality;
+
                     this.fishCaught.Push(fish);
                     this.Invicibility += 2000 - Math.Min(this.fishCaught.Count + 100, 2000);
                 }
@@ -293,8 +302,19 @@ namespace NpcAdventure.AI.Controller
             if (!Context.IsPlayerFree)
                 return;
 
+            if (this.IsFarmerFishingOnInactive())
+                this.Invicibility = 0;
+
             if (this.Invicibility > 0)
                 this.Invicibility -= (int)Game1.currentGameTime.ElapsedGameTime.TotalMilliseconds;
+        }
+
+        public bool IsFarmerFishingOnInactive()
+        {
+            return this.ai.CurrentState != AI_StateMachine.State.FISH 
+                && !this.IsFishing 
+                && this.farmer.UsingTool 
+                && this.farmer.CurrentTool is FishingRod;
         }
 
         public void Update(UpdateTickedEventArgs e)
