@@ -10,6 +10,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Monsters;
+using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -161,6 +162,7 @@ namespace NpcAdventure.AI
         private bool CanForage()
         {
             return this.IsFarmerNear() 
+                && this.CurrentState != State.FORAGE
                 && !this.cooldown.IsRunning(CHANGE_STATE_COOLDOWN)
                 && !this.cooldown.IsRunning(FORAGING_COOLDOWN)
                 && this.controllers[State.FORAGE] is ForageController fc 
@@ -230,14 +232,18 @@ namespace NpcAdventure.AI
 
         private bool CanFish()
         {
+            Console.Write(this.farmer.isMoving());
+
+            bool isFarmerFishing = this.farmer.UsingTool && this.farmer.CurrentTool is FishingRod;
             return this.IsFarmerNear()
+                && this.CurrentState != State.FISH
                 && !this.cooldown.IsRunning(CHANGE_STATE_COOLDOWN)
                 && !this.cooldown.IsRunning(FISHING_COOLDOWN)
                 && !this.farmer.isMoving()
                 && this.npc.currentLocation.waterTiles != null
                 && this.controllers[State.FISH] is FishController fishController
                 && fishController.CanFish()
-                && Game1.random.Next(1, 8) == 1;
+                && (isFarmerFishing || Game1.random.Next(1, 24) == 1);
         }
 
         private bool FollowOrIdle()

@@ -7,11 +7,15 @@ using System.Collections.Generic;
 using SObject = StardewValley.Object;
 using IDrawable = PurrplingCore.Internal.IDrawable;
 using Microsoft.Xna.Framework.Graphics;
+using StardewModdingAPI;
+using StardewValley.Tools;
 
 namespace NpcAdventure.AI.Controller
 {
     class FishController : IController, IDrawable
     {
+        public const int FISHING_DISTANCE = 4;
+
         private readonly PathFinder pathFinder;
         private readonly NpcMovementController joystick;
         private readonly AI_StateMachine ai;
@@ -24,6 +28,7 @@ namespace NpcAdventure.AI.Controller
         private bool fishingFacingRight;
         private int fishCaughtTimer;
         private int lastCaughtFishIdx;
+        private Vector2 fishingSpot;
 
         public bool IsIdle { get; private set; }
         public bool IsFishing { get; private set; }
@@ -42,6 +47,7 @@ namespace NpcAdventure.AI.Controller
             this.ai = ai;
             this.fisher = ai.npc;
             this.farmer = ai.farmer;
+            this.fishingSpot = this.negativeOne;
             this.pathFinder = new PathFinder(this.fisher.currentLocation, this.fisher, this.farmer);
             this.joystick = new NpcMovementController(this.fisher, this.pathFinder);
             this.fishCaught = new Stack<SObject>();
@@ -92,26 +98,32 @@ namespace NpcAdventure.AI.Controller
 
                     fish.Quality = quality;
                     this.fishCaught.Push(fish);
-                    this.Invicibility += 2000;
+                    this.Invicibility += 2000 - Math.Min(this.fishCaught.Count + 100, 2000);
                 }
 
                 this.lastCaughtFishIdx = fish.ParentSheetIndex;
                 this.fishCaughtTimer = 3000;
+                this.Invicibility += 1000;
             }
         }
 
         private void ArrivedFishingSpot(object sender, NpcMovementController.EndOfRouteReachedEventArgs e)
         {
+            this.StartFishing();
+        }
+
+        private void StartFishing()
+        {
             if (this.IsFishing)
                 return;
 
             this.IsFishing = true;
-            this.Invicibility = 1000;
+            this.Invicibility = 30000;
             this.fisher.Sprite.SpriteWidth = 32;
             this.fisher.HideShadow = true;
             if (this.fishingFacingRight)
             {
-               this.fisher.Sprite.setCurrentAnimation(this.fishingRightAnim);
+                this.fisher.Sprite.setCurrentAnimation(this.fishingRightAnim);
             }
             else
             {
@@ -142,15 +154,21 @@ namespace NpcAdventure.AI.Controller
 
         public void CheckFishingHere()
         {
-            var fishSpot = this.GetFishStandingPoint();
+            this.fishingSpot = this.GetFishStandingPoint();
 
-            if (fishSpot == this.negativeOne)
+            if (this.fishingSpot == this.negativeOne)
             {
                 this.IsIdle = true;
                 return;
             }
 
-            this.joystick.AcquireTarget(fishSpot);
+            if (!this.IsFishing && this.fisher.getTileLocation() == this.fishingSpot)
+            {
+                this.fisher.Halt();
+                this.StartFishing();
+            }
+
+            this.joystick.AcquireTarget(this.fishingSpot);
         }
 
         public bool GiveFishesTo(Farmer player)
@@ -174,16 +192,15 @@ namespace NpcAdventure.AI.Controller
         private Vector2 GetFishStandingPoint()
         {
             Vector2 tile = this.negativeOne;
-            var maxTilesToWander = 6;
             bool anyWater = false;
 
             if (this.pathFinder.GameLocation.waterTiles == null)
                 return tile;
 
-            TileReachability[,] tileCache = new TileReachability[(maxTilesToWander * 2) + 1, (maxTilesToWander * 2) + 1];
-            tileCache[maxTilesToWander, maxTilesToWander] = TileReachability.Walkable;
+            TileReachability[,] tileCache = new TileReachability[(FISHING_DISTANCE * 2) + 1, (FISHING_DISTANCE * 2) + 1];
+            tileCache[FISHING_DISTANCE, FISHING_DISTANCE] = TileReachability.Walkable;
             Vector2 loc = this.fisher.getTileLocation();
-            Vector3 translate = new Vector3(loc.X, loc.Y, 0) - new Vector3(maxTilesToWander, maxTilesToWander, 0);
+            Vector3 translate = new Vector3(loc.X, loc.Y, 0) - new Vector3(FISHING_DISTANCE, FISHING_DISTANCE, 0);
             Queue<Vector3> tileQueue = new Queue<Vector3>();
             tileQueue.Enqueue(new Vector3(loc.X, loc.Y, 0));
 
@@ -194,8 +211,8 @@ namespace NpcAdventure.AI.Controller
                 foreach (Vector3 neighbor in neighbors)
                 {
                     Vector3 pos = neighbor - translate;
-                    if (pos.X >= 0 && pos.X <= maxTilesToWander * 2 &&
-                        pos.Y >= 0 && pos.Y <= maxTilesToWander * 2 &&
+                    if (pos.X >= 0 && pos.X <= FISHING_DISTANCE * 2 &&
+                        pos.Y >= 0 && pos.Y <= FISHING_DISTANCE * 2 &&
                         tileCache[(int)pos.X, (int)pos.Y] == TileReachability.Unreachable)
                     {
                         if (neighbor.Z == 1)
@@ -229,11 +246,11 @@ namespace NpcAdventure.AI.Controller
             if (!anyWater)
                 return this.negativeOne;
 
-            List<Vector3> fishingTiles = new List<Vector3>(maxTilesToWander);
-            int xDim = maxTilesToWander * 2;
-            for (int y = 0; y < (maxTilesToWander * 2) + 1; y++)
+            List<Vector3> fishingTiles = new List<Vector3>(FISHING_DISTANCE);
+            int xDim = FISHING_DISTANCE * 2;
+            for (int y = 0; y < (FISHING_DISTANCE * 2) + 1; y++)
             {
-                for (int x = 0; x < (maxTilesToWander * 2) + 1; x++)
+                for (int x = 0; x < (FISHING_DISTANCE * 2) + 1; x++)
                 {
                     if (tileCache[x, y] == TileReachability.Water)
                     {
@@ -267,22 +284,27 @@ namespace NpcAdventure.AI.Controller
                 this.IsFishing = false;
             }
 
-            this.Invicibility = 1000;
+            this.Invicibility = 10000;
             this.joystick.Reset();
         }
 
         public void SideUpdate(UpdateTickedEventArgs e)
         {
+            if (!Context.IsPlayerFree)
+                return;
+
             if (this.Invicibility > 0)
                 this.Invicibility -= (int)Game1.currentGameTime.ElapsedGameTime.TotalMilliseconds;
         }
 
         public void Update(UpdateTickedEventArgs e)
         {
-            if (this.IsIdle)
+            if (this.IsIdle || !Context.IsPlayerFree)
                 return;
 
-            if (!this.ai.IsFarmerNear() || this.IsFishing && this.Invicibility <= 0 && Game1.random.NextDouble() < 0.02f)
+            bool breakFishingImmediatelly = this.IsFishing && this.Invicibility <= 0 && Game1.random.NextDouble() < 0.01f;
+            bool shorter = this.IsFishing && this.farmer.isMoving();
+            if (!this.ai.IsFarmerNear(shorter ? 8f : 11f) || breakFishingImmediatelly)
             {
                 this.IsIdle = true;
                 return;
@@ -296,7 +318,7 @@ namespace NpcAdventure.AI.Controller
 
         public bool CanFish()
         {
-            return this.GetFishStandingPoint() != this.negativeOne;
+            return this.Invicibility <= 0 && this.GetFishStandingPoint() != this.negativeOne;
         }
 
         public void Draw(SpriteBatch spriteBatch)
