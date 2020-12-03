@@ -2,6 +2,7 @@
 
 ## Upcoming version
 
+- Added `fisherman` skill for Elliott
 - Added support for EPU conditions in companion event cutscenes
 
 ## 0.15.0 "Tasty Kimchi"

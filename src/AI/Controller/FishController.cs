@@ -68,6 +68,15 @@ namespace NpcAdventure.AI.Controller
                 };
         }
 
+        private float GetSkillMultiplier()
+        {
+            var multiplier = this.farmer.professions.Contains(6) ? 0.5f : 0.25f;
+
+            if (this.farmer.professions.Contains(8))
+                multiplier += 0.25f;
+
+            return multiplier;
+        }
         private void OnTimeChanged(object sender, TimeChangedEventArgs e)
         {
             if (!this.IsFishing)
@@ -86,10 +95,13 @@ namespace NpcAdventure.AI.Controller
                 if (fish.Category != -20 && fish.ParentSheetIndex != 152 && fish.ParentSheetIndex != 153 &&
                     fish.ParentSheetIndex != 157 && fish.ParentSheetIndex != 797 && fish.ParentSheetIndex != 79)
                 {
-                    int skill = this.farmer.FishingLevel;
+                    int skill = this.farmer.fishingLevel.Value;
+                    int addedSkill = this.farmer.addedFishingLevel.Value;
                     int quality = 0;
+                    float skillPower = (skill * 0.01f + addedSkill * 0.001f + (float)this.farmer.DailyLuck) * this.GetSkillMultiplier();
 
-                    if (Game1.random.NextDouble() < 0.2f - Math.Min(skill * 0.01 - this.farmer.DailyLuck * 2, 0.18f))
+                    // There are chance to miss a fish. Depends on farmer's fishing skill and luck
+                    if (Game1.random.NextDouble() < 0.2f - Math.Min(skill * 0.01 - this.farmer.DailyLuck * 2, 0.18f) - skillPower / 4)
                     {
                         var bbox = this.fisher.GetBoundingBox();
                         this.Invicibility += 1000;
@@ -97,11 +109,11 @@ namespace NpcAdventure.AI.Controller
                         return;
                     }
 
-                    if (skill >= 8 && Game1.random.NextDouble() < .05f)
+                    if (skill >= 8 && Game1.random.NextDouble() < .01f + skillPower)
                         quality = 4;
-                    else if (skill >= 6 && Game1.random.NextDouble() < 0.2f)
+                    else if (skill >= 6 && Game1.random.NextDouble() < 0.1f + skillPower)
                         quality = 2;
-                    else if (skill >= 2 && Game1.random.NextDouble() < 0.55f)
+                    else if (skill >= 2 && Game1.random.NextDouble() < 0.2f + skillPower)
                         quality = 1;
 
                     fish.Quality = quality;
@@ -333,6 +345,9 @@ namespace NpcAdventure.AI.Controller
             if (this.fishCaughtTimer > 0)
                 this.fishCaughtTimer -= (int)Game1.currentGameTime.ElapsedGameTime.TotalMilliseconds;
 
+            if (this.IsFishing && e.IsOneSecond && this.farmer.UsingTool && this.farmer.CurrentTool is FishingRod)
+                this.Invicibility += 100;
+
             this.joystick.Update(e);
         }
 
@@ -346,13 +361,12 @@ namespace NpcAdventure.AI.Controller
             if (this.fishCaughtTimer <= 0)
                 return;
 
-            float num1 = (float)(2.0 * Math.Round(Math.Sin(DateTime.UtcNow.TimeOfDay.TotalMilliseconds / 250.0), 2));
+            float num1 = (float)(2.0 * Math.Round(Math.Sin(DateTime.UtcNow.TimeOfDay.TotalMilliseconds / 250.0), 2)) - 40f;
             Point tileLocationPoint = this.fisher.getTileLocationPoint();
             Vector2 offset = this.fisher.drawOffset.Value;
-            float num2 = (float)((tileLocationPoint.Y + 1) * 64) / 10000f;
-            float num3 = num1 - 40f;
-            spriteBatch.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, new Vector2((float)(tileLocationPoint.X * 64 + 64 + offset.X), (float)(tileLocationPoint.Y * 64 - 96 - 36 + offset.Y) + num3)), new Rectangle?(new Rectangle(141, 465, 20, 24)), Color.White * 0.75f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, num2 + 1E-06f);
-            spriteBatch.Draw(Game1.objectSpriteSheet, Game1.GlobalToLocal(Game1.viewport, new Vector2((float)(tileLocationPoint.X * 64 + 64 + 40 + offset.X), (float)(tileLocationPoint.Y * 64 - 64 - 16 - 10 + offset.Y) + num3)), new Rectangle?(Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, this.lastCaughtFishIdx, 16, 16)), Color.White, 0.0f, new Vector2(8f, 8f), 4f, SpriteEffects.None, num2 + 1E-05f);
+            float num2 = (tileLocationPoint.Y + 1) * 64 / 10000f;
+            spriteBatch.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, new Vector2(tileLocationPoint.X * 64 + 64 + offset.X, tileLocationPoint.Y * 64 - 96 - 36 + num1 + offset.Y)), new Rectangle?(new Rectangle(141, 465, 20, 24)), Color.White * 0.75f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, num2 + 1E-06f);
+            spriteBatch.Draw(Game1.objectSpriteSheet, Game1.GlobalToLocal(Game1.viewport, new Vector2(tileLocationPoint.X * 64 + 64 + 40 + offset.X, tileLocationPoint.Y * 64 - 64 - 16 - 10 + num1 + offset.Y)), new Rectangle?(Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, this.lastCaughtFishIdx, 16, 16)), Color.White, 0.0f, new Vector2(8f, 8f), 4f, SpriteEffects.None, num2 + 1E-05f);
         }
     }
 }
