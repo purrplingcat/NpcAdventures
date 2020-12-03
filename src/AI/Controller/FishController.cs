@@ -9,6 +9,7 @@ using IDrawable = PurrplingCore.Internal.IDrawable;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley.Tools;
+using System.Linq;
 
 namespace NpcAdventure.AI.Controller
 {
@@ -56,16 +57,27 @@ namespace NpcAdventure.AI.Controller
             events.GameLoop.TimeChanged += this.OnTimeChanged;
             this.joystick.EndOfRouteReached += this.ArrivedFishingSpot;
 
-            this.fishingLeftAnim = new List<FarmerSprite.AnimationFrame>
-                {
-                    new FarmerSprite.AnimationFrame(20, 4000, false, true, null, false),
-                    new FarmerSprite.AnimationFrame(21, 4000, false, true, null, false)
-                };
-            this.fishingRightAnim = new List<FarmerSprite.AnimationFrame>
-                {
-                    new FarmerSprite.AnimationFrame(20, 4000),
-                    new FarmerSprite.AnimationFrame(21, 4000)
-                };
+            string key = $"{ai.npc.Name.ToLower()}_sideFish";
+            var animationDescriptions = this.ai.ContentLoader.LoadData<string, string>("Data/AnimationDescriptions");
+
+            if (!animationDescriptions.ContainsKey(key))
+            {
+                ai.Monitor.Log($"No fishing animation for `{ai.npc.Name}`: Key `{key}` doesn't exist.", LogLevel.Error);
+                return;
+            }
+
+            string[] animation = animationDescriptions[key].Split('/');
+
+            if (animation.Length < 3)
+            {
+                ai.Monitor.Log($"Wrong animation description format for key `{key}`", LogLevel.Error);
+                return;
+            }
+
+            int[] frames = Utility.parseStringToIntArray(animation[1]);
+
+            this.fishingLeftAnim = frames.Select(f => new FarmerSprite.AnimationFrame(f, 4000, false, true, null, false)).ToList();
+            this.fishingRightAnim = frames.Select(f => new FarmerSprite.AnimationFrame(f, 4000)).ToList();
         }
 
         private float GetSkillMultiplier()
