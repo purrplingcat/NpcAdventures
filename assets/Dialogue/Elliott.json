@@ -1,4 +1,9 @@
 {
+  "companionAccepted_Spouse": "Most gladly, my dearest! Spending some time with you would be very delightful.$1",
+  "companionRejectedNight_Spouse": "I would love to go, darling, but I am afraid I'm feeling rather tired tonight.$2",
+  "companionDismiss_Spouse": "Oh my, a little busy today, aren't we?$1#$b#I'll head home then, I had a marvelous day with you.#$b#Break a leg, my darling.",
+  "companionDismissAuto_Spouse": "It has gotten really dark, has it not? I think that is our cue to go home.#$b#I'll go ahead and prepare our bed. You should go home soon. Love you!",
+  "companionRecruited_Spouse": "Today's gonna be marvelous, I am certain of it.$1",
   "companionAccepted": "The fresh air of this valley is good for the body and mind. A stroll outdoors sounds marvelous!$1",
   "companionRejected": "I'm afraid I cannot go, @. I've been meaning to finish this book I'm reading.",
   "companionRejectedNight": "It is much too late to go on a jaunt now, @!",
