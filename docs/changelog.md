@@ -2,6 +2,8 @@
 
 ## Upcoming version
 
+- Added translation registry. Translations must have their own `manifest.json` file
+- Added support for optional assets in ContentLoader
 - Added support for EPU conditions in companion event cutscenes
 
 ## 0.15.0 "Tasty Kimchi"
