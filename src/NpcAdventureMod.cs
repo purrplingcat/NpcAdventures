@@ -144,7 +144,15 @@ namespace NpcAdventure
             this.MailDriver = new MailDriver(this.ContentLoader, this.Monitor);
             this.GameMaster = new GameMaster(this.Helper, storyHelper, this.Monitor);
             this.CompanionHud = new CompanionDisplay(this.Config, this.ContentLoader);
-            this.CompanionManager = new CompanionManager(this.GameMaster, this.DialogueDriver, this.HintDriver, this.CompanionHud, this.Config, this.Monitor);
+            this.CompanionManager = new CompanionManager(
+                gameMaster: this.GameMaster,
+                dialogueDriver: this.DialogueDriver,
+                hintDriver: this.HintDriver,
+                hud: this.CompanionHud,
+                config: this.Config,
+                epu: this.Epu,
+                monitor: this.Monitor
+            );
             
             this.StuffDriver.RegisterEvents(this.Helper.Events);
             this.MailDriver.RegisterEvents(this.SpecialEvents);

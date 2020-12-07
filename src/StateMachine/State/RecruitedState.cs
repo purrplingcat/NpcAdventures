@@ -47,6 +47,9 @@ namespace NpcAdventure.StateMachine.State
 
         public override void Entry()
         {
+            if (this.StateMachine.Companion == null)
+                throw new TransitionStateException("Companion NPC can't be null for recruit.");
+
             this.ai = new AI_StateMachine(this.StateMachine, this.StateMachine.CompanionManager.Hud, this.Events, this.monitor);
             this.timeOfRecruit = Game1.timeOfDay;
 

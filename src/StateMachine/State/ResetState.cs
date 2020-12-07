@@ -24,6 +24,12 @@ namespace NpcAdventure.StateMachine.State
         {
         }
 
+        public override void Entry()
+        {
+            base.Entry();
+            this.StateMachine.ReloadNpc();
+        }
+
         public void ReintegrateCompanionNPC()
         {
             NPC companion = this.StateMachine.Companion;
@@ -52,6 +58,7 @@ namespace NpcAdventure.StateMachine.State
                         new Point((int)companion.DefaultPosition.X, (int)companion.DefaultPosition.Y);
                 }
             }
+
             Game1.fadeScreenToBlack();
             companion.faceTowardFarmerTimer = 0;
             this.DelayedWarp(this.companionRescheduleDestinationLocation,
