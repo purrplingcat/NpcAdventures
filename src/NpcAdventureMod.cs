@@ -13,6 +13,7 @@ using NpcAdventure.Internal.Assets;
 using PurrplingCore.Patching;
 using QuestFramework.Api;
 using ExpandedPreconditionsUtility;
+using System.IO;
 
 namespace NpcAdventure
 {
@@ -62,6 +63,7 @@ namespace NpcAdventure
             this.ContentLoader = new ContentLoader(helper, this.ContentPackManager, this.Monitor);
             this.Patcher = new GamePatcher(this.ModManifest.UniqueID, this.Monitor, this.Config.EnableDebug);
             this.RegisterEvents(helper.Events);
+            this.CheckTranslations();
             this.ContentPackManager.LoadContentPacks(helper.ContentPacks.GetOwned());
             Commander.Register(this);
         }
@@ -142,7 +144,15 @@ namespace NpcAdventure
             this.MailDriver = new MailDriver(this.ContentLoader, this.Monitor);
             this.GameMaster = new GameMaster(this.Helper, storyHelper, this.Monitor);
             this.CompanionHud = new CompanionDisplay(this.Config, this.ContentLoader);
-            this.CompanionManager = new CompanionManager(this.GameMaster, this.DialogueDriver, this.HintDriver, this.CompanionHud, this.Config, this.Monitor);
+            this.CompanionManager = new CompanionManager(
+                gameMaster: this.GameMaster,
+                dialogueDriver: this.DialogueDriver,
+                hintDriver: this.HintDriver,
+                hud: this.CompanionHud,
+                config: this.Config,
+                epu: this.Epu,
+                monitor: this.Monitor
+            );
             
             this.StuffDriver.RegisterEvents(this.Helper.Events);
             this.MailDriver.RegisterEvents(this.SpecialEvents);
@@ -201,6 +211,35 @@ namespace NpcAdventure
             this.GameMaster.RegisterScenario(new AdventureBegins(this.SpecialEvents, this.QuestApi.Events, this.Helper.Events, this.ContentLoader, this.Config, this.Monitor));
             this.GameMaster.RegisterScenario(new RecruitmentScenario());
             this.GameMaster.RegisterScenario(new CompanionCutscenes(this.ContentLoader, this.CompanionManager, this.Epu));
+        }
+
+        private void CheckTranslations()
+        {
+            var dirInfo = new DirectoryInfo(Path.Combine(this.Helper.DirectoryPath, "locale"));
+            var localeDirs = dirInfo.GetDirectories();
+            string localeRoot;
+            LocaleManifest locale;
+
+            foreach(var localeDir in localeDirs)
+            {
+                localeRoot = Path.Combine("locale", localeDir.Name);
+                locale = this.Helper.Data.ReadJsonFile<LocaleManifest>(Path.Combine(localeRoot, "manifest.json"));
+
+                if (locale == null)
+                {
+                    this.Monitor.Log($"Invalid translation in folder `{localeRoot}`", LogLevel.Error);
+                    continue;
+                }
+
+                if (this.ContentLoader.Translations.ContainsKey(locale.Code))
+                {
+                    this.Monitor.Log($"Translation locale `{locale.Code}` is already registered! Can't add another one from `{localeRoot}`.", LogLevel.Error);
+                    continue;
+                }
+
+                this.ContentLoader.Translations.Add(locale.Code, Path.Combine("locale", localeDir.Name));
+                this.Monitor.Log($"Found translation: {locale.Language} ({locale.Code}) {locale.Version} by {locale.Translator} in `{localeRoot}`", LogLevel.Info);
+            }
         }
 
         private void GameLoop_DayStarted(object sender, DayStartedEventArgs e)
