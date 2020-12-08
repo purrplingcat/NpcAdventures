@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley.Tools;
 using System.Linq;
+using static StardewValley.Network.NetAudio;
 
 namespace NpcAdventure.AI.Controller
 {
@@ -152,8 +153,11 @@ namespace NpcAdventure.AI.Controller
 
             this.IsFishing = true;
             this.Invicibility = 30000;
-            this.fisher.Sprite.SpriteWidth = 32;
-            this.fisher.HideShadow = true;
+            //this.fisher.HideShadow = true;
+            
+            //this.fisher.Sprite.SpriteWidth = 32;
+            // this.fisher.Sprite.ignoreSourceRectUpdates = false;
+
             if (this.fishingFacingRight)
             {
                 this.fisher.Sprite.setCurrentAnimation(this.fishingRightAnim);
@@ -163,6 +167,9 @@ namespace NpcAdventure.AI.Controller
                 this.fisher.drawOffset.Value = new Vector2(-64f, 0);
                 this.fisher.Sprite.setCurrentAnimation(this.fishingLeftAnim);
             }
+
+            this.fisher.extendSourceRect(16, 0, false);
+            this.fisher.currentLocation.playSound("slosh");
         }
 
         private void Ai_LocationChanged(object sender, EventArgsLocationChanged e)
@@ -177,6 +184,7 @@ namespace NpcAdventure.AI.Controller
         public void Activate()
         {
             this.IsIdle = false;
+            this.fishCaughtTimer = 0;
             this.CheckFishingHere();
         }
 
@@ -199,6 +207,7 @@ namespace NpcAdventure.AI.Controller
             {
                 this.fisher.Halt();
                 this.StartFishing();
+                return;
             }
 
             this.joystick.AcquireTarget(this.fishingSpot);
@@ -317,6 +326,7 @@ namespace NpcAdventure.AI.Controller
                 this.IsFishing = false;
             }
 
+            this.fishCaughtTimer = 0;
             this.Invicibility = 10000;
             this.joystick.Reset();
         }
@@ -343,6 +353,12 @@ namespace NpcAdventure.AI.Controller
 
         public void Update(UpdateTickedEventArgs e)
         {
+            if (this.IsFishing)
+            {
+                this.fisher.Sprite.UpdateSourceRect();
+                this.fisher.extendSourceRect(16, 0, false);
+            }
+
             if (this.IsIdle || !Context.IsPlayerFree)
                 return;
 
@@ -376,6 +392,10 @@ namespace NpcAdventure.AI.Controller
             float num1 = (float)(2.0 * Math.Round(Math.Sin(DateTime.UtcNow.TimeOfDay.TotalMilliseconds / 250.0), 2)) - 40f;
             Point tileLocationPoint = this.fisher.getTileLocationPoint();
             Vector2 offset = this.fisher.drawOffset.Value;
+
+            if (this.fishingFacingRight)
+                offset.X -= this.fisher.Sprite.SpriteWidth * 4;
+
             float num2 = (tileLocationPoint.Y + 1) * 64 / 10000f;
             spriteBatch.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, new Vector2(tileLocationPoint.X * 64 + 64 + offset.X, tileLocationPoint.Y * 64 - 96 - 36 + num1 + offset.Y)), new Rectangle?(new Rectangle(141, 465, 20, 24)), Color.White * 0.75f, 0.0f, Vector2.Zero, 4f, SpriteEffects.None, num2 + 1E-06f);
             spriteBatch.Draw(Game1.objectSpriteSheet, Game1.GlobalToLocal(Game1.viewport, new Vector2(tileLocationPoint.X * 64 + 64 + 40 + offset.X, tileLocationPoint.Y * 64 - 64 - 16 - 10 + num1 + offset.Y)), new Rectangle?(Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, this.lastCaughtFishIdx, 16, 16)), Color.White, 0.0f, new Vector2(8f, 8f), 4f, SpriteEffects.None, num2 + 1E-05f);
