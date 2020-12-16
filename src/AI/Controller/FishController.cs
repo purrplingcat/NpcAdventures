@@ -1,19 +1,21 @@
-﻿using Microsoft.Xna.Framework;
-using PurrplingCore.Movement;
-using StardewModdingAPI.Events;
-using StardewValley;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using StardewValley;
+using StardewValley.Tools;
+using StardewModdingAPI.Events;
+using StardewModdingAPI;
+using PurrplingCore.Movement;
 using SObject = StardewValley.Object;
 using IDrawable = PurrplingCore.Internal.IDrawable;
-using Microsoft.Xna.Framework.Graphics;
-using StardewModdingAPI;
-using StardewValley.Tools;
-using System.Linq;
-using static StardewValley.Network.NetAudio;
 
 namespace NpcAdventure.AI.Controller
 {
+    /// <summary>
+    /// Fish controler for fisherman companions
+    /// </summary>
     class FishController : IController, IDrawable
     {
         public const int FISHING_DISTANCE = 4;
@@ -54,6 +56,9 @@ namespace NpcAdventure.AI.Controller
             this.joystick = new NpcMovementController(this.fisher, this.pathFinder);
             this.fishCaught = new Stack<SObject>();
 
+            if (!ai.Csm.HasSkill("fisherman"))
+                return;
+
             ai.LocationChanged += this.Ai_LocationChanged;
             events.GameLoop.TimeChanged += this.OnTimeChanged;
             this.joystick.EndOfRouteReached += this.ArrivedFishingSpot;
@@ -90,6 +95,7 @@ namespace NpcAdventure.AI.Controller
 
             return multiplier;
         }
+
         private void OnTimeChanged(object sender, TimeChangedEventArgs e)
         {
             if (!this.IsFishing)
@@ -153,10 +159,6 @@ namespace NpcAdventure.AI.Controller
 
             this.IsFishing = true;
             this.Invicibility = 30000;
-            //this.fisher.HideShadow = true;
-            
-            //this.fisher.Sprite.SpriteWidth = 32;
-            // this.fisher.Sprite.ignoreSourceRectUpdates = false;
 
             if (this.fishingFacingRight)
             {
@@ -213,12 +215,17 @@ namespace NpcAdventure.AI.Controller
             this.joystick.AcquireTarget(this.fishingSpot);
         }
 
-        public bool GiveFishesTo(Farmer player)
+        /// <summary>
+        /// Give caught fishes to farmer's repository.
+        /// </summary>
+        /// <param name="farmer">The farmer</param>
+        /// <returns>Sucessfully placed in repository?</returns>
+        public bool GiveFishesTo(Farmer farmer)
         {
             bool somethingAdded = false;
             while (this.HasAnyFish())
             {
-                if (!player.addItemToInventoryBool(this.fishCaught.Peek()))
+                if (!farmer.addItemToInventoryBool(this.fishCaught.Peek()))
                     break;
 
                 somethingAdded = true;
@@ -231,6 +238,10 @@ namespace NpcAdventure.AI.Controller
             return somethingAdded;
         }
 
+        /// <summary>
+        /// Get standing point for fishing (ground tile near water)
+        /// </summary>
+        /// <returns>Tile position</returns>
         private Vector2 GetFishStandingPoint()
         {
             Vector2 tile = this.negativeOne;
@@ -320,9 +331,9 @@ namespace NpcAdventure.AI.Controller
             {
                 this.fisher.reloadSprite();
                 this.fisher.Sprite.SpriteWidth = 16;
+                this.fisher.Sprite.SpriteHeight = 32;
                 this.fisher.drawOffset.Value = new Vector2(0, 0);
                 this.fisher.Sprite.UpdateSourceRect();
-                this.fisher.HideShadow = false;
                 this.IsFishing = false;
             }
 
@@ -343,6 +354,10 @@ namespace NpcAdventure.AI.Controller
                 this.Invicibility -= (int)Game1.currentGameTime.ElapsedGameTime.TotalMilliseconds;
         }
 
+        /// <summary>
+        /// Check if player do fishing when fisherman don't.
+        /// </summary>
+        /// <returns></returns>
         public bool IsFarmerFishingOnInactive()
         {
             return this.ai.CurrentState != AI_StateMachine.State.FISH 
