@@ -2,6 +2,7 @@
 
 ## Upcoming version
 
+- Added `fisherman` skill for Elliott
 - Added support for availability (via EPU condition in companion dispositions file)
 - Added translation registry. Translations must have their own `manifest.json` file
 - Added support for optional assets in ContentLoader

@@ -228,7 +228,7 @@ namespace NpcAdventure.AI.Controller
             internal bool IsCanceled()
             {
                 Point fp = this.npc.GetBoundingBox().Center;
-                Point lp = this.controller.ai.player.GetBoundingBox().Center;
+                Point lp = this.controller.ai.farmer.GetBoundingBox().Center;
                 Vector2 diff = new Vector2(lp.X, lp.Y) - new Vector2(fp.X, fp.Y);
 
                 return diff.Length() > 2.65f * Game1.tileSize;
