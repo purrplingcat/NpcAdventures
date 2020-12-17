@@ -17,7 +17,7 @@ using StardewValley.Objects;
 namespace NpcAdventure.StateMachine
 {
 
-    internal class CompanionStateMachine
+    internal class CompanionStateMachine : IDisposable
     {
         /// <summary>
         /// Allowed states in machine
@@ -371,16 +371,19 @@ namespace NpcAdventure.StateMachine
 
         public void Dispose()
         {
-            var state = this.currentState;
+            this.currentState?.Exit();
+            this.currentState = null;
+
+            foreach (var state in this.States.Values.OfType<IDisposable>())
+            {
+                state.Dispose();
+            }
 
             this.States.Clear();
             this.States = null;
-            this.currentState = null;
             this.Companion = null;
             this.CompanionManager = null;
             this.ContentLoader = null;
-
-            state?.Exit();
         }
 
         /// <summary>
