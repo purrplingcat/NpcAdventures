@@ -8,7 +8,7 @@ Currently there are only one adventuring story event. It's Marlon's invitation e
 
 ## Companion cutscenes
 
-Companion cutscenes are events which are played when you are entered to a location with recruited companion. The key of these kind of events ere more complex, the template is: `companion/<int:eventId>/<string:npcName>/<string:location>[/<epu_conditions> ...]`
+Companion cutscenes are events which are played when you are entered to a location with recruited companion (during adventuring with currently recruited companion). The key of these kind of events ere more complex, the template is: `companion/<int:eventId>/<string:npcName>/<string:location>[/<epu_conditions> ...]`
 
 The key always starts with `companion/` and follow these parameters:
 
