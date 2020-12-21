@@ -57,7 +57,14 @@ namespace NpcAdventure.Story.Scenario
 
                     if (!Game1.player.eventsSeen.Contains(eventId) && canPlay)
                     {
-                        e.Location.startEvent(new Event(events[key], eventId));
+                        var companionEvent = new Event(events[key], eventId);
+
+                        companionEvent.onEventFinished += () =>
+                        {
+                            recruitedCsm.Companion.setTilePosition(Game1.player.getTileLocationPoint());
+                        };
+
+                        e.Location.startEvent(companionEvent);
                         break;
                     }
                 }
