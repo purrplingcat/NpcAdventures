@@ -7,6 +7,8 @@
     1. [Requests with shift key](guide/requests-with-shift.md)
     2. [Experimental features](guide/experimental.md)
 3. Gameplay
+    1. [The invitation](guide/invitation.md)
+    2. [Events](guide/events.md)
 4. [Full changelog](changelog.md)
 
 ## Modder guide

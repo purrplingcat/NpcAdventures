@@ -19,15 +19,36 @@ The key always starts with `companion/` and follow these parameters:
 | 3 | location | string | A location name for this event. Player must enter this location with recruited companion (defined in previous parameter) to play this event |
 | 4 | epu_conditions | array of string splited by `/` | (optional) [Extended precondition utility](https://github.com/ChroniclerCherry/stardew-valley-mods/blob/master/ExpandedPreconditionsUtility/README.md) condition like `f Linus 1000/w rainy/z spring`
 
+Internal event id standard (in NA development team) is:
+
+<details>
+  <summary>Companion event id standard</summary>
+```
+     Nexus mod id (4582 is NA's nexus id. For content packs use yours)
+    /
+   /    Number of companion in companion disposition file (entry index)
+  /    /
+4582 1n xx
+     \   \ 
+      \   Number of event for this companion
+       \ 
+        Event type: companion event (1)
+```
+</details>
+
+### List of companion events
+
+See [Events](../guide/events.md) in the mod guide.
+
 ### Example
 
 An example of content pack which adds/edits an companion cutscene.
 
 ```js
 // File assets/data/my-events.json
-{
-  "companion/4582000/Emily/SandyHouse": "none/6 18/farmer 4 9 0 Emily 4 8 0 Sandy 2 5 2 Bouncer 17 3 2/pause 1000/skippable/pause 200" // prefix 4582 is NPC Adventures nexusmods mod id. Dont' use this prefix, use another one in your content pack
-  "companion/4582001/Emily/SandyHouse/t 900 1000/f Emily 1500": "none/6 18/farmer 4 9 0 Emily 4 8 0 Sandy 2 5 2 Bouncer 17 3 2/pause 1000/skippable/pause 200"
+{            
+  "companion/45821700/Emily/SandyHouse": "none/6 18/farmer 4 9 0 Emily 4 8 0 Sandy 2 5 2 Bouncer 17 3 2/pause 1000/skippable/pause 200" // prefix 4582 is NPC Adventures nexusmods mod id. Dont' use this prefix, use another one in your content pack
+  "companion/45821701/Emily/SandyHouse/t 900 1000/f Emily 1500": "none/6 18/farmer 4 9 0 Emily 4 8 0 Sandy 2 5 2 Bouncer 17 3 2/pause 1000/skippable/pause 200"
 }
 ```
 
