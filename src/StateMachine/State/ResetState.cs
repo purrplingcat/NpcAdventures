@@ -28,10 +28,18 @@ namespace NpcAdventure.StateMachine.State
         {
             base.Entry();
             this.StateMachine.ReloadNpc();
+            this.companionRescheduleDestinationLocation = null;
+            this.companionRescheduleDestinationPoint = Point.Zero;
+            this.companionRescheduleEndRouteBehavior = null;
+            this.companionRescheduleEndRouteDialogue = null;
+            this.companionRescheduleFacingDirection = 0;
         }
 
         public void ReintegrateCompanionNPC()
         {
+            if (this.StateMachine.CurrentStateFlag != CompanionStateMachine.StateFlag.RESET)
+                return;
+
             NPC companion = this.StateMachine.Companion;
             Farmer farmer = this.StateMachine.CompanionManager.Farmer;
 
@@ -43,7 +51,7 @@ namespace NpcAdventure.StateMachine.State
             companion.eventActor = false;
             companion.followSchedule = true;
 
-            if (companion.Schedule == null)
+            if (companion.Schedule == null || this.companionRescheduleDestinationLocation == null)
             {
                 this.companionRescheduleDestinationLocation = companion.DefaultMap;
                 if (farmer.spouse != null && farmer.spouse.Equals(companion.Name))
@@ -408,7 +416,7 @@ namespace NpcAdventure.StateMachine.State
         {
             await Task.Run(() => this.Timer(milliseconds));
             location = location != null ? location : this.StateMachine.CompanionManager.Farmer.currentLocation.Name;
-            //tileLocation = tileLocation != Point.Zero ? tileLocation : stateMachine.manager.farmer.getTileLocationPoint();
+            tileLocation = tileLocation != Point.Zero ? tileLocation : this.StateMachine.CompanionManager.Farmer.getTileLocationPoint();
             if (this.StateMachine.Companion.currentLocation != null)
                 Game1.warpCharacter(this.StateMachine.Companion, location, tileLocation);
             afterWarpAction.Invoke();
