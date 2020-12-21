@@ -1,4 +1,6 @@
-﻿# Initiation
+﻿# Invitation
+
+**NOTE:** This part of NPC Adventures is available only when you have enabled Adventure mode
 
 ## Receive Marlon's invitation letter
 
