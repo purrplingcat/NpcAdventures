@@ -190,11 +190,6 @@ namespace NpcAdventure
             {
                 this.Patcher.Apply(new Patches.CheckEventPatch(this.GameMaster));
             }
-
-            if (this.Config.Experimental.UseSwimsuits)
-            {
-                this.LogExperimental("Support swimsuits for companions");
-            }
         }
 
         private void LogExperimental(string featureName)

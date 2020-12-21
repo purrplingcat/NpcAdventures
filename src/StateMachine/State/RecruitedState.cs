@@ -64,6 +64,7 @@ namespace NpcAdventure.StateMachine.State
             this.Events.Input.ButtonPressed += this.Input_ButtonPressed;
             this.SpecialEvents.RenderedLocation += this.SpecialEvents_RenderedLocation;
 
+            this.StateMachine.Companion.CurrentDialogue.Clear();
             this.recruitedDialogue = this.StateMachine.Dialogues.GenerateDialogue("companionRecruited");
             this.CanPerformAction = true;
 

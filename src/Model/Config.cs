@@ -29,8 +29,6 @@ namespace NpcAdventure.Model
 
         public class ExperimentalFeatures
         {    
-            // From version ??? as stable option (enabled by default)
-            public bool UseSwimsuits { get; set; } = false;
         }
     }
 }

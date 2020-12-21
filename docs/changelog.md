@@ -2,6 +2,8 @@
 
 ## Upcoming version
 
+- Added swimsuits (uses vanilla SDV beach sprites)
+- Updated to working with SDV 1.5 (SMAPI 3.8)
 - Added `fisherman` skill for Elliott
 - Added support for availability (via EPU condition in companion dispositions file)
 - Added translation registry. Translations must have their own `manifest.json` file

@@ -1,6 +1,10 @@
 ﻿using ExpandedPreconditionsUtility;
+using Microsoft.Xna.Framework;
 using NpcAdventure.Loader;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Locations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,7 +65,15 @@ namespace NpcAdventure.Story.Scenario
 
                         companionEvent.onEventFinished += () =>
                         {
-                            recruitedCsm.Companion.setTilePosition(Game1.player.getTileLocationPoint());
+                            var afterEventPosition = Game1.player.positionBeforeEvent;
+
+                            if (recruitedCsm.Companion.currentLocation is MineShaft mines)
+                            {
+                                afterEventPosition = recruitedCsm.Reflection.GetProperty<Vector2>(mines, "tileBeneathLadder").GetValue();
+                                Game1.player.positionBeforeEvent = afterEventPosition;
+                            }
+
+                            recruitedCsm.Companion.setTileLocation(afterEventPosition);
                         };
 
                         e.Location.startEvent(companionEvent);
