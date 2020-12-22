@@ -2,6 +2,8 @@
 
 ## Upcoming version
 
+- Added companion event for Emily
+- Added companion event for Haley
 - Added swimsuits (uses vanilla SDV beach sprites)
 - Updated to working with SDV 1.5 (SMAPI 3.8)
 - Added `fisherman` skill for Elliott
