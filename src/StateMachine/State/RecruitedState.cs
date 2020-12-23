@@ -231,6 +231,11 @@ namespace NpcAdventure.StateMachine.State
 
         private void GameLoop_UpdateTicked(object sender, UpdateTickedEventArgs e)
         {
+            if (this.dismissalDialogue != null && this.ai.CurrentState != AI_StateMachine.State.FOLLOW)
+            {
+                this.ai.ChangeState(AI_StateMachine.State.FOLLOW);
+            }
+
             this.FixProblemsWithNPC();
             this.ai.Update(e);
         }

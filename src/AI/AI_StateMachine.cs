@@ -133,7 +133,7 @@ namespace NpcAdventure.AI
             return false;
         }
 
-        private void ChangeState(State state)
+        public void ChangeState(State state)
         {
             this.Monitor.Log($"AI changes state {this.CurrentState} -> {state}");
 
