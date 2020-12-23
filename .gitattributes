@@ -61,7 +61,8 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
-*.sh        text eol=lf
-*.csproj    text eol=clrf
-*.sln       text eol=crlf
-mod.list    text eol=lf
+*.sh              text eol=lf
+*.csproj          text eol=clrf
+*.sln             text eol=crlf
+mod.list          text eol=lf
+manifest.json     text eol=crlf

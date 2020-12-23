@@ -21,7 +21,13 @@ There are a list of all companion event cutscenes which contains NPC Adventures 
   
   ### Haley
 
-  Event id | Location | Condition | Description
-  -------- | -------- | --------- | -----------
-  45821301 | Mountain | 4 hearts with Haley, sunny day, time between 9:00 am - 6:50 pm, Haley is recruited as a companion | Haley invites the player to take some selfies together for her adventuring scrapbook.
+  Event id | Location | Condition | Created by | Description
+  -------- | -------- | --------- | ---------- | -----------
+  45821301 | Mountain | 4 hearts or more with Haley, sunny day, time between 9:00 am - 6:50 pm, Haley is recruited as a companion | Arknir | Haley invites the player to take some selfies together for her adventuring scrapbook.
+
+  ### Emily
+
+  Event id | Location | Condition | Created by | Description
+  -------- | -------- | --------- | ---------- | -----------
+  45821701 | Mountain | 2 hearts or more with Emily and Sandy, Emily is recruited as a companion | Mortimer | A pleasant visit to Sandy... Well what was supposed to be, spirits to the rescue!
 </details>
