@@ -130,7 +130,10 @@ namespace NpcAdventure.AI.Controller
 
             // Try to load idle definition for this NPC
             if (!idleNpcDefinitions.TryGetValue(npcName, out string idleDefinition))
-                throw new Exception($"Can't fetch NPC idle behavior definition for `{npcName}`");
+            {
+                this.ai.Monitor.Log($"Can't fetch NPC idle behavior definition for `{npcName}`", LogLevel.Error);
+                return;
+            }
 
             // Parse idle definition (1 = behavior names, 2 = tendencies)
             var (behaviors, tendencies, rest) = idleDefinition.Split('/');
@@ -140,7 +143,10 @@ namespace NpcAdventure.AI.Controller
             var (minDuration, maxDuration, _) = Utility.parseStringToIntArray(rest[0]);
 
             if (tends.Length != behavs.Length)
-                throw new Exception($"Inconsistent lenght of behaviors and tendencies ({behavs.Length} != {tends.Length})");
+            {
+                this.ai.Monitor.Log($"Inconsistent lenght of behaviors and tendencies ({behavs.Length} != {tends.Length}) for `{npcName}`", LogLevel.Error);
+                return;
+            }
 
             // Assign behaviors
             this.behaviors = new IdleBehavior[behavs.Length];
@@ -149,7 +155,10 @@ namespace NpcAdventure.AI.Controller
                 string behaviorName = behavs[i];
 
                 if (!behaviorDefinitions.TryGetValue(behaviorName, out string b))
-                    throw new Exception($"Cannot find behavior definition for `{behaviorName}`");
+                {
+                    this.ai.Monitor.Log($"Cannot find behavior definition for `{behaviorName}`. (Companion `{npcName}`)", LogLevel.Error);
+                    continue;
+                }
 
                 // Parse behavior definition and create real behavior
                 var (behaviorType, behaviorArgs) = b.Split('/');
@@ -219,7 +228,7 @@ namespace NpcAdventure.AI.Controller
             internal bool IsCanceled()
             {
                 Point fp = this.npc.GetBoundingBox().Center;
-                Point lp = this.controller.ai.player.GetBoundingBox().Center;
+                Point lp = this.controller.ai.farmer.GetBoundingBox().Center;
                 Vector2 diff = new Vector2(lp.X, lp.Y) - new Vector2(fp.X, fp.Y);
 
                 return diff.Length() > 2.65f * Game1.tileSize;

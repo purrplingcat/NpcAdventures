@@ -1,5 +1,10 @@
-﻿using NpcAdventure.Loader;
+﻿using ExpandedPreconditionsUtility;
+using Microsoft.Xna.Framework;
+using NpcAdventure.Loader;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Locations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +17,13 @@ namespace NpcAdventure.Story.Scenario
     {
         private readonly IContentLoader contentLoader;
         private readonly CompanionManager companionManager;
+        private readonly IConditionsChecker epu;
 
-        public CompanionCutscenes(IContentLoader contentLoader, CompanionManager companionManager)
+        public CompanionCutscenes(IContentLoader contentLoader, CompanionManager companionManager, IConditionsChecker epu)
         {
             this.contentLoader = contentLoader;
             this.companionManager = companionManager;
+            this.epu = epu;
         }
 
         public override void Dispose()
@@ -50,10 +57,26 @@ namespace NpcAdventure.Story.Scenario
                 if (tokens.Length >= 4 && tokens[0] == "companion" && recruitedCsm.Name == tokens[2] && e.Location.Name == tokens[3])
                 {
                     int eventId = int.Parse(tokens[1]);
+                    bool canPlay = tokens.Length == 4 || this.epu.CheckConditions(string.Join("/", tokens.Skip(4).ToArray()));
 
-                    if (!Game1.player.eventsSeen.Contains(eventId))
+                    if (!Game1.player.eventsSeen.Contains(eventId) && canPlay)
                     {
-                        e.Location.startEvent(new Event(events[key], eventId));
+                        var companionEvent = new Event(events[key], eventId);
+
+                        companionEvent.onEventFinished += () =>
+                        {
+                            var afterEventPosition = Game1.player.positionBeforeEvent;
+
+                            if (recruitedCsm.Companion.currentLocation is MineShaft mines)
+                            {
+                                afterEventPosition = recruitedCsm.Reflection.GetProperty<Vector2>(mines, "tileBeneathLadder").GetValue();
+                                Game1.player.positionBeforeEvent = afterEventPosition;
+                            }
+
+                            recruitedCsm.Companion.setTileLocation(afterEventPosition);
+                        };
+
+                        e.Location.startEvent(companionEvent);
                         break;
                     }
                 }
