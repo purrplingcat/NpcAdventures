@@ -74,12 +74,26 @@ namespace NpcAdventure.Story.Scenario
                             }
 
                             recruitedCsm.Companion.setTileLocation(afterEventPosition);
+                            this.DoHardcodedAfterEventStuff(companionEvent, Game1.player, recruitedCsm.Companion);
                         };
 
                         e.Location.startEvent(companionEvent);
                         break;
                     }
                 }
+            }
+        }
+
+        private void DoHardcodedAfterEventStuff(Event companionEvent, Farmer farmer, NPC companion)
+        {
+            if (companionEvent.id == 45821101)
+            {
+                FarmHouse farmHouse = Utility.getHomeOfFarmer(farmer);
+                Point bedPosition = farmHouse.getEntryLocation();
+
+                farmer.positionBeforeEvent = new Vector2(bedPosition.X, bedPosition.Y);
+                companion.setTileLocation(farmer.positionBeforeEvent);
+                Game1.warpFarmer(farmHouse.Name, bedPosition.X, bedPosition.Y, 0);
             }
         }
     }

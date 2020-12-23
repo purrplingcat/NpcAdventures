@@ -1,4 +1,5 @@
 ﻿using Harmony;
+using Microsoft.Xna.Framework;
 using NpcAdventure.Story;
 using PurrplingCore.Patching;
 using StardewValley;
@@ -42,6 +43,35 @@ namespace NpcAdventure.Patches
                 original: AccessTools.Method(typeof(GameLocation), nameof(GameLocation.checkForEvents)),
                 postfix: new HarmonyMethod(typeof(CheckEventPatch), nameof(CheckEventPatch.After_checkForEvents))
             );
+            harmony.Patch(
+                original: AccessTools.Method(typeof(Event), nameof(Event.command_move)),
+                prefix: new HarmonyMethod(typeof(CheckEventPatch), nameof(CheckEventPatch.Before_command_move))
+            );
+            harmony.Patch(
+                original: AccessTools.Method(typeof(Event), nameof(Event.command_faceDirection)),
+                prefix: new HarmonyMethod(typeof(CheckEventPatch), nameof(CheckEventPatch.Before_command_faceDirection))
+            );
+            harmony.Patch(
+                original: AccessTools.Method(typeof(Event), nameof(Event.command_showFrame)),
+                prefix: new HarmonyMethod(typeof(CheckEventPatch), nameof(CheckEventPatch.Before_command_faceDirection))
+            );
+        }
+
+        private static bool Before_command_faceDirection(string[] split)
+        {
+            split[1] = split[1].Replace('_', ' ');
+
+            return true;
+        }
+
+        private static bool Before_command_move(string[] split)
+        {
+            for (int i = 1; i < split.Length && split.Length - i >= 3; i += 4)
+            {
+                split[i] = split[i].Replace('_', ' ');
+            }
+
+            return true;
         }
     }
 }
