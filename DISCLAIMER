@@ -15,3 +15,12 @@ is not allowed without written permission.
 
 Open source published forks of source code without binaries 
 are implicitly allowed.
+
+NPC Adventures content is copyrighted and you are not allowed use all content included in folders 
+`/ContentSources`, '/assets' and `/locale` in other projects. 
+If you want add or change content directly in NPC Adventures, 
+you are permited to send pull request to repo https://github.com/purrplingcat/NpcAdventures 
+and distribute it as unofficial NPC Adventures update. Just keep project and author name in your fork.
+
+Content packs created by 3rd party authors for NPC Adventures 
+are always under license declared by their authors and these limitations are not applied.
