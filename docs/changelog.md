@@ -1,5 +1,10 @@
 # Full changelog
 
+## 0.16.1 "Revival"
+
+- Fixed issue with following through cooled lava in volcano
+- Added some extra warnings when playing in multiplayer (which is not supported)
+
 ## 0.16.0 "Christmas Miracle"
 
 - Added companion event for Emily
