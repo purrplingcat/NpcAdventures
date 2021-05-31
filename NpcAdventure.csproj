@@ -34,12 +34,16 @@
     <Content Include="locale/**/*.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="volume/**/*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\QuestFramework\QuestFramework.csproj">
       <Private>false</Private>
     </ProjectReference>
+    <ProjectReference Include="..\QuestEssentials\QuestEssentials.csproj" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">

@@ -136,7 +136,15 @@ namespace NpcAdventure
             IQuestApi questApi = this.Helper.ModRegistry.GetApi<IQuestApi>("purrplingcat.questframework");
             IConditionsChecker epu = this.Helper.ModRegistry.GetApi<IConditionsChecker>("Cherry.ExpandedPreconditionsUtility");
             var storyHelper = new StoryHelper(this.ContentLoader, questApi.GetManagedApi(this.ModManifest));
+            var questsPack = this.Helper.ContentPacks.CreateTemporary(
+                directoryPath: $"{this.Helper.DirectoryPath}/volume/[QFE] NA Quests",
+                id: this.ModManifest.UniqueID,
+                name: "NPC Adventures Quests",
+                description: "Quest extension content pack for NPC Adventures",
+                author: this.ModManifest.Author,
+                version: this.ModManifest.Version);
 
+            questApi.LoadContentPack(this, questsPack);
             questApi.Events.GettingReady += (_, args) => storyHelper.LoadQuests(this.GameMaster);
             questApi.Events.Ready += (_, args) => storyHelper.SanitizeOldAdventureQuestsInLog();
             epu.Initialize(this.Config.EnableDebug, this.ModManifest.UniqueID);

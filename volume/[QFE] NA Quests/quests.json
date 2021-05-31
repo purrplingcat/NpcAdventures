@@ -1,0 +1,16 @@
+﻿// This file can't be patched by NA content packs. To add NA quests create standard QF content pack
+{
+  "Format": "1.0", // this is required
+  "Quests": [
+    // (optional) quests are defined here
+  ],
+  "Offers": [
+    // (optional) quest offers are defined here
+  ],
+  "CustomBoards": [
+    // (optional) define your custom quest or special order boards here
+  ],
+  "CustomDropBoxes": [
+    // (optional) define your custom drop boxes for your special orders here
+  ]
+}
