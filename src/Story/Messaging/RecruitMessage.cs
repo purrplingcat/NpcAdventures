@@ -1,10 +1,12 @@
-﻿namespace NpcAdventure.Story.Messaging
+﻿using QuestEssentials.Messages;
+using QuestFramework.Quests;
+
+namespace NpcAdventure.Story.Messaging
 {
-    class RecruitMessage : GameMasterMessage
+    class RecruitMessage : GameMasterMessage, ICompletionMessage, IStoryMessage
     {
         public RecruitMessage() : base("recruit")
         {
-
         }
 
         public RecruitMessage(string companionName) : this()
@@ -13,5 +15,7 @@
         }
 
         public string CompanionName { get; set; }
+
+        public string Trigger => this.CompanionName;
     }
 }

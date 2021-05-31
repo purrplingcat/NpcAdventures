@@ -1,4 +1,5 @@
 ﻿using NpcAdventure.Loader;
+using NpcAdventure.Story.Messaging;
 using NpcAdventure.Story.Quests;
 using QuestFramework;
 using QuestFramework.Api;
@@ -6,6 +7,7 @@ using QuestFramework.Extensions;
 using QuestFramework.Quests;
 using StardewValley;
 using StardewValley.Quests;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -64,6 +66,11 @@ namespace NpcAdventure.Story
             }
         }
 
+        internal void CheckQuestCompletion(ICompletionMessage completionMessage)
+        {
+            this.questApi.CheckForQuestComplete(completionMessage);
+        }
+
         private void SetQuestDetails(CustomQuest quest, string[] definition)
         {
             quest.BaseType = definition[0] == "Location" ? QuestType.Location : QuestType.Custom;
@@ -99,6 +106,11 @@ namespace NpcAdventure.Story
         internal void CompleteQuest(int questId)
         {
             this.questApi.CompleteQuest($"adventure{questId}");
+        }
+
+        internal void CompleteQuest(string name)
+        {
+            this.questApi.CompleteQuest(name);
         }
 
         internal bool IsAdventureQuest(Quest quest, int id = -1)

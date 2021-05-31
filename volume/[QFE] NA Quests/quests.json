@@ -2,15 +2,51 @@
 {
   "Format": "1.0", // this is required
   "Quests": [
-    // (optional) quests are defined here
+    {
+      "Name": "abby_adventure1",
+      "Type": "PurrplingCat.QuestEssentials/Special",
+      "Title": "Adventure with Abby?",
+      "Description": "Take Abigail to a little adventure in mines and slay some slimes.",
+      "Tasks": [
+        {
+          "Name": "recruit_abby",
+          "Type": "Recruit",
+          "Data": {
+            "CompanionName": "Abigail"
+          },
+          "Description": "Take Abigail to an adventure"
+        },
+        {
+          "Name": "slay_with_abby",
+          "Type": "Slay",
+          "RequiredTasks": [ "recruit_abby" ],
+          "Data": {
+            "TargetName": "Slime, Jelly, Sludge"
+          },
+          "When": {
+            "purrplingcat.npcadventure/CompanionRecruited": "Abigail"
+          },
+          "Description": "Slay some slimes together with Abigail",
+          "Goal": 50
+        },
+        {
+          "Name": "talk_with_abby",
+          "Type": "Talk",
+          "RequiredTasks": [ "recruit_abby", "slay_with_abby" ],
+          "Data": {
+            "NpcName": "Abigail",
+            "DialogueText": "Fighting with monsters is fun! It was amazing adventure, do you think?$h#$b#Thank you for you taken me with you."
+          },
+          "Description": "Talk to Abby"
+        }
+      ],
+      "Cancelable": true
+    }
   ],
   "Offers": [
     // (optional) quest offers are defined here
   ],
   "CustomBoards": [
     // (optional) define your custom quest or special order boards here
-  ],
-  "CustomDropBoxes": [
-    // (optional) define your custom drop boxes for your special orders here
   ]
 }

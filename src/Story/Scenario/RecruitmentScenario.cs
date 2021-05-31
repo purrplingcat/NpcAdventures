@@ -28,12 +28,15 @@ namespace NpcAdventure.Story.Scenario
 
             var ps = this.GameMaster.Data.GetPlayerState();
 
-            if (e.Message is RecruitMessage recruitMessage && !ps.recruited.Contains(recruitMessage.CompanionName))
+            if (e.Message is RecruitMessage recruitMessage)
             {
-                ps.recruited.Add(recruitMessage.CompanionName);
-                this.GameMaster.SyncData();
+                if (!ps.recruited.Contains(recruitMessage.CompanionName))
+                {
+                    ps.recruited.Add(recruitMessage.CompanionName);
+                    this.GameMaster.SyncData();
+                }
 
-                Game1.player.checkForQuestComplete(null, -1, -1, null, null, RecruitmentQuest.TYPE_ID);
+                this.StoryHelper.CheckQuestCompletion(recruitMessage);
                 this.StoryHelper.CompleteQuest(2); // Immediatelly complete the first companion recruited quest
             }
         }

@@ -1,9 +1,11 @@
 ﻿using NpcAdventure.Loader;
+using NpcAdventure.Story.Messaging;
+using QuestFramework.Extensions;
 using QuestFramework.Quests;
 
 namespace NpcAdventure.Story.Quests
 {
-    class RecruitmentQuest : CustomQuest, IQuestObserver
+    class RecruitmentQuest : CustomQuest, IQuestInfoUpdater
     {
         public const int TYPE_ID = 4582100;
 
@@ -11,17 +13,27 @@ namespace NpcAdventure.Story.Quests
         {
             this.GameMaster = gameMaster;
             this.ContentLoader = contentLoader;
+            this.CustomTypeId = TYPE_ID;
         }
 
         public IGameMaster GameMaster { get; }
         public IContentLoader ContentLoader { get; }
 
-        public bool CheckIfComplete(IQuestInfo questData, ICompletionArgs completion)
+        public override bool OnCompletionCheck(ICompletionMessage completionMessage)
         {
-            int goal = int.Parse(this.Trigger.ToString());
-            var ps = this.GameMaster.Data.GetPlayerState();
+            if (completionMessage.Name == "recruit" && completionMessage is RecruitMessage recruitMessage)
+            {
+                int goal = int.Parse(this.Trigger.ToString());
+                var ps = this.GameMaster.Data.GetPlayerState();
 
-            return ps.recruited.Count >= goal;
+                if (ps.recruited.Count >= goal)
+                {
+                    this.Complete();
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void UpdateDescription(IQuestInfo questData, ref string description)

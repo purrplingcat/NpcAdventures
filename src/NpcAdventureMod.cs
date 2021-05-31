@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using StardewModdingAPI;
+﻿using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using NpcAdventure.Loader;
 using NpcAdventure.Driver;
@@ -10,9 +9,13 @@ using NpcAdventure.Compatibility;
 using NpcAdventure.Story;
 using NpcAdventure.Story.Scenario;
 using NpcAdventure.Internal.Assets;
+using NpcAdventure.Story.Quests;
+using NpcAdventure.Story.Quests.Tasks;
 using PurrplingCore.Patching;
 using QuestFramework.Api;
+using QuestEssentials.Tasks;
 using ExpandedPreconditionsUtility;
+using System.Collections.Generic;
 using System.IO;
 
 namespace NpcAdventure
@@ -65,6 +68,8 @@ namespace NpcAdventure
             this.RegisterEvents(helper.Events);
             this.CheckTranslations();
             this.ContentPackManager.LoadContentPacks(helper.ContentPacks.GetOwned());
+
+            QuestTask.RegisterTaskType<RecruitTask>($"Recruit");
             Commander.Register(this);
         }
 
@@ -135,7 +140,8 @@ namespace NpcAdventure
             Compat.Setup(this.Helper.ModRegistry, this.Monitor);
             IQuestApi questApi = this.Helper.ModRegistry.GetApi<IQuestApi>("purrplingcat.questframework");
             IConditionsChecker epu = this.Helper.ModRegistry.GetApi<IConditionsChecker>("Cherry.ExpandedPreconditionsUtility");
-            var storyHelper = new StoryHelper(this.ContentLoader, questApi.GetManagedApi(this.ModManifest));
+            IManagedQuestApi managedQuestApi = questApi.GetManagedApi(this.ModManifest);
+            var storyHelper = new StoryHelper(this.ContentLoader, managedQuestApi);
             var questsPack = this.Helper.ContentPacks.CreateTemporary(
                 directoryPath: $"{this.Helper.DirectoryPath}/volume/[QFE] NA Quests",
                 id: this.ModManifest.UniqueID,
@@ -168,7 +174,13 @@ namespace NpcAdventure
                 epu: this.Epu,
                 monitor: this.Monitor
             );
-            
+
+            managedQuestApi.ExposeQuestType<RecruitmentQuest>("Recruitment", 
+                () => new RecruitmentQuest(this.GameMaster, this.ContentLoader));
+            managedQuestApi.ExposeGlobalCondition("CompanionRecruited", 
+                (v, _) => this.CompanionManager.IsRecruitedAnyone() 
+                    && this.CompanionManager.GetRecruitedCompanion().Name == v);
+
             this.StuffDriver.RegisterEvents(this.Helper.Events);
             this.MailDriver.RegisterEvents(this.SpecialEvents);
 
